@@ -12,7 +12,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codetracker.api.CodeElement;
@@ -46,6 +48,9 @@ import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLClass;
+import gr.uom.java.xmi.UMLComment;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import gr.uom.java.xmi.decomposition.AbstractStatement;
 import gr.uom.java.xmi.decomposition.OperationBody;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import gr.uom.java.xmi.diff.ExtractClassRefactoring;
@@ -249,7 +254,7 @@ public class FileTrackerImpl extends BaseTracker {
 						continue;
 					}
 					String rightClassName = rightClass.getUmlClass().getName();
-                    String rightClassSourceFolder = rightClass.getUmlClass().getLocationInfo().getSourceFolder();
+					String rightClassSourceFolder = rightClass.getUmlClass().getLocationInfo().getSourceFolder();
 					if ("0".equals(parentCommitId)) {
 						Class leftClass = Class.of(rightClass.getUmlClass(), parentVersion);
 						startClassChangeHistory.get().handleAdd(leftClass, rightClass, "Initial commit!");
@@ -275,6 +280,17 @@ public class FileTrackerImpl extends BaseTracker {
 						break;
 					}
 					UMLModel leftModel = getUMLModel(parentCommitId, Collections.singleton(rightClass.getFilePath()));
+					if(leftModel.getClassList().isEmpty()) {
+						Set<String> filePathsBefore = new LinkedHashSet<String>();
+						Set<String> filePathsCurrent = new LinkedHashSet<String>();
+						Map<String, String> renamedFilesHint = new HashMap<String, String>();
+						populateFileSets(commitId, filePathsBefore, filePathsCurrent, renamedFilesHint);
+						String noExtension = FilenameUtils.removeExtension(rightClass.getFilePath());
+						Set<String> matchingNames = filePathsBefore.stream().filter(path -> path.startsWith(noExtension + ".")).collect(Collectors.toSet());
+						if(matchingNames.size() > 0) {
+							leftModel = getUMLModel(parentCommitId, matchingNames);
+						}
+					}
 
 					Class leftClass = getClass(leftModel, parentVersion, rightClass::equalIdentifierIgnoringVersion);
 					boolean annotationChanged = false;
@@ -294,11 +310,11 @@ public class FileTrackerImpl extends BaseTracker {
 						UMLType leftSuperclass = leftClass.getUmlClass().getSuperclass();
 						UMLType rightSuperclass = rightClass.getUmlClass().getSuperclass();
 						if (leftSuperclass != null && rightSuperclass != null) {
-                    		if (!leftSuperclass.equals(rightSuperclass)) {
-                    			startClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
-                    			startClassChangeHistory.get().connectRelatedNodes();
-                    		}
-                    	}
+							if (!leftSuperclass.equals(rightSuperclass)) {
+								startClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
+								startClassChangeHistory.get().connectRelatedNodes();
+							}
+						}
 						else if (leftSuperclass != null && rightSuperclass == null) {
 							startClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
 							startClassChangeHistory.get().connectRelatedNodes();
@@ -352,11 +368,11 @@ public class FileTrackerImpl extends BaseTracker {
 							UMLType leftSuperclass = leftClass.getUmlClass().getSuperclass();
 							UMLType rightSuperclass = rightClass.getUmlClass().getSuperclass();
 							if (leftSuperclass != null && rightSuperclass != null) {
-	                    		if (!leftSuperclass.equals(rightSuperclass)) {
-	                    			startClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
-	                    			startClassChangeHistory.get().connectRelatedNodes();
-	                    		}
-	                    	}
+								if (!leftSuperclass.equals(rightSuperclass)) {
+									startClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
+									startClassChangeHistory.get().connectRelatedNodes();
+								}
+							}
 							else if (leftSuperclass != null && rightSuperclass == null) {
 								startClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
 								startClassChangeHistory.get().connectRelatedNodes();
@@ -384,7 +400,7 @@ public class FileTrackerImpl extends BaseTracker {
 							processImportsAndClassComments(umlClassDiff, rightClass, currentVersion, parentVersion, refactorings);
 							for (Pair<Class, Class> pair : foundInnerClasses) {
 								String rightInnerClassName = pair.getRight().getUmlClass().getName();
-			                    String rightInnerClassSourceFolder = pair.getRight().getUmlClass().getLocationInfo().getSourceFolder();
+								String rightInnerClassSourceFolder = pair.getRight().getUmlClass().getLocationInfo().getSourceFolder();
 								UMLAbstractClassDiff innerClassDiff = getUMLClassDiff(umlModelDiffLocal, rightInnerClassSourceFolder, rightInnerClassName);
 								processImportsAndClassComments(innerClassDiff, pair.getRight(), currentVersion, parentVersion, refactorings);
 							}
@@ -416,7 +432,7 @@ public class FileTrackerImpl extends BaseTracker {
 							processImportsAndClassComments(umlClassDiff, rightClass, currentVersion, parentVersion, refactoringsPartial);
 							for (Pair<Class, Class> pair : foundInnerClasses) {
 								String rightInnerClassName = pair.getRight().getUmlClass().getName();
-			                    String rightInnerClassSourceFolder = pair.getRight().getUmlClass().getLocationInfo().getSourceFolder();
+								String rightInnerClassSourceFolder = pair.getRight().getUmlClass().getLocationInfo().getSourceFolder();
 								UMLAbstractClassDiff innerClassDiff = getUMLClassDiff(umlModelDiffPartial, rightInnerClassSourceFolder, rightInnerClassName);
 								processImportsAndClassComments(innerClassDiff, pair.getRight(), currentVersion, parentVersion, refactoringsPartial);
 							}
@@ -457,7 +473,7 @@ public class FileTrackerImpl extends BaseTracker {
 							processImportsAndClassComments(umlClassDiff, rightClass, currentVersion, parentVersion, refactorings);
 							for (Pair<Class, Class> pair : foundInnerClasses) {
 								String rightInnerClassName = pair.getRight().getUmlClass().getName();
-			                    String rightInnerClassSourceFolder = pair.getRight().getUmlClass().getLocationInfo().getSourceFolder();
+								String rightInnerClassSourceFolder = pair.getRight().getUmlClass().getLocationInfo().getSourceFolder();
 								UMLAbstractClassDiff innerClassDiff = getUMLClassDiff(umlModelDiffAll, rightInnerClassSourceFolder, rightInnerClassName);
 								processImportsAndClassComments(innerClassDiff, pair.getRight(), currentVersion, parentVersion, refactorings);
 							}
@@ -875,7 +891,7 @@ public class FileTrackerImpl extends BaseTracker {
 	private void processLocallyRefactoredAttributes(Map<Attribute, AttributeTrackerChangeHistory> notFoundAttributes, UMLModelDiff umlModelDiff, Version currentVersion, Version parentVersion, List<Refactoring> refactorings) throws Exception {
 		for (Attribute rightAttribute : notFoundAttributes.keySet()) {
 			String rightAttributeClassName = rightAttribute.getUmlAttribute().getClassName();
-            String rightAttributeSourceFolder = rightAttribute.getUmlAttribute().getLocationInfo().getSourceFolder();
+			String rightAttributeSourceFolder = rightAttribute.getUmlAttribute().getLocationInfo().getSourceFolder();
 			AttributeTrackerChangeHistory startAttributeChangeHistory = notFoundAttributes.get(rightAttribute);
 			Set<Attribute> attributeContainerChanged = startAttributeChangeHistory.isAttributeContainerChanged(umlModelDiff, refactorings, currentVersion, parentVersion, rightAttribute::equalIdentifierIgnoringVersion, getClassMoveDiffList(umlModelDiff));
 			boolean containerChanged = !attributeContainerChanged.isEmpty();
@@ -937,36 +953,36 @@ public class FileTrackerImpl extends BaseTracker {
 								continue;
 							}
 							UMLAbstractClassDiff umlClassDiff = getUMLClassDiff(umlModelDiff,  rightAttributeSourceFolder, rightAttributeClassName);
-						    if (umlClassDiff != null) {
-						    	Pair<? extends UMLAttribute, ? extends UMLAttribute> foundPair = null;
-						    	for (Pair<UMLAttribute, UMLAttribute> pair : umlClassDiff.getCommonAtrributes()) {
-						    		if (pair.getRight().equals(rightAttribute.getUmlAttribute())) {
-						    			foundPair = pair;
-						    			break;
-						    		}
-						    	}
-						    	for (Pair<UMLEnumConstant, UMLEnumConstant> pair : umlClassDiff.getCommonEnumConstants()) {
-						    		if (pair.getRight().equals(rightAttribute.getUmlAttribute())) {
-						    			foundPair = pair;
-						    			break;
-						    		}
-						    	}
-						    	UMLDocumentationDiffProvider provider = null;
-						    	for (UMLAttributeDiff attributeDiff : umlClassDiff.getAttributeDiffList()) {
-						    		if (attributeDiff.getContainer2().equals(rightAttribute.getUmlAttribute())) {
-						    			provider = attributeDiff;
-						    			break;
-						    		}
-						    	}
-						    	for (UMLEnumConstantDiff attributeDiff : umlClassDiff.getEnumConstantDiffList()) {
-						    		if (attributeDiff.getContainer2().equals(rightAttribute.getUmlAttribute())) {
-						    			provider = attributeDiff;
-						    			break;
-						    		}
-						    	}
-						    	startCommentChangeHistory.checkBodyOfMatchedAttributes(currentVersion, parentVersion, currentComment::equalIdentifierIgnoringVersion, foundPair);
-						    	startCommentChangeHistory.checkBodyOfMatchedOperations(currentVersion, parentVersion, currentComment::equalIdentifierIgnoringVersion, provider);
-						    }
+							if (umlClassDiff != null) {
+								Pair<? extends UMLAttribute, ? extends UMLAttribute> foundPair = null;
+								for (Pair<UMLAttribute, UMLAttribute> pair : umlClassDiff.getCommonAtrributes()) {
+									if (pair.getRight().equals(rightAttribute.getUmlAttribute())) {
+										foundPair = pair;
+										break;
+									}
+								}
+								for (Pair<UMLEnumConstant, UMLEnumConstant> pair : umlClassDiff.getCommonEnumConstants()) {
+									if (pair.getRight().equals(rightAttribute.getUmlAttribute())) {
+										foundPair = pair;
+										break;
+									}
+								}
+								UMLDocumentationDiffProvider provider = null;
+								for (UMLAttributeDiff attributeDiff : umlClassDiff.getAttributeDiffList()) {
+									if (attributeDiff.getContainer2().equals(rightAttribute.getUmlAttribute())) {
+										provider = attributeDiff;
+										break;
+									}
+								}
+								for (UMLEnumConstantDiff attributeDiff : umlClassDiff.getEnumConstantDiffList()) {
+									if (attributeDiff.getContainer2().equals(rightAttribute.getUmlAttribute())) {
+										provider = attributeDiff;
+										break;
+									}
+								}
+								startCommentChangeHistory.checkBodyOfMatchedAttributes(currentVersion, parentVersion, currentComment::equalIdentifierIgnoringVersion, foundPair);
+								startCommentChangeHistory.checkBodyOfMatchedOperations(currentVersion, parentVersion, currentComment::equalIdentifierIgnoringVersion, provider);
+							}
 						}
 					}
 					else if (key2 instanceof Annotation) {
@@ -1100,7 +1116,20 @@ public class FileTrackerImpl extends BaseTracker {
 							}
 							Block rightBlock = rightMethod.findBlock(currentBlock::equalIdentifierIgnoringVersion);
 							if (rightBlock == null) {
-								continue;
+								//construct right block from mapper
+								UMLOperationBodyMapper mapper = findBodyMapper(umlModelDiff, rightMethod, currentVersion, parentVersion);
+								if(mapper != null) {
+									for(AbstractCodeMapping mapping : mapper.getMappings()) {
+										if(mapping.getFragment2().getString().equals(currentBlock.getComposite().getString()) &&
+												mapping.getFragment2().getDepth() == currentBlock.getComposite().getDepth() &&
+												mapping.getFragment2().getIndex() == currentBlock.getComposite().getIndex()) {
+											rightBlock = Block.of((AbstractStatement)mapping.getFragment2(), rightMethod);
+											break;
+										}
+									}
+								}
+								if (rightBlock == null)
+									continue;
 							}
 							startBlockChangeHistory.poll();
 							alreadyProcessed.add(startBlock);
@@ -1138,7 +1167,17 @@ public class FileTrackerImpl extends BaseTracker {
 							}
 							Comment rightComment = rightMethod.findComment(currentComment::equalIdentifierIgnoringVersion);
 							if (rightComment == null) {
-								continue;
+								//construct right comment from mapper
+								UMLOperationBodyMapper mapper = findBodyMapper(umlModelDiff, rightMethod, currentVersion, parentVersion);
+								if(mapper != null) {
+									for(Pair<UMLComment, UMLComment> pair : mapper.getCommentListDiff().getCommonComments()) {
+										if(pair.getRight().getFullText().equals(currentComment.getComment().getFullText())) {
+											rightComment = Comment.of(pair.getRight(), rightMethod);
+										}
+									}
+								}
+								if (rightComment == null)
+									continue;
 							}
 							startCommentChangeHistory.poll();
 							alreadyProcessed.add(startComment);
@@ -1381,11 +1420,11 @@ public class FileTrackerImpl extends BaseTracker {
 					UMLType leftSuperclass = leftClass.getUmlClass().getSuperclass();
 					UMLType rightSuperclass = rightClass.getUmlClass().getSuperclass();
 					if (leftSuperclass != null && rightSuperclass != null) {
-                		if (!leftSuperclass.equals(rightSuperclass)) {
-                			startInnerClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
-                			startInnerClassChangeHistory.get().connectRelatedNodes();
-                		}
-                	}
+						if (!leftSuperclass.equals(rightSuperclass)) {
+							startInnerClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
+							startInnerClassChangeHistory.get().connectRelatedNodes();
+						}
+					}
 					else if (leftSuperclass != null && rightSuperclass == null) {
 						startInnerClassChangeHistory.get().addChange(leftClass, rightClass, ChangeFactory.forClass(Change.Type.SUPERCLASS_CHANGE));
 						startInnerClassChangeHistory.get().connectRelatedNodes();
@@ -1413,7 +1452,7 @@ public class FileTrackerImpl extends BaseTracker {
 	private void processLocallyRefactoredInnerClasses(Map<Class, ClassTrackerChangeHistory> notFoundInnerClasses, UMLModelDiff umlModelDiff, Version currentVersion, Version parentVersion, List<Refactoring> refactorings) throws RefactoringMinerTimedOutException {
 		for (Class rightInnerClass : notFoundInnerClasses.keySet()) {
 			String rightInnerClassName = rightInnerClass.getUmlClass().getName();
-            String rightInnerClassSourceFolder = rightInnerClass.getUmlClass().getLocationInfo().getSourceFolder();
+			String rightInnerClassSourceFolder = rightInnerClass.getUmlClass().getLocationInfo().getSourceFolder();
 			ClassTrackerChangeHistory startInnerClassChangeHistory = notFoundInnerClasses.get(rightInnerClass);
 			Set<Class> classRefactored = startInnerClassChangeHistory.analyseClassRefactorings(refactorings, currentVersion, parentVersion, rightInnerClass::equalIdentifierIgnoringVersion);
 			Set<Class> innerClassContainerChanged = startInnerClassChangeHistory.isInnerClassContainerChanged(umlModelDiff, refactorings, currentVersion, parentVersion, rightInnerClass::equalIdentifierIgnoringVersion, getClassMoveDiffList(umlModelDiff));
@@ -1508,7 +1547,7 @@ public class FileTrackerImpl extends BaseTracker {
 								}
 								startCommentChangeHistory.poll();
 								Pair<UMLAttribute, UMLAttribute> pair = Pair.of(leftAttribute.getUmlAttribute(), rightAttribute.getUmlAttribute());
-							    startCommentChangeHistory.checkBodyOfMatchedAttributes(currentVersion, parentVersion, rightComment::equalIdentifierIgnoringVersion, pair);
+								startCommentChangeHistory.checkBodyOfMatchedAttributes(currentVersion, parentVersion, rightComment::equalIdentifierIgnoringVersion, pair);
 							}
 						}
 						else if (key2 instanceof Annotation) {
@@ -1526,7 +1565,7 @@ public class FileTrackerImpl extends BaseTracker {
 								}
 								startAnnotationChangeHistory.poll();
 								Pair<VariableDeclarationContainer, VariableDeclarationContainer> pair = Pair.of(leftAttribute.getUmlAttribute(), rightAttribute.getUmlAttribute());
-							    startAnnotationChangeHistory.checkBodyOfMatched(currentVersion, parentVersion, rightAnnotation::equalIdentifierIgnoringVersion, pair);
+								startAnnotationChangeHistory.checkBodyOfMatched(currentVersion, parentVersion, rightAnnotation::equalIdentifierIgnoringVersion, pair);
 							}
 						}
 					}
@@ -1560,12 +1599,15 @@ public class FileTrackerImpl extends BaseTracker {
 							checkIfJavadocChanged(currentVersion, parentVersion, startMethod, rightMethod, leftMethod);
 							checkSignatureFormatChange(startMethodChangeHistory, leftMethod, rightMethod);
 							if (leftMethod.getUmlOperation() instanceof UMLOperation && rightMethod.getUmlOperation() instanceof UMLOperation) {
-	                			UMLOperation leftOperation = (UMLOperation)leftMethod.getUmlOperation();
-	                			UMLOperation rightOperation = (UMLOperation)rightMethod.getUmlOperation();
-	                			if (!leftOperation.getTypeParameters().equals(rightOperation.getTypeParameters())) {
-	                				startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.TYPE_PARAMETER_CHANGE));
-	                			}
-	                		}
+								UMLOperation leftOperation = (UMLOperation)leftMethod.getUmlOperation();
+								UMLOperation rightOperation = (UMLOperation)rightMethod.getUmlOperation();
+								if (!leftOperation.getTypeParameters().equals(rightOperation.getTypeParameters())) {
+									startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.TYPE_PARAMETER_CHANGE));
+								}
+								if (!leftOperation.getAnnotations().equals(rightOperation.getAnnotations())) {
+									startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.ANNOTATION_CHANGE));
+								}
+							}
 							continue;
 						}
 						//CHANGE BODY OR DOCUMENT
@@ -1584,12 +1626,15 @@ public class FileTrackerImpl extends BaseTracker {
 							checkIfJavadocChanged(currentVersion, parentVersion, startMethod, rightMethod, leftMethod);
 							checkSignatureFormatChange(startMethodChangeHistory, leftMethod, rightMethod);
 							if (leftMethod.getUmlOperation() instanceof UMLOperation && rightMethod.getUmlOperation() instanceof UMLOperation) {
-	                			UMLOperation leftOperation = (UMLOperation)leftMethod.getUmlOperation();
-	                			UMLOperation rightOperation = (UMLOperation)rightMethod.getUmlOperation();
-	                			if (!leftOperation.getTypeParameters().equals(rightOperation.getTypeParameters())) {
-	                				startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.TYPE_PARAMETER_CHANGE));
-	                			}
-	                		}
+								UMLOperation leftOperation = (UMLOperation)leftMethod.getUmlOperation();
+								UMLOperation rightOperation = (UMLOperation)rightMethod.getUmlOperation();
+								if (!leftOperation.getTypeParameters().equals(rightOperation.getTypeParameters())) {
+									startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.TYPE_PARAMETER_CHANGE));
+								}
+								if (!leftOperation.getAnnotations().equals(rightOperation.getAnnotations())) {
+									startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.ANNOTATION_CHANGE));
+								}
+							}
 							startMethodChangeHistory.get().connectRelatedNodes();
 							startMethodChangeHistory.elements.remove(currentMethod);
 							startMethodChangeHistory.elements.add(leftMethod);
@@ -1609,7 +1654,7 @@ public class FileTrackerImpl extends BaseTracker {
 					if (currentMethod == null || currentMethod.isAdded()) {
 						continue;
 					}
-					Method rightMethod = getMethod(rightModel, currentVersion, currentMethod::equalIdentifierIgnoringVersion);
+					Method rightMethod = getMethod(rightModel, currentVersion, currentMethod::equalIdentifierIgnoringVersionAndAnnotation);
 					if (rightMethod == null) {
 						continue;
 					}
@@ -1619,12 +1664,15 @@ public class FileTrackerImpl extends BaseTracker {
 						checkIfJavadocChanged(currentVersion, parentVersion, startMethod, rightMethod, leftMethod);
 						checkSignatureFormatChange(startMethodChangeHistory, leftMethod, rightMethod);
 						if (leftMethod.getUmlOperation() instanceof UMLOperation && rightMethod.getUmlOperation() instanceof UMLOperation) {
-                			UMLOperation leftOperation = (UMLOperation)leftMethod.getUmlOperation();
-                			UMLOperation rightOperation = (UMLOperation)rightMethod.getUmlOperation();
-                			if (!leftOperation.getTypeParameters().equals(rightOperation.getTypeParameters())) {
-                				startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.TYPE_PARAMETER_CHANGE));
-                			}
-                		}
+							UMLOperation leftOperation = (UMLOperation)leftMethod.getUmlOperation();
+							UMLOperation rightOperation = (UMLOperation)rightMethod.getUmlOperation();
+							if (!leftOperation.getTypeParameters().equals(rightOperation.getTypeParameters())) {
+								startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.TYPE_PARAMETER_CHANGE));
+							}
+							if (!leftOperation.getAnnotations().equals(rightOperation.getAnnotations())) {
+								startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.ANNOTATION_CHANGE));
+							}
+						}
 						startMethodChangeHistory.setCurrent(leftMethod);
 						int leftLines = leftMethod.getLocation().getEndLine() - leftMethod.getLocation().getStartLine();
 						int rightLines = rightMethod.getLocation().getEndLine() - rightMethod.getLocation().getStartLine();
@@ -1655,12 +1703,15 @@ public class FileTrackerImpl extends BaseTracker {
 						checkIfJavadocChanged(currentVersion, parentVersion, startMethod, rightMethod, leftMethod);
 						checkSignatureFormatChange(startMethodChangeHistory, leftMethod, rightMethod);
 						if (leftMethod.getUmlOperation() instanceof UMLOperation && rightMethod.getUmlOperation() instanceof UMLOperation) {
-                			UMLOperation leftOperation = (UMLOperation)leftMethod.getUmlOperation();
-                			UMLOperation rightOperation = (UMLOperation)rightMethod.getUmlOperation();
-                			if (!leftOperation.getTypeParameters().equals(rightOperation.getTypeParameters())) {
-                				startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.TYPE_PARAMETER_CHANGE));
-                			}
-                		}
+							UMLOperation leftOperation = (UMLOperation)leftMethod.getUmlOperation();
+							UMLOperation rightOperation = (UMLOperation)rightMethod.getUmlOperation();
+							if (!leftOperation.getTypeParameters().equals(rightOperation.getTypeParameters())) {
+								startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.TYPE_PARAMETER_CHANGE));
+							}
+							if (!leftOperation.getAnnotations().equals(rightOperation.getAnnotations())) {
+								startMethodChangeHistory.get().addChange(leftMethod, rightMethod, ChangeFactory.forMethod(Change.Type.ANNOTATION_CHANGE));
+							}
+						}
 						startMethodChangeHistory.get().connectRelatedNodes();
 						startMethodChangeHistory.setCurrent(leftMethod);
 						processNestedStatementsAndComments(rightModel, currentVersion, leftModel, parentVersion,
