@@ -38,6 +38,7 @@ public class VariableTrackerWithLocalFiles extends BaseTrackerWithLocalFiles imp
     public VariableTrackerWithLocalFiles(String cloneURL, String startCommitId, String filePath, String methodName, int methodDeclarationLineNumber, String variableName, int variableDeclarationLineNumber) {
         super(cloneURL, startCommitId, filePath);
         this.changeHistory = new VariableTrackerChangeHistory(methodName, methodDeclarationLineNumber, variableName, variableDeclarationLineNumber);
+        this.changeHistory.setCommitFileSource(commitFileSource());
     }
 
     @Override
@@ -85,6 +86,10 @@ public class VariableTrackerWithLocalFiles extends BaseTrackerWithLocalFiles imp
                 commits = getCommits(currentVariable.getVersion().getId(), jsonFile);
                 historyReport.gitLogCommandCallsPlusPlus();
                 analysedCommits.clear();
+            }
+            if (commits != null && changeHistory.isPendingUncommented(currentVariable)) {
+                changeHistory.followCommentedVariable(currentVariable, commits, analysedCommits);
+                continue;
             }
             if (analysedCommits.containsAll(commits))
                 break;
@@ -333,6 +338,7 @@ public class VariableTrackerWithLocalFiles extends BaseTrackerWithLocalFiles imp
                 }
             }
         }
+        changeHistory.closePendingUncommentedVariables();
         return new HistoryImpl<>(changeHistory.get().getCompleteGraph(), historyReport);
     }
 }

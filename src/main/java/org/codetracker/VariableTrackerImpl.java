@@ -21,6 +21,7 @@ public class VariableTrackerImpl extends BaseTracker implements VariableTracker 
     public VariableTrackerImpl(Repository repository, String startCommitId, String filePath, String methodName, int methodDeclarationLineNumber, String variableName, int variableDeclarationLineNumber) {
         super(repository, startCommitId, filePath);
         this.changeHistory = new VariableTrackerChangeHistory(methodName, methodDeclarationLineNumber, variableName, variableDeclarationLineNumber);
+        this.changeHistory.setCommitFileSource(commitFileSource());
     }
 
     @Override
@@ -58,6 +59,10 @@ public class VariableTrackerImpl extends BaseTracker implements VariableTracker 
                     commits = getCommits(repository, currentVariable.getVersion().getId(), currentVariable.getFilePath(), git);
                     historyReport.gitLogCommandCallsPlusPlus();
                     analysedCommits.clear();
+                }
+                if (commits != null && changeHistory.isPendingUncommented(currentVariable)) {
+                    changeHistory.followCommentedVariable(currentVariable, commits, analysedCommits);
+                    continue;
                 }
                 if (analysedCommits.containsAll(commits))
                     break;
@@ -304,6 +309,7 @@ public class VariableTrackerImpl extends BaseTracker implements VariableTracker 
                     }
                 }
             }
+            changeHistory.closePendingUncommentedVariables();
             return new HistoryImpl<>(changeHistory.get().getCompleteGraph(), historyReport);
         }
     }

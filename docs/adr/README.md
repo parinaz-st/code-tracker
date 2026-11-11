@@ -36,5 +36,6 @@ What becomes easier or harder, including the known downsides.
 | [0009](0009-virtual-uncomment-with-refactoringminer-mapping.md) | Edit-tolerant uncomment detection with a virtual parent and RefactoringMiner mapping | Proposed | 3 |
 | [0010](0010-commented-out-methods.md) | Commented-out methods (report Algorithm 3) | Proposed | 4a |
 | [0011](0011-commented-out-attributes.md) | Commented-out attributes | Proposed | 4b |
+| [0012](0012-commented-out-variables.md) | Commented-out variables | Proposed | 4c |
 
 ADRs from Phase 1 onward stay **Proposed** until the branch author (Parinaz Sattarzadeh) reviews them and moves the changes to `feature/CmtTransitionDetectionBlock`.
