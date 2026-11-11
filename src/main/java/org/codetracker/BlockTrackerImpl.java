@@ -318,6 +318,7 @@ public class BlockTrackerImpl extends BaseTracker implements BlockTracker {
                     }
                 }
             }
+            changeHistory.closePendingUncommentedBlocks();
             return new HistoryImpl<>(changeHistory.get().getCompleteGraph(), historyReport);
         }
     }
@@ -613,6 +614,8 @@ public class BlockTrackerImpl extends BaseTracker implements BlockTracker {
                     }
                 }
             }
+            if (changeHistory.closePendingUncommentedBlocks())
+                return changeHistory.blameReturn(startBlock);
         }
         return null;
     }

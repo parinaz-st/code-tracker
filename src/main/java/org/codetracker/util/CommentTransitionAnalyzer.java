@@ -1,91 +1,112 @@
 package org.codetracker.util;
 
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.UMLComment;
-import gr.uom.java.xmi.decomposition.*;
-import org.codetracker.api.Version;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.codetracker.change.Change;
 import org.codetracker.element.Block;
 
-import java.util.*;
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.UMLComment;
+import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import gr.uom.java.xmi.decomposition.CompositeStatementObject;
+import gr.uom.java.xmi.decomposition.CompositeStatementObjectMapping;
+import gr.uom.java.xmi.decomposition.LeafMapping;
+import gr.uom.java.xmi.decomposition.StatementObject;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 
+/**
+ * Detects code that was commented out or uncommented between two versions of a method body.
+ * <p>
+ * Code and comment text are compared by {@link #codeHash(String)}, which ignores all whitespace
+ * (ADR 0006), so formatting differences between the commented and the active form do not matter.
+ */
 public class CommentTransitionAnalyzer {
 
-    public static Set<Change.Type> detectCommentTransitionsInsideMatchedBlock(UMLOperationBodyMapper umlOperationBodyMapper, Block blockBefore, Block blockAfter, Version currentVersion, Version parentVersion) {
-        Set<Change.Type> changeTypes = new HashSet<>();
+    /** A line that starts a block statement. The word boundary keeps {@code double}, {@code format(}, {@code ifPresent(} out. */
+    private static final Pattern BLOCK_KEYWORD = Pattern.compile(
+            "^(if|else|for|while|do|try|catch|finally|switch|synchronized|static)\\b");
+
+    /**
+     * Lines that are too common to count as evidence of uncommented code on their own
+     * (whitespace already removed). They still count when checking the body of an uncommented block.
+     */
+    private static final Pattern TRIVIAL_CODE_LINE = Pattern.compile(
+            "^(\\{|\\}|\\};|\\)|\\);|return;|break;|continue;|returnnull;|returntrue;|returnfalse;|return0;|"
+                    + "\\}?else\\{?|try\\{|\\}?finally\\{|default:)$");
+
+    private CommentTransitionAnalyzer() {
+    }
+
+    /**
+     * Returns the comment transitions that explain part of a matched block's body change:
+     * {@link Change.Type#UNCOMMENTED_STATEMENT} and/or {@link Change.Type#COMMENTED_OUT_STATEMENT}.
+     */
+    public static Set<Change.Type> detectCommentTransitionsInsideMatchedBlock(UMLOperationBodyMapper umlOperationBodyMapper, Block blockBefore, Block blockAfter) {
+        Set<Change.Type> changeTypes = new LinkedHashSet<>();
         List<UMLComment> deletedComments = umlOperationBodyMapper.getCommentListDiff().getDeletedComments();
         List<UMLComment> addedComments = umlOperationBodyMapper.getCommentListDiff().getAddedComments();
-        Map<String, UMLComment> deletedCommentsHash;
-        Map<String, UMLComment> addedCommentsHash;
-
         if (!deletedComments.isEmpty()) {
-            List<UMLComment> inScopeDeletedComments;
-            inScopeDeletedComments = removeOutOfScopeComments(deletedComments, blockBefore);
-            deletedCommentsHash = generateCommentTextHashMap(inScopeDeletedComments);
+            List<UMLComment> inScopeDeletedComments = removeOutOfScopeComments(deletedComments, blockBefore);
+            Map<String, UMLComment> deletedCommentsHash = generateCommentTextHashMap(inScopeDeletedComments, false);
             if (isUncommentedCodeDetected(deletedCommentsHash, umlOperationBodyMapper, blockAfter)) {
                 changeTypes.add(Change.Type.UNCOMMENTED_STATEMENT);
             }
         }
         if (!addedComments.isEmpty()) {
-            List<UMLComment> inScopeAddedComments;
-            inScopeAddedComments = removeOutOfScopeComments(addedComments, blockAfter);
-            addedCommentsHash = generateCommentTextHashMap(inScopeAddedComments);
+            List<UMLComment> inScopeAddedComments = removeOutOfScopeComments(addedComments, blockAfter);
+            Map<String, UMLComment> addedCommentsHash = generateCommentTextHashMap(inScopeAddedComments, false);
             if (isCommentedOutCodeDetected(addedCommentsHash, umlOperationBodyMapper, blockBefore)) {
                 changeTypes.add(Change.Type.COMMENTED_OUT_STATEMENT);
             }
         }
         return changeTypes;
     }
-    private static List<UMLComment> removeOutOfScopeComments(List<UMLComment> commentList, Block block){
+
+    private static List<UMLComment> removeOutOfScopeComments(List<UMLComment> commentList, Block block) {
         List<UMLComment> inScopeComments = new ArrayList<>();
-        for (int i = 0; i < commentList.size(); i++) {
-            if ((commentList.get(i).getLocationInfo().getStartLine() > block.getLocation().getStartLine() &&
-                    commentList.get(i).getLocationInfo().getEndLine() < block.getLocation().getEndLine())) {
-                inScopeComments.add(commentList.get(i));
+        for (UMLComment comment : commentList) {
+            if (comment.getLocationInfo().getStartLine() > block.getLocation().getStartLine() &&
+                    comment.getLocationInfo().getEndLine() < block.getLocation().getEndLine()) {
+                inScopeComments.add(comment);
             }
         }
         return inScopeComments;
     }
+
     private static boolean isUncommentedCodeDetected(Map<String, UMLComment> deletedCommentsHash, UMLOperationBodyMapper umlOperationBodyMapper, Block blockAfter) {
         if (deletedCommentsHash.isEmpty())
             return false;
-        // find unmatched leaf statements afterBlock in deleted comments
-        if (!umlOperationBodyMapper.getNonMappedLeavesT2().isEmpty()) {
-            for (AbstractCodeFragment abstractCodeFragment : umlOperationBodyMapper.getNonMappedLeavesT2()) {
-                if (blockAfter.getComposite().getLeaves().contains(abstractCodeFragment)) { //if nonmappedLeave actually belongs to the target Block
-                    String codeFragmentHash = Util.getSHA512(abstractCodeFragment.getString().trim());
-                    if (deletedCommentsHash.containsKey(codeFragmentHash)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        //find unmatched composite statements afterBlock in deleted comments
-        if (!umlOperationBodyMapper.getNonMappedInnerNodesT2().isEmpty()) {
-            for (CompositeStatementObject compositeStatementObject : umlOperationBodyMapper.getNonMappedInnerNodesT2()) {
-                if (((CompositeStatementObject) blockAfter.getComposite()).contains(compositeStatementObject)) { //if nonMappedInnerNode actually belongs to the current block
-                    String codeFragmentHash = Util.getSHA512(compositeStatementObject.getActualSignature());
-                    if (deletedCommentsHash.containsKey(codeFragmentHash)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        // RefactoringMiner may create leaf mappings between semantically different statements when textual similarity is high enough,
-        // even when one side is actually a commented/uncommented transition.
-        if (!umlOperationBodyMapper.getMappings().isEmpty()) {
-            for (AbstractCodeMapping mapping : umlOperationBodyMapper.getMappings()) {
-                if (!(mapping instanceof LeafMapping)) // does not happen in composite
-                    continue;
-                if(mapping.getReplacements().isEmpty()) //real mapping
-                    continue;
-                if (!isMappingBelongToTrackedBlock(mapping, blockAfter, true))
-                    continue;
-                String codeFragmentHashCurrent = Util.getSHA512(mapping.getFragment2().getString().trim());
-                if (deletedCommentsHash.containsKey(codeFragmentHashCurrent)) {
+        // unmatched leaf statements of the block after, found in deleted comments
+        for (AbstractCodeFragment abstractCodeFragment : umlOperationBodyMapper.getNonMappedLeavesT2()) {
+            if (blockAfter.getComposite().getLeaves().contains(abstractCodeFragment)) {
+                if (deletedCommentsHash.containsKey(codeHash(abstractCodeFragment.getString())))
                     return true;
-                }
             }
+        }
+        // unmatched composite statements of the block after, found in deleted comments
+        for (CompositeStatementObject compositeStatementObject : umlOperationBodyMapper.getNonMappedInnerNodesT2()) {
+            if (((CompositeStatementObject) blockAfter.getComposite()).contains(compositeStatementObject)) {
+                if (deletedCommentsHash.containsKey(codeHash(compositeStatementObject.getActualSignature())))
+                    return true;
+            }
+        }
+        // RefactoringMiner may map textually similar but different statements when one side is actually
+        // an uncommented statement, so leaf mappings with replacements are checked too.
+        for (AbstractCodeMapping mapping : umlOperationBodyMapper.getMappings()) {
+            if (!(mapping instanceof LeafMapping) || mapping.getReplacements().isEmpty())
+                continue;
+            if (!isMappingBelongToTrackedBlock(mapping, blockAfter, true))
+                continue;
+            if (deletedCommentsHash.containsKey(codeHash(mapping.getFragment2().getString())))
+                return true;
         }
         return false;
     }
@@ -93,116 +114,100 @@ public class CommentTransitionAnalyzer {
     private static boolean isCommentedOutCodeDetected(Map<String, UMLComment> addedCommentsHash, UMLOperationBodyMapper umlOperationBodyMapper, Block blockBefore) {
         if (addedCommentsHash.isEmpty())
             return false;
-        if (!umlOperationBodyMapper.getNonMappedLeavesT1().isEmpty()) {
-            //find unmatched leaf statements parent1 in added comments
-            for (AbstractCodeFragment abstractCodeFragment : umlOperationBodyMapper.getNonMappedLeavesT1()) {
-                if (blockBefore.getComposite().getLeaves().contains(abstractCodeFragment)) { // if nonMappedleaf actually belongs to parent block
-                    String codeFragmentHash = Util.getSHA512(abstractCodeFragment.getString().trim());
-                    if (addedCommentsHash.containsKey(codeFragmentHash)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        if (!umlOperationBodyMapper.getNonMappedInnerNodesT1().isEmpty()) {
-            //find unmatched composite statements parent in added comments
-            for (CompositeStatementObject compositeStatementObject : umlOperationBodyMapper.getNonMappedInnerNodesT1()) {
-                if (((CompositeStatementObject) blockBefore.getComposite()).contains(compositeStatementObject)) { // if nonMappedInnerNode actually belongs to parent block
-                    if (!isBracketAndBelongsToStandAloneBlock(compositeStatementObject))
-                        continue;
-                    String codeFragmentHash = Util.getSHA512(compositeStatementObject.getActualSignature());
-                    if (addedCommentsHash.containsKey(codeFragmentHash)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        // RefactoringMiner may create leaf mappings between semantically different statements when textual similarity is high enough,
-        // even when one side is actually a commented/uncommented transition.
-        if (!umlOperationBodyMapper.getMappings().isEmpty()) {
-            for (AbstractCodeMapping mapping : umlOperationBodyMapper.getMappings()) {
-                if (!(mapping instanceof LeafMapping)) // does not happen in composite
-                    continue;
-                if(mapping.getReplacements().isEmpty()) //real mapping
-                    continue;
-                if (!isMappingBelongToTrackedBlock(mapping, blockBefore, false))
-                    continue;
-                String codeFragmentHashParent = Util.getSHA512(mapping.getFragment1().getString().trim());
-                if (!addedCommentsHash.isEmpty() && addedCommentsHash.containsKey(codeFragmentHashParent)) {
+        // unmatched leaf statements of the block before, found in added comments
+        for (AbstractCodeFragment abstractCodeFragment : umlOperationBodyMapper.getNonMappedLeavesT1()) {
+            if (blockBefore.getComposite().getLeaves().contains(abstractCodeFragment)) {
+                if (addedCommentsHash.containsKey(codeHash(abstractCodeFragment.getString())))
                     return true;
-                }
             }
+        }
+        // unmatched composite statements of the block before, found in added comments
+        for (CompositeStatementObject compositeStatementObject : umlOperationBodyMapper.getNonMappedInnerNodesT1()) {
+            if (((CompositeStatementObject) blockBefore.getComposite()).contains(compositeStatementObject)) {
+                if (!isBracketAndBelongsToStandAloneBlock(compositeStatementObject))
+                    continue;
+                if (addedCommentsHash.containsKey(codeHash(compositeStatementObject.getActualSignature())))
+                    return true;
+            }
+        }
+        // see isUncommentedCodeDetected
+        for (AbstractCodeMapping mapping : umlOperationBodyMapper.getMappings()) {
+            if (!(mapping instanceof LeafMapping) || mapping.getReplacements().isEmpty())
+                continue;
+            if (!isMappingBelongToTrackedBlock(mapping, blockBefore, false))
+                continue;
+            if (addedCommentsHash.containsKey(codeHash(mapping.getFragment1().getString())))
+                return true;
         }
         return false;
     }
-    public static boolean isBlockBodyUnchangedDuringUncomment (UMLOperationBodyMapper umlOperationBodyMapper, CompositeStatementObject uncommentedBlock, Map<String, UMLComment> deletedComments, Block blockAfter) {
+
+    /**
+     * Checks that every statement inside an uncommented block is either mapped or present in the
+     * deleted comments, i.e. the block body did not change while it was uncommented.
+     */
+    public static boolean isBlockBodyUnchangedDuringUncomment(UMLOperationBodyMapper umlOperationBodyMapper, CompositeStatementObject uncommentedBlock, Map<String, UMLComment> deletedComments, Block blockAfter) {
         Set<String> mappedFragments = new HashSet<>();
         for (AbstractCodeMapping mapping : umlOperationBodyMapper.getMappings()) {
-            if(!isMappingBelongToTrackedBlock(mapping, blockAfter, true))
+            if (!isMappingBelongToTrackedBlock(mapping, blockAfter, true))
                 continue;
-            if(mapping instanceof CompositeStatementObjectMapping) {
+            if (mapping instanceof CompositeStatementObjectMapping) {
                 CompositeStatementObject composite = (CompositeStatementObject) mapping.getFragment2();
                 if (!isBracketAndBelongsToStandAloneBlock(composite))
                     continue;
-                mappedFragments.add(Util.getSHA512(composite.getActualSignature()));
+                mappedFragments.add(codeHash(composite.getActualSignature()));
             }
-            else if(mapping instanceof LeafMapping && mapping.getFragment2() instanceof StatementObject){ // mappings belong to the currentblock
-                mappedFragments.add(Util.getSHA512(mapping.getFragment2().getString().trim()));
+            else if (mapping instanceof LeafMapping && mapping.getFragment2() instanceof StatementObject) {
+                mappedFragments.add(codeHash(mapping.getFragment2().getString()));
             }
         }
         for (CompositeStatementObject inner : uncommentedBlock.getInnerNodes()) {
-            if(inner.getActualSignature().equals(uncommentedBlock.getActualSignature())){
+            if (inner.getActualSignature().equals(uncommentedBlock.getActualSignature()))
                 continue;
-            }
-            if (!isBracketAndBelongsToStandAloneBlock(inner)) {
+            if (!isBracketAndBelongsToStandAloneBlock(inner))
                 continue;
-            }
-            String hash = Util.getSHA512(inner.getActualSignature().replaceAll("\\s+", " ").trim());
-            if(!existsAsMappedOrComment(hash, mappedFragments, deletedComments)){
+            if (!existsAsMappedOrComment(codeHash(inner.getActualSignature()), mappedFragments, deletedComments))
                 return false;
-            }
         }
         for (AbstractCodeFragment leaf : uncommentedBlock.getLeaves()) {
-            String hash = Util.getSHA512(((StatementObject) leaf).getActualSignature().replaceAll("\\s+", " ").trim());
-            if(!existsAsMappedOrComment(hash, mappedFragments, deletedComments))
+            if (!existsAsMappedOrComment(codeHash(((StatementObject) leaf).getActualSignature()), mappedFragments, deletedComments))
                 return false;
         }
         return true;
     }
 
-    private static Change.Type partialBlockUncommented(CompositeStatementObject compositeStatementObject, Block blockBefore, Block blockAfter) {
-        //TODO: else/catch/finally uncommented support should be added
-        if (blockBefore.getComposite().getLocationInfo().getCodeElementType().equals(LocationInfo.CodeElementType.IF_STATEMENT) &&
-                blockAfter.getComposite().getLocationInfo().getCodeElementType().equals(LocationInfo.CodeElementType.IF_STATEMENT)) {
-            CompositeStatementObject ifBefore = (CompositeStatementObject) blockBefore.getComposite();
-            CompositeStatementObject ifAfter = (CompositeStatementObject) blockAfter.getComposite();
-            if (ifBefore.getStatements().size() == 1 && ifAfter.getStatements().size() == 2) {
-                return Change.Type.UNCOMMENTED_STATEMENT;
-            }
-        }
-        return null;
+    public static boolean isBracketAndBelongsToStandAloneBlock(CompositeStatementObject compositeStatementObject) { // heuristic
+        return compositeStatementObject.getLocationInfo().getCodeElementType() != LocationInfo.CodeElementType.BLOCK
+                || compositeStatementObject.getParent().getActualSignature().equals("{");
     }
 
-    public static boolean isBracketAndBelongsToStandAloneBlock(CompositeStatementObject compositeStatementObject){ //heuristic
-        if ((compositeStatementObject.getLocationInfo().getCodeElementType() == LocationInfo.CodeElementType.BLOCK) && (!compositeStatementObject.getParent().getActualSignature().equals("{")))
-            return false;
-        return true;
-    }
-    private static boolean isMappingBelongToTrackedBlock(AbstractCodeMapping mapping, Block block, boolean isAfter){
-        if(mapping instanceof CompositeStatementObjectMapping){
+    private static boolean isMappingBelongToTrackedBlock(AbstractCodeMapping mapping, Block block, boolean isAfter) {
+        if (mapping instanceof CompositeStatementObjectMapping) {
             CompositeStatementObject composite = (CompositeStatementObject) mapping.getFragment2();
-            if(!((CompositeStatementObject) block.getComposite()).contains(composite))
-                return false;
+            return ((CompositeStatementObject) block.getComposite()).contains(composite);
         }
-        else if(mapping instanceof LeafMapping && (isAfter ? mapping.getFragment2() : mapping.getFragment1()) instanceof StatementObject){
-            if(!block.getComposite().getLeaves().contains(isAfter ? mapping.getFragment2() : mapping.getFragment1()))
-                return false;
-        }
+        AbstractCodeFragment fragment = isAfter ? mapping.getFragment2() : mapping.getFragment1();
+        if (mapping instanceof LeafMapping && fragment instanceof StatementObject)
+            return block.getComposite().getLeaves().contains(fragment);
         return true;
     }
-    private static boolean existsAsMappedOrComment(String hash, Set<String> mappedFragments, Map<String, UMLComment> commentsHash){
+
+    private static boolean existsAsMappedOrComment(String hash, Set<String> mappedFragments, Map<String, UMLComment> commentsHash) {
         return mappedFragments.contains(hash) || commentsHash.containsKey(hash);
     }
+
+    // ------------------------------------------------------------------ text normalization
+
+    /** Removes all whitespace, so {@code if(x>0){} and {@code if (x > 0) {} compare equal (ADR 0006). */
+    public static String normalizeCode(String code) {
+        return code.replaceAll("\\s+", "");
+    }
+
+    /** SHA-512 of {@link #normalizeCode(String)}; the key used for every code/comment comparison. */
+    public static String codeHash(String code) {
+        return Util.getSHA512(normalizeCode(code));
+    }
+
     public static String normalizeCommentText(String commentText) {
         commentText = commentText.trim();
         if (commentText.startsWith("//")) {
@@ -221,92 +226,92 @@ public class CommentTransitionAnalyzer {
         return commentText.trim();
     }
 
-    public static Map<String, UMLComment> generateCommentTextHashMap(List<UMLComment> commentList) {
+    /**
+     * Maps {@link #codeHash(String)} of every comment line (and of the whole text of each block comment)
+     * to its comment.
+     *
+     * @param includeTrivialLines whether lines such as {@code return;} or {@code }} are included; they are
+     *                            too common to be evidence on their own (ADR 0006)
+     */
+    public static Map<String, UMLComment> generateCommentTextHashMap(List<UMLComment> commentList, boolean includeTrivialLines) {
         Map<String, UMLComment> commentTextHashMap = new HashMap<>();
         for (UMLComment comment : commentList) {
-            String text = comment.getText();
-            text = normalizeCommentText(text);
-            if(comment.getFullText().startsWith("/*")){
-                commentTextHashMap.put(Util.getSHA512(text.replaceAll("\\s+", " ").trim()), comment);
+            String text = normalizeCommentText(comment.getText());
+            if (comment.getFullText().startsWith("/*")) {
+                commentTextHashMap.put(codeHash(text), comment);
             }
-            String[] lines = text.split("\\R");
-            for (String line : lines) {
+            for (String line : text.split("\\R")) {
                 line = normalizeCommentText(line);
-                if (line.isBlank()) {
+                if (line.isEmpty())
                     continue;
-                }
-                commentTextHashMap.put(Util.getSHA512(line), comment);
+                if (!includeTrivialLines && isTrivialCodeLine(line))
+                    continue;
+                commentTextHashMap.put(codeHash(line), comment);
             }
         }
         return commentTextHashMap;
     }
-    public static Map<String, String> generateUnCommentedBlockSignaturetHashMap(List<UMLComment> commentList) {
-        Map<String, String> blockSignatureUnCommentedHashMap = new HashMap<>();
-        List<String> blockSignatureUnCommented = extractBlockSignaturesFromComments(commentList);
-        for(String signature : blockSignatureUnCommented){
-            String normalized = signature.replaceAll("\\s+", " ").trim();
-            blockSignatureUnCommentedHashMap.put(Util.getSHA512(normalized), normalized);
-        }
-        return blockSignatureUnCommentedHashMap;
-    }
-public static List<String> extractBlockSignaturesFromComments(List<UMLComment> comments) {
-    List<String> signatures = new ArrayList<>();
 
-    for (int i = 0; i < comments.size(); i++) {
-        UMLComment comment = comments.get(i);
-        String text = normalizeCommentText(comment.getText());
-        if (text.isBlank())
-            continue;
-        if (isLeafStatement(text))
-            continue;
-        // Complete one-line signature
-        if (isCompleteBlockSignature(text)) {
-            signatures.add(text);
-            continue;
+    /** Maps {@link #codeHash(String)} of every block signature reconstructed from the comments to the signature. */
+    public static Map<String, String> generateUncommentedBlockSignatureHashMap(List<UMLComment> commentList) {
+        Map<String, String> blockSignatureHashMap = new HashMap<>();
+        for (String signature : extractBlockSignaturesFromComments(commentList)) {
+            blockSignatureHashMap.put(codeHash(signature), signature);
         }
-        if (comment.getFullText().startsWith("/*")) {
-            signatures.addAll(extractFromBlockComment(text));
-        }
-        else if (comment.getFullText().startsWith("//")) {
-            if (!hasBlockKeyword(text))
+        return blockSignatureHashMap;
+    }
+
+    public static List<String> extractBlockSignaturesFromComments(List<UMLComment> comments) {
+        List<String> signatures = new ArrayList<>();
+        for (int i = 0; i < comments.size(); i++) {
+            UMLComment comment = comments.get(i);
+            String text = normalizeCommentText(comment.getText());
+            if (text.isEmpty())
                 continue;
-            SingleLineExtractionResult singleLineExtractionResult = extractFromSingleLineComments(comments, i, text);
-            signatures.addAll(singleLineExtractionResult.getSignatures());
-            i = singleLineExtractionResult.getLastConsumedIndex();
+            if (isLeafStatement(text))
+                continue;
+            // complete one-line signature
+            if (isCompleteBlockSignature(text)) {
+                signatures.add(text);
+                continue;
+            }
+            if (comment.getFullText().startsWith("/*")) {
+                signatures.addAll(extractFromBlockComment(text));
+            }
+            else if (comment.getFullText().startsWith("//")) {
+                if (!hasBlockKeyword(text))
+                    continue;
+                SingleLineExtractionResult singleLineExtractionResult = extractFromSingleLineComments(comments, i, text);
+                signatures.addAll(singleLineExtractionResult.getSignatures());
+                i = singleLineExtractionResult.getLastConsumedIndex();
+            }
         }
+        return signatures;
     }
-    return signatures;
-}
-private static boolean isCompleteBlockSignature(String text) {
-        return hasBlockKeyword(text) && text.trim().endsWith("{");
+
+    static boolean hasBlockKeyword(String text) {
+        // TODO: add support for standalone blocks {}
+        return BLOCK_KEYWORD.matcher(text.trim()).find();
     }
+
+    static boolean isLeafStatement(String text) {
+        return !hasBlockKeyword(text) && text.trim().endsWith(";");
+    }
+
+    static boolean isTrivialCodeLine(String text) {
+        return TRIVIAL_CODE_LINE.matcher(normalizeCode(text)).matches();
+    }
+
+    private static boolean isCompleteBlockSignature(String text) {
+        return hasBlockKeyword(text) && signatureEnds(text);
+    }
+
     private static boolean signatureEnds(String text) {
         return text.trim().endsWith("{");
     }
-    private static boolean hasBlockKeyword(String text) {
-        String trimmed = text.trim();
-        return trimmed.startsWith("if")
-                || trimmed.startsWith("else")
-                || trimmed.startsWith("for")
-                || trimmed.startsWith("while")
-                || trimmed.startsWith("do")
-                || trimmed.startsWith("try")
-                || trimmed.startsWith("catch")
-                || trimmed.startsWith("finally")
-                || trimmed.startsWith("switch")
-                || trimmed.startsWith("synchronized")
-                || trimmed.startsWith("static");
-        //TODO:Add support for  standalone block {}
-    }
-    private static boolean areConsecutiveComments(
-            UMLComment current,
-            UMLComment next) {
 
-        return next.getLocationInfo().getStartLine()
-                == current.getLocationInfo().getEndLine() + 1;
-    }
-    private static boolean isLeafStatement(String text) {
-        return (!hasBlockKeyword(text) && text.trim().endsWith(";"));
+    private static boolean areConsecutiveComments(UMLComment current, UMLComment next) {
+        return next.getLocationInfo().getStartLine() == current.getLocationInfo().getEndLine() + 1;
     }
 
     private static List<String> extractFromBlockComment(String commentText) {
@@ -317,11 +322,9 @@ private static boolean isCompleteBlockSignature(String text) {
                 continue;
             if (!hasBlockKeyword(lines[j]))
                 continue;
-            StringBuilder signatureBuilder = new StringBuilder();
-            signatureBuilder.append(lines[j]);
+            StringBuilder signatureBuilder = new StringBuilder(lines[j]);
             int currentIndex = j + 1;
-            while (!signatureEnds(signatureBuilder.toString())
-                    && currentIndex < lines.length) {
+            while (!signatureEnds(signatureBuilder.toString()) && currentIndex < lines.length) {
                 String nextLine = lines[currentIndex];
                 if (isLeafStatement(nextLine)) {
                     if (signatureBuilder.toString().trim().endsWith(")")) {
@@ -340,17 +343,15 @@ private static boolean isCompleteBlockSignature(String text) {
             }
             j = currentIndex - 1;
         }
-    return signatures;
+        return signatures;
     }
 
-    private static SingleLineExtractionResult extractFromSingleLineComments(List<UMLComment> comments, int index, String commentText){
+    private static SingleLineExtractionResult extractFromSingleLineComments(List<UMLComment> comments, int index, String commentText) {
         int lastConsumedIndex = index;
         List<String> signatures = new ArrayList<>();
-        StringBuilder signatureBuilder = new StringBuilder();
-        signatureBuilder.append(commentText);
+        StringBuilder signatureBuilder = new StringBuilder(commentText);
         int currentIndex = index;
-        while (!signatureEnds(signatureBuilder.toString())
-                && currentIndex + 1 < comments.size()) {
+        while (!signatureEnds(signatureBuilder.toString()) && currentIndex + 1 < comments.size()) {
             UMLComment current = comments.get(currentIndex);
             UMLComment next = comments.get(currentIndex + 1);
             if (!areConsecutiveComments(current, next))
@@ -362,7 +363,7 @@ private static boolean isCompleteBlockSignature(String text) {
                 }
                 break;
             }
-            // another block signature starts inside the same comment
+            // another block signature starts
             if (hasBlockKeyword(nextText))
                 break;
             signatureBuilder.append("\n").append(nextText);
@@ -374,22 +375,22 @@ private static boolean isCompleteBlockSignature(String text) {
         }
         return new SingleLineExtractionResult(signatures, lastConsumedIndex);
     }
-    private static class SingleLineExtractionResult {
-        private  List<String> signatures;
-        private  int lastConsumedIndex;
 
-        SingleLineExtractionResult(List<String> signatures,
-                                   int lastConsumedIndex) {
+    private static class SingleLineExtractionResult {
+        private final List<String> signatures;
+        private final int lastConsumedIndex;
+
+        SingleLineExtractionResult(List<String> signatures, int lastConsumedIndex) {
             this.signatures = signatures;
             this.lastConsumedIndex = lastConsumedIndex;
         }
-        public List<String> getSignatures() {
+
+        List<String> getSignatures() {
             return signatures;
         }
 
-        public int getLastConsumedIndex() {
+        int getLastConsumedIndex() {
             return lastConsumedIndex;
         }
     }
 }
-

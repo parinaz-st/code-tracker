@@ -2,10 +2,17 @@ package org.codetracker;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
-import gr.uom.java.xmi.*;
-import gr.uom.java.xmi.diff.*;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codetracker.api.History;
@@ -30,7 +37,6 @@ import org.codetracker.change.block.SplitBlock;
 import org.codetracker.change.method.BodyChange;
 import org.codetracker.element.Block;
 import org.codetracker.element.Method;
-import org.codetracker.util.Util;
 import org.refactoringminer.api.Refactoring;
 
 import com.github.difflib.DiffUtils;
@@ -40,7 +46,12 @@ import com.github.difflib.patch.EqualDelta;
 import com.github.difflib.patch.InsertDelta;
 import com.github.difflib.patch.Patch;
 
+import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.UMLAnonymousClass;
+import gr.uom.java.xmi.UMLComment;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
@@ -53,9 +64,30 @@ import gr.uom.java.xmi.decomposition.StatementObject;
 import gr.uom.java.xmi.decomposition.TryStatementObject;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
+import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
+import gr.uom.java.xmi.diff.InlineOperationRefactoring;
+import gr.uom.java.xmi.diff.MergeOperationRefactoring;
+import gr.uom.java.xmi.diff.MoveCodeRefactoring;
+import gr.uom.java.xmi.diff.MoveOperationRefactoring;
+import gr.uom.java.xmi.diff.PullUpOperationRefactoring;
+import gr.uom.java.xmi.diff.PushDownOperationRefactoring;
+import gr.uom.java.xmi.diff.RenameOperationRefactoring;
+import gr.uom.java.xmi.diff.ReplaceAnonymousWithClassRefactoring;
+import gr.uom.java.xmi.diff.ReplaceAnonymousWithLambdaRefactoring;
+import gr.uom.java.xmi.diff.ReplaceConditionalWithTernaryRefactoring;
+import gr.uom.java.xmi.diff.ReplaceLoopWithPipelineRefactoring;
+import gr.uom.java.xmi.diff.ReplacePipelineWithLoopRefactoring;
+import gr.uom.java.xmi.diff.SplitConditionalRefactoring;
+import gr.uom.java.xmi.diff.SplitOperationRefactoring;
+import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
+import gr.uom.java.xmi.diff.UMLAnonymousClassDiff;
+import gr.uom.java.xmi.diff.UMLCommentListDiff;
 
-import static org.codetracker.util.CommentTransitionAnalyzer.*;
-
+import static org.codetracker.util.CommentTransitionAnalyzer.detectCommentTransitionsInsideMatchedBlock;
+import static org.codetracker.util.CommentTransitionAnalyzer.generateCommentTextHashMap;
+import static org.codetracker.util.CommentTransitionAnalyzer.generateUncommentedBlockSignatureHashMap;
+import static org.codetracker.util.CommentTransitionAnalyzer.isBlockBodyUnchangedDuringUncomment;
+import static org.codetracker.util.CommentTransitionAnalyzer.codeHash;
 
 public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
 	private final ChangeHistory<Block> blockChangeHistory = new ChangeHistory<>();
@@ -65,6 +97,8 @@ public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
     private final int blockStartLineNumber;
     private final int blockEndLineNumber;
     private final Map<Block, BlockTrackerChangeHistory> nested = new LinkedHashMap<Block, BlockTrackerChangeHistory>();
+    /** Virtual "before" node of an uncommented block → its "after" node, until the history is closed. */
+    private final Map<Block, Block> pendingUncommentedBlocks = new LinkedHashMap<>();
 
 	public BlockTrackerChangeHistory(String methodName, int methodDeclarationLineNumber, CodeElementType blockType,
 			int blockStartLineNumber, int blockEndLineNumber) {
@@ -669,41 +703,64 @@ public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
         // check if it is in the matched
         if (isMatched(umlOperationBodyMapper, currentVersion, parentVersion, equalOperator))
             return true;
-        //check if block got uncommented
-        if(isBlockUncommented(umlOperationBodyMapper, currentVersion, parentVersion, equalOperator)){
+        // check if the block was uncommented
+        if (isBlockUncommented(umlOperationBodyMapper, currentVersion, parentVersion, equalOperator))
             return true;
-        }
-//        Check if is added
+        // check if it is added
         return isAdded(umlOperationBodyMapper, currentVersion, parentVersion, equalOperator);
     }
+
+    /**
+     * Ends the history of every block that was detected as uncommented but could not be linked to an
+     * earlier active version: an {@code introduced} change is added on its uncommented edge, so the
+     * history always has an origin (ADR 0004). Must be called once, after the tracking loop.
+     *
+     * @return {@code true} if at least one pending block was closed
+     */
+    public boolean closePendingUncommentedBlocks() {
+        boolean closed = false;
+        for (Map.Entry<Block, Block> entry : pendingUncommentedBlocks.entrySet()) {
+            Block virtualBlockBefore = entry.getKey();
+            if (blockChangeHistory.predecessors(virtualBlockBefore).isEmpty()) {
+                blockChangeHistory.handleAdd(virtualBlockBefore, entry.getValue(), "uncommented block; no earlier active version found");
+                closed = true;
+            }
+        }
+        pendingUncommentedBlocks.clear();
+        return closed;
+    }
+
     public boolean isBlockUncommented(UMLOperationBodyMapper umlOperationBodyMapper, Version currentVersion, Version parentVersion, Predicate<Block> equalOperator) {
         List<CompositeStatementObject> currentNonMappedInnerNodes = umlOperationBodyMapper.getNonMappedInnerNodesT2();
         UMLCommentListDiff umlCommentListDiff = umlOperationBodyMapper.getCommentListDiff();
-       List<UMLComment> deletedComments = umlCommentListDiff.getDeletedComments();
-        if(currentNonMappedInnerNodes.size() == 0 || deletedComments == null || deletedComments.isEmpty())
+        List<UMLComment> deletedComments = umlCommentListDiff.getDeletedComments();
+        if (currentNonMappedInnerNodes.isEmpty() || deletedComments == null || deletedComments.isEmpty())
             return false;
-        //reconstruct multiline block signature
-        Map<String, UMLComment> allDeletedCommentsHashMap =  generateCommentTextHashMap(deletedComments);
-        Map<String, String> deletedCommentsBlockSignatureHashMap =  generateUnCommentedBlockSignaturetHashMap(deletedComments);
-        if(deletedCommentsBlockSignatureHashMap.isEmpty())
+        // reconstruct block signatures that span several comment lines
+        Map<String, UMLComment> allDeletedCommentsHashMap = generateCommentTextHashMap(deletedComments, true);
+        Map<String, String> deletedCommentsBlockSignatureHashMap = generateUncommentedBlockSignatureHashMap(deletedComments);
+        if (deletedCommentsBlockSignatureHashMap.isEmpty())
             return false;
-        for(CompositeStatementObject nonMappedInnerNode : currentNonMappedInnerNodes) {
-            String normalizedSignature = nonMappedInnerNode.getActualSignature().replaceAll("\\s+", " ").trim();
-            String hashOfNonMappedInnerNode = Util.getSHA512(normalizedSignature);
+        for (CompositeStatementObject nonMappedInnerNode : currentNonMappedInnerNodes) {
+            String hashOfNonMappedInnerNode = codeHash(nonMappedInnerNode.getActualSignature());
             if (!deletedCommentsBlockSignatureHashMap.containsKey(hashOfNonMappedInnerNode))
                 continue;
             Block blockAfter = Block.of(nonMappedInnerNode, umlOperationBodyMapper.getContainer2(), currentVersion);
             if (!equalOperator.test(blockAfter))
                 continue;
-            //check block body continuity
+            // check block body continuity
             if (!isBlockBodyUnchangedDuringUncomment(umlOperationBodyMapper, nonMappedInnerNode, allDeletedCommentsHashMap, blockAfter))
                 continue;
-            Block virtualBlockBefore = Block.of(nonMappedInnerNode, umlOperationBodyMapper.getContainer2(), parentVersion); // add metadata later, flag isVirtual = true;
+            // The block does not exist as code in the parent version. This virtual node keeps the current
+            // method's identity, so it is only linked to an older version whose method body is identical
+            // (via connectRelatedNodes). Otherwise closePendingUncommentedBlocks() gives it an origin.
+            Block virtualBlockBefore = Block.of(nonMappedInnerNode, umlOperationBodyMapper.getContainer2(), parentVersion);
             blockChangeHistory.addChange(virtualBlockBefore, blockAfter, ChangeFactory.forBlock(Change.Type.UNCOMMENTED_BLOCK));
+            pendingUncommentedBlocks.put(virtualBlockBefore, blockAfter);
             elements.add(virtualBlockBefore);
             blockChangeHistory.connectRelatedNodes();
-             return true;
-            }
+            return true;
+        }
         return false;
     }
 
@@ -1147,16 +1204,11 @@ public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
                         List<String> stringRepresentationBodyBefore = stringRepresentationBefore.subList(1, stringRepresentationBefore.size());
                         List<String> stringRepresentationBodyAfter = stringRepresentationAfter.subList(1, stringRepresentationAfter.size());
                         if (!stringRepresentationBodyBefore.equals(stringRepresentationBodyAfter)) {
-                            Set<Change.Type> commentTransitions = detectCommentTransitionsInsideMatchedBlock(umlOperationBodyMapper, blockBefore, blockAfter, currentVersion, parentVersion);
-                            if(!commentTransitions.isEmpty()){
-                                for(Change.Type changeType : commentTransitions){
-                                    blockChangeHistory.addChange(blockBefore, blockAfter, ChangeFactory.forBlock(changeType));
-                                }
+                            blockChangeHistory.addChange(blockBefore, blockAfter, ChangeFactory.forBlock(Change.Type.BODY_CHANGE));
+                            // comment transitions explain part of the body change; they never replace it (ADR 0005)
+                            for (Change.Type changeType : detectCommentTransitionsInsideMatchedBlock(umlOperationBodyMapper, blockBefore, blockAfter)) {
+                                blockChangeHistory.addChange(blockBefore, blockAfter, ChangeFactory.forBlock(changeType));
                             }
-                            else{
-                                blockChangeHistory.addChange(blockBefore, blockAfter, ChangeFactory.forBlock(Change.Type.BODY_CHANGE));
-                            }
-
                         }
                         bodyChange = true;
                     }

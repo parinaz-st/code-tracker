@@ -85,6 +85,11 @@ public class ChangeHistory<T extends BaseCodeElement> {
                     if (!changeHistoryGraph.predecessors(rootCodeElement).isEmpty() && rootCodeElement.isAdded()) {
                         continue;
                     }
+                    // never close a cycle: a root that already points to this leaf is its own newer version
+                    // (e.g. the virtual "before" node of an uncommented block, which shares its identifier)
+                    if (changeHistoryGraph.hasEdgeConnecting(rootCodeElement, leafCodeElement)) {
+                        continue;
+                    }
                     if (!rootCodeElement.getVersion().getId().equals(leafCodeElement.getVersion().getId())) {
                         matched.add(rootCodeElement);
                     }

@@ -28,5 +28,9 @@ What becomes easier or harder, including the known downsides.
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted | 0 |
 | [0002](0002-scenario-tests-with-in-test-fixture-repositories.md) | Scenario tests with in-test fixture repositories | Accepted | 0 |
 | [0003](0003-refactoringminer-version-3.1.6.md) | Build the branch against RefactoringMiner 3.1.6 | Accepted | 0 |
+| [0004](0004-pending-uncomment-falls-back-to-introduced.md) | An unresolved uncommented block ends the history with "introduced" | Proposed | 1 |
+| [0005](0005-comment-transitions-complement-body-change.md) | Comment transitions are recorded in addition to BODY_CHANGE | Proposed | 1 |
+| [0006](0006-whitespace-insensitive-code-matching.md) | Whitespace-insensitive matching and trivial-line filtering | Proposed | 1 |
+| [0007](0007-oracle-regression-runs-once-at-the-end.md) | The oracle regression run happens once, after the last phase | Accepted | 1 |
 
 ADRs from Phase 1 onward stay **Proposed** until the branch author (Parinaz Sattarzadeh) reviews them and moves the changes to `feature/CmtTransitionDetectionBlock`.

@@ -59,7 +59,7 @@ public interface Change {
         INTERFACE_LIST_CHANGE("interface list change"),
         COMMENTED_OUT_STATEMENT("commented out statement"),
         UNCOMMENTED_STATEMENT("uncommented statement"),
-        UNCOMMENTED_BLOCK("uncommented Block");
+        UNCOMMENTED_BLOCK("uncommented block");
         private static final Map<String, Type> lookup = new HashMap<>();
 
         static {
