@@ -22,6 +22,7 @@ public class AttributeTrackerImpl extends BaseTracker implements AttributeTracke
     public AttributeTrackerImpl(Repository repository, String startCommitId, String filePath, String attributeName, int attributeDeclarationLineNumber) {
         super(repository, startCommitId, filePath);
         this.changeHistory = new AttributeTrackerChangeHistory(attributeName, attributeDeclarationLineNumber);
+        this.changeHistory.setCommitFileSource(commitFileSource());
     }
 
     @Override
@@ -57,6 +58,10 @@ public class AttributeTrackerImpl extends BaseTracker implements AttributeTracke
                     commitMap.put(currentAttribute.getVersion().getId(), commits);
                     historyReport.gitLogCommandCallsPlusPlus();
                     analysedCommits.clear();
+                }
+                if (commits != null && changeHistory.isPendingUncommented(currentAttribute)) {
+                    changeHistory.followCommentedAttribute(currentAttribute, commits, analysedCommits);
+                    continue;
                 }
                 if (commits == null || analysedCommits.containsAll(commits))
                     break;
@@ -96,6 +101,10 @@ public class AttributeTrackerImpl extends BaseTracker implements AttributeTracke
                     }
 
                     String extractedClassFilePath = null;
+                    // commented-out attribute restored (ADR 0011)
+                    if (changeHistory.isAttributeUncommented(rightAttribute, leftModel, rightModel, currentVersion, parentVersion))
+                        break;
+
                     //Local Refactoring
                     UMLModelDiff umlModelDiffLocal = leftModel.diff(rightModel);
                     {
@@ -218,6 +227,7 @@ public class AttributeTrackerImpl extends BaseTracker implements AttributeTracke
                     }
                 }
             }
+            changeHistory.closePendingUncommentedAttributes();
             return new HistoryImpl<>(changeHistory.get().getCompleteGraph(), historyReport);
         }
     }
@@ -257,6 +267,10 @@ public class AttributeTrackerImpl extends BaseTracker implements AttributeTracke
                     historyReport.gitLogCommandCallsPlusPlus();
                     analysedCommits.clear();
                 }
+                if (commits != null && changeHistory.isPendingUncommented(currentAttribute)) {
+                    changeHistory.followCommentedAttribute(currentAttribute, commits, analysedCommits);
+                    continue;
+                }
                 if (commits == null || analysedCommits.containsAll(commits))
                     break;
                 for (String commitId : commits) {
@@ -294,6 +308,10 @@ public class AttributeTrackerImpl extends BaseTracker implements AttributeTracke
                     }
 
                     String extractedClassFilePath = null;
+                    // commented-out attribute restored (ADR 0011)
+                    if (changeHistory.isAttributeUncommented(rightAttribute, leftModel, rightModel, currentVersion, parentVersion))
+                        break;
+
                     //Local Refactoring
                     UMLModelDiff umlModelDiffLocal = leftModel.diff(rightModel);
                     {
@@ -416,6 +434,8 @@ public class AttributeTrackerImpl extends BaseTracker implements AttributeTracke
                     }
                 }
             }
+            if (changeHistory.closePendingUncommentedAttributes())
+                return changeHistory.blameReturn();
         }
         return null;
     }

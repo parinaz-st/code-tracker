@@ -18,6 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.codetracker.api.History;
 import org.codetracker.api.History.HistoryInfo;
 import org.codetracker.api.Version;
+import org.codetracker.change.AbstractChange;
 import org.codetracker.change.Change;
 import org.codetracker.change.ChangeFactory;
 import org.codetracker.change.Introduced;
@@ -25,6 +26,7 @@ import org.codetracker.change.attribute.AttributeAnnotationChange;
 import org.codetracker.change.attribute.AttributeCrossFileChange;
 import org.codetracker.change.Change.Type;
 import org.codetracker.element.Attribute;
+import org.codetracker.util.CommentedCodeUncommenter;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
@@ -34,11 +36,14 @@ import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.InsertDelta;
 import com.github.difflib.patch.Patch;
 
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLClass;
+import gr.uom.java.xmi.UMLComment;
 import gr.uom.java.xmi.UMLEnumConstant;
+import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import gr.uom.java.xmi.diff.AddAttributeAnnotationRefactoring;
@@ -69,6 +74,9 @@ import gr.uom.java.xmi.diff.UMLClassRenameDiff;
 import gr.uom.java.xmi.diff.UMLEnumConstantDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 
+import static org.codetracker.util.CommentTransitionAnalyzer.deletedComments;
+import static org.codetracker.util.CommentTransitionAnalyzer.findClass;
+
 public class AttributeTrackerChangeHistory extends AbstractChangeHistory<Attribute> {
 	private final ChangeHistory<Attribute> attributeChangeHistory = new ChangeHistory<>();
     private final String attributeName;
@@ -82,6 +90,160 @@ public class AttributeTrackerChangeHistory extends AbstractChangeHistory<Attribu
 	public ChangeHistory<Attribute> get() {
 		return attributeChangeHistory;
 	}
+
+    // ------------------------------------------------------------------ commented-out attributes (ADR 0011)
+
+    /** Virtual "before" node of an uncommented attribute → what is known about it, until it is confirmed or closed. */
+    private final Map<Attribute, PendingUncommentedAttribute> pendingUncommentedAttributes = new LinkedHashMap<>();
+    private CommitFileSource commitFileSource;
+
+    /** Sets where older versions of files are read from; without it, comment transitions are not detected. */
+    public void setCommitFileSource(CommitFileSource commitFileSource) {
+        this.commitFileSource = commitFileSource;
+    }
+
+    /** Whether {@code attribute} is the still-pending virtual "before" node of an uncommented attribute. */
+    public boolean isPendingUncommented(Attribute attribute) {
+        return pendingUncommentedAttributes.containsKey(attribute);
+    }
+
+    /**
+     * Checks whether {@code rightAttribute}, which has no identical declaration in the parent, is a
+     * commented-out field that was uncommented: the class-level comments deleted in this commit that parse as
+     * class members are uncommented in place, the parent file is re-parsed, and the attribute is uncommented if
+     * a declaration with the same identity (class, modifiers, visibility, name, type, annotations) appears on the
+     * uncommented lines. A different initializer is recorded on the same edge. Same scheme as for methods (ADR 0010).
+     */
+    public boolean isAttributeUncommented(Attribute rightAttribute, UMLModel leftModel, UMLModel rightModel, Version currentVersion, Version parentVersion) {
+        if (commitFileSource == null || leftModel == null || rightModel == null)
+            return false;
+        String className = rightAttribute.getUmlAttribute().getClassName();
+        UMLAbstractClass leftClass = findClass(leftModel, className);
+        UMLAbstractClass rightClass = findClass(rightModel, className);
+        if (leftClass == null || rightClass == null)
+            return false;
+        List<UMLComment> deletedComments = deletedComments(leftClass.getComments(), rightClass.getComments());
+        if (deletedComments.isEmpty())
+            return false;
+        try {
+            CommitFileSource.FileSnapshot parentFile = commitFileSource.fileBefore(currentVersion.getId(), rightAttribute.getFilePath());
+            if (parentFile == null)
+                return false;
+            CommentedCodeUncommenter.Result uncommented = CommentedCodeUncommenter.uncomment(parentFile.getContent(), deletedComments, CommentedCodeUncommenter.Kind.CLASS_BODY_DECLARATIONS);
+            if (uncommented.isEmpty())
+                return false;
+            Attribute commentedForm = AbstractTracker.getAttribute(parentFile.toModel(uncommented.getContent()), parentVersion, rightAttribute::equalIdentifierIgnoringVersion);
+            if (commentedForm == null || !uncommented.getUncommentedLines().contains(commentedForm.getUmlAttribute().getLocationInfo().getEndLine()))
+                return false;
+            // The attribute's identity does not depend on its initializer, so this node equals commentedForm.
+            Attribute virtualAttributeBefore = Attribute.of(rightAttribute.getUmlAttribute(), parentVersion);
+            attributeChangeHistory.addChange(virtualAttributeBefore, rightAttribute, ChangeFactory.forAttribute(Type.UNCOMMENTED_ATTRIBUTE));
+            addInitializerDifference(commentedForm, virtualAttributeBefore, rightAttribute);
+            pendingUncommentedAttributes.put(virtualAttributeBefore, new PendingUncommentedAttribute(rightAttribute, commentedForm));
+            elements.add(virtualAttributeBefore);
+            attributeChangeHistory.connectRelatedNodes();
+            return true;
+        }
+        catch (Exception e) {
+            // the virtual version could not be built; fall back to the normal steps
+            return false;
+        }
+    }
+
+    /**
+     * Commented-state tracking for attributes (ADR 0008, 0011): walks back through {@code commits} (newest first)
+     * while the attribute is still found in commented-out form in its class. At the first commit where it is
+     * active again, records {@code COMMENTED_OUT_ATTRIBUTE} and continues normal tracking from it.
+     */
+    public void followCommentedAttribute(Attribute virtualAttribute, List<String> commits, Set<String> analysedCommits) throws Exception {
+        PendingUncommentedAttribute pending = pendingUncommentedAttributes.get(virtualAttribute);
+        if (pending == null || commitFileSource == null)
+            return;
+        String filePath = pending.uncommentedAttribute.getFilePath();
+        String className = pending.uncommentedAttribute.getUmlAttribute().getClassName();
+        String uncommentedCommitId = pending.uncommentedAttribute.getVersion().getId();
+        Version commentedVersion = virtualAttribute.getVersion();
+        for (int i = commits.indexOf(uncommentedCommitId) + 1; i < commits.size(); i++) {
+            String commitId = commits.get(i);
+            if (commitId.equals(uncommentedCommitId))
+                continue;
+            CommitFileSource.FileSnapshot file = commitFileSource.fileAt(commitId, filePath);
+            if (file == null)
+                return;
+            Version version = commitFileSource.version(commitId);
+            UMLModel model = file.toModel();
+            Attribute activeAttribute = AbstractTracker.getAttribute(model, version, pending.commentedForm::equalIdentifierIgnoringVersion);
+            if (activeAttribute != null) {
+                confirmCommentedOut(virtualAttribute, activeAttribute, commentedVersion);
+                return;
+            }
+            UMLAbstractClass umlClass = findClass(model, className);
+            if (umlClass == null)
+                return;
+            CommentedCodeUncommenter.Result uncommented = CommentedCodeUncommenter.uncomment(file.getContent(), umlClass.getComments(), CommentedCodeUncommenter.Kind.CLASS_BODY_DECLARATIONS);
+            if (uncommented.isEmpty())
+                return;
+            if (AbstractTracker.getAttribute(file.toModel(uncommented.getContent()), version, pending.commentedForm::equalIdentifierIgnoringVersion) == null)
+                return;
+            analysedCommits.add(commitId);
+            commentedVersion = version;
+        }
+    }
+
+    private void confirmCommentedOut(Attribute virtualAttributeBefore, Attribute activeAttribute, Version commentedOutVersion) {
+        Attribute commentedOutNode = virtualAttributeBefore;
+        if (!commentedOutVersion.getId().equals(virtualAttributeBefore.getVersion().getId())) {
+            commentedOutNode = Attribute.of(virtualAttributeBefore.getUmlAttribute(), commentedOutVersion);
+            attributeChangeHistory.addChange(commentedOutNode, virtualAttributeBefore, ChangeFactory.of(AbstractChange.Type.NO_CHANGE));
+        }
+        attributeChangeHistory.addChange(activeAttribute, commentedOutNode, ChangeFactory.forAttribute(Type.COMMENTED_OUT_ATTRIBUTE));
+        pendingUncommentedAttributes.remove(virtualAttributeBefore);
+        elements.add(activeAttribute);
+        attributeChangeHistory.connectRelatedNodes();
+    }
+
+    /**
+     * Ends the history of every uncommented attribute that could not be linked to an earlier active version
+     * with an {@code introduced} change on its uncommented edge. Call once, after the loop.
+     *
+     * @return {@code true} if at least one pending attribute was closed
+     */
+    public boolean closePendingUncommentedAttributes() {
+        boolean closed = false;
+        for (Map.Entry<Attribute, PendingUncommentedAttribute> entry : pendingUncommentedAttributes.entrySet()) {
+            if (attributeChangeHistory.predecessors(entry.getKey()).isEmpty()) {
+                attributeChangeHistory.handleAdd(entry.getKey(), entry.getValue().uncommentedAttribute, "uncommented attribute; no earlier active version found");
+                closed = true;
+            }
+        }
+        pendingUncommentedAttributes.clear();
+        return closed;
+    }
+
+    /** Records an initializer difference between {@code commentedForm} and {@code after} on the edge {@code before → after}, with no other side effect. */
+    private void addInitializerDifference(Attribute commentedForm, Attribute before, Attribute after) {
+        AbstractExpression commentedInitializer = commentedForm.getUmlAttribute().getVariableDeclaration().getInitializer();
+        AbstractExpression restoredInitializer = after.getUmlAttribute().getVariableDeclaration().getInitializer();
+        if (commentedInitializer != null && restoredInitializer != null && !commentedInitializer.getString().equals(restoredInitializer.getString()))
+            attributeChangeHistory.addChange(before, after, ChangeFactory.forAttribute(Type.INITIALIZER_CHANGE));
+        else if (commentedInitializer == null && restoredInitializer != null)
+            attributeChangeHistory.addChange(before, after, ChangeFactory.forAttribute(Type.INITIALIZER_ADDED));
+        else if (commentedInitializer != null && restoredInitializer == null)
+            attributeChangeHistory.addChange(before, after, ChangeFactory.forAttribute(Type.INITIALIZER_REMOVED));
+    }
+
+    /** A virtual node waiting for its earlier active version. */
+    private static final class PendingUncommentedAttribute {
+        /** The attribute in the commit where it was uncommented. */
+        private final Attribute uncommentedAttribute;
+        /** The attribute as it looked while commented out (parsed from the virtual parent). */
+        private final Attribute commentedForm;
+
+        PendingUncommentedAttribute(Attribute uncommentedAttribute, Attribute commentedForm) {
+            this.uncommentedAttribute = uncommentedAttribute;
+            this.commentedForm = commentedForm;
+        }
+    }
 
 	public String getAttributeName() {
 		return attributeName;

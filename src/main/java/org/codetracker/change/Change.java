@@ -62,7 +62,9 @@ public interface Change {
         UNCOMMENTED_BLOCK("uncommented block"),
         COMMENTED_OUT_BLOCK("commented out block"),
         UNCOMMENTED_METHOD("uncommented method"),
-        COMMENTED_OUT_METHOD("commented out method");
+        COMMENTED_OUT_METHOD("commented out method"),
+        UNCOMMENTED_ATTRIBUTE("uncommented attribute"),
+        COMMENTED_OUT_ATTRIBUTE("commented out attribute");
         private static final Map<String, Type> lookup = new HashMap<>();
 
         static {

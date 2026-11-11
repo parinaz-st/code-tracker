@@ -165,6 +165,14 @@ public final class ChangeFactory {
                 change = new CommentedOutMethod();
                 break;
             }
+            case UNCOMMENTED_ATTRIBUTE: {
+                change = new UncommentedAttribute();
+                break;
+            }
+            case COMMENTED_OUT_ATTRIBUTE: {
+                change = new CommentedOutAttribute();
+                break;
+            }
 
             case CATCH_BLOCK_CHANGE: {
                 change = new CatchBlockChange();

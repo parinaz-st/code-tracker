@@ -92,6 +92,9 @@ import gr.uom.java.xmi.diff.UMLClassMoveDiff;
 import gr.uom.java.xmi.diff.UMLClassRenameDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 
+import static org.codetracker.util.CommentTransitionAnalyzer.deletedComments;
+import static org.codetracker.util.CommentTransitionAnalyzer.findClass;
+
 public class MethodTrackerChangeHistory extends AbstractChangeHistory<Method> {
 	private final ChangeHistory<Method> methodChangeHistory = new ChangeHistory<>();
     private final String methodName;
@@ -246,31 +249,6 @@ public class MethodTrackerChangeHistory extends AbstractChangeHistory<Method> {
         }
         pendingUncommentedMethods.clear();
         return closed;
-    }
-
-    private static UMLAbstractClass findClass(UMLModel model, String className) {
-        for (UMLClass umlClass : model.getClassList()) {
-            if (umlClass.getName().equals(className))
-                return umlClass;
-        }
-        return null;
-    }
-
-    /** The comments of {@code before} whose text no longer appears in {@code after} (whitespace ignored). */
-    private static List<UMLComment> deletedComments(List<UMLComment> before, List<UMLComment> after) {
-        Map<String, Integer> remaining = new LinkedHashMap<>();
-        for (UMLComment comment : after)
-            remaining.merge(comment.getFullText().replaceAll("\\s+", ""), 1, Integer::sum);
-        List<UMLComment> deleted = new ArrayList<>();
-        for (UMLComment comment : before) {
-            String key = comment.getFullText().replaceAll("\\s+", "");
-            Integer count = remaining.get(key);
-            if (count == null || count == 0)
-                deleted.add(comment);
-            else
-                remaining.put(key, count - 1);
-        }
-        return deleted;
     }
 
     /** A virtual node waiting for its earlier active version. */

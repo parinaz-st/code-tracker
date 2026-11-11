@@ -13,7 +13,10 @@ import org.codetracker.change.Change;
 import org.codetracker.element.Block;
 
 import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.UMLAbstractClass;
+import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.UMLComment;
+import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
@@ -199,6 +202,32 @@ public class CommentTransitionAnalyzer {
                 signatureMatch = candidate;
         }
         return signatureMatch;
+    }
+
+    /** The class named {@code className} in {@code model}, or {@code null} (ADR 0010). */
+    public static UMLAbstractClass findClass(UMLModel model, String className) {
+        for (UMLClass umlClass : model.getClassList()) {
+            if (umlClass.getName().equals(className))
+                return umlClass;
+        }
+        return null;
+    }
+
+    /** The comments of {@code before} whose text no longer appears in {@code after}, whitespace ignored (ADR 0010). */
+    public static List<UMLComment> deletedComments(List<UMLComment> before, List<UMLComment> after) {
+        Map<String, Integer> remaining = new HashMap<>();
+        for (UMLComment comment : after)
+            remaining.merge(normalizeCode(comment.getFullText()), 1, Integer::sum);
+        List<UMLComment> deleted = new ArrayList<>();
+        for (UMLComment comment : before) {
+            String key = normalizeCode(comment.getFullText());
+            Integer count = remaining.get(key);
+            if (count == null || count == 0)
+                deleted.add(comment);
+            else
+                remaining.put(key, count - 1);
+        }
+        return deleted;
     }
 
     /** Whether the comments of {@code operation} contain the signature of {@code target} as commented-out code. */

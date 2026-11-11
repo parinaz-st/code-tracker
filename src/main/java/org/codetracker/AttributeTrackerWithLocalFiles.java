@@ -32,6 +32,7 @@ public class AttributeTrackerWithLocalFiles extends BaseTrackerWithLocalFiles im
 	public AttributeTrackerWithLocalFiles(String cloneURL, String startCommitId, String filePath, String attributeName, int attributeDeclarationLineNumber) {
 		super(cloneURL, startCommitId, filePath);
 		this.changeHistory = new AttributeTrackerChangeHistory(attributeName, attributeDeclarationLineNumber);
+        this.changeHistory.setCommitFileSource(commitFileSource());
 	}
 
     @Override
@@ -75,6 +76,10 @@ public class AttributeTrackerWithLocalFiles extends BaseTrackerWithLocalFiles im
                 commits = getCommits(currentAttribute.getVersion().getId(), jsonFile);
                 historyReport.gitLogCommandCallsPlusPlus();
                 analysedCommits.clear();
+            }
+            if (commits != null && changeHistory.isPendingUncommented(currentAttribute)) {
+                changeHistory.followCommentedAttribute(currentAttribute, commits, analysedCommits);
+                continue;
             }
             if (commits == null || analysedCommits.containsAll(commits))
                 break;
@@ -131,6 +136,10 @@ public class AttributeTrackerWithLocalFiles extends BaseTrackerWithLocalFiles im
                 }
 
                 String extractedClassFilePath = null;
+                // commented-out attribute restored (ADR 0011)
+                if (changeHistory.isAttributeUncommented(rightAttribute, leftModel, rightModel, currentVersion, parentVersion))
+                    break;
+
                 //Local Refactoring
                 UMLModelDiff umlModelDiffLocal = leftModel.diff(rightModel);
                 {
@@ -250,6 +259,7 @@ public class AttributeTrackerWithLocalFiles extends BaseTrackerWithLocalFiles im
                 }
             }
         }
+        changeHistory.closePendingUncommentedAttributes();
         return new HistoryImpl<>(changeHistory.get().getCompleteGraph(), historyReport);
     }
 }
