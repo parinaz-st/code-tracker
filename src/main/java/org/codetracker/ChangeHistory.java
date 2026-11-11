@@ -1,5 +1,6 @@
 package org.codetracker;
 
+import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
 import org.codetracker.api.Edge;
@@ -85,9 +86,9 @@ public class ChangeHistory<T extends BaseCodeElement> {
                     if (!changeHistoryGraph.predecessors(rootCodeElement).isEmpty() && rootCodeElement.isAdded()) {
                         continue;
                     }
-                    // never close a cycle: a root that already points to this leaf is its own newer version
-                    // (e.g. the virtual "before" node of an uncommented block, which shares its identifier)
-                    if (changeHistoryGraph.hasEdgeConnecting(rootCodeElement, leafCodeElement)) {
+                    // never close a cycle: a root that already reaches this leaf is an older version of it
+                    // (e.g. the nodes of an uncommented block, which share the current block's identifier)
+                    if (Graphs.reachableNodes(changeHistoryGraph.asGraph(), rootCodeElement).contains(leafCodeElement)) {
                         continue;
                     }
                     if (!rootCodeElement.getVersion().getId().equals(leafCodeElement.getVersion().getId())) {

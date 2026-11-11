@@ -14,6 +14,7 @@ import org.codetracker.element.Block;
 
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLComment;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
@@ -174,6 +175,39 @@ public class CommentTransitionAnalyzer {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Finds the active version of {@code target} in {@code operation}: a composite statement of the same
+     * kind with the same signature (whitespace ignored). A candidate with an identical body is preferred;
+     * otherwise the first signature match is returned. Returns {@code null} if there is none (ADR 0008).
+     */
+    public static CompositeStatementObject findActiveBlock(VariableDeclarationContainer operation, CompositeStatementObject target) {
+        if (operation.getBody() == null)
+            return null;
+        String signatureHash = codeHash(target.getActualSignature());
+        String bodyHash = bodyHash(target);
+        CompositeStatementObject signatureMatch = null;
+        for (CompositeStatementObject candidate : operation.getBody().getCompositeStatement().getInnerNodes()) {
+            if (candidate.getLocationInfo().getCodeElementType() != target.getLocationInfo().getCodeElementType())
+                continue;
+            if (!codeHash(candidate.getActualSignature()).equals(signatureHash))
+                continue;
+            if (bodyHash(candidate).equals(bodyHash))
+                return candidate;
+            if (signatureMatch == null)
+                signatureMatch = candidate;
+        }
+        return signatureMatch;
+    }
+
+    /** Whether the comments of {@code operation} contain the signature of {@code target} as commented-out code. */
+    public static boolean containsCommentedBlock(VariableDeclarationContainer operation, CompositeStatementObject target) {
+        return generateUncommentedBlockSignatureHashMap(operation.getComments()).containsKey(codeHash(target.getActualSignature()));
+    }
+
+    private static String bodyHash(CompositeStatementObject composite) {
+        return codeHash(String.join("", composite.stringRepresentation()));
     }
 
     public static boolean isBracketAndBelongsToStandAloneBlock(CompositeStatementObject compositeStatementObject) { // heuristic

@@ -4,18 +4,24 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.codetracker.api.BlockTracker;
 import org.codetracker.api.CodeTracker;
+import org.codetracker.api.Edge;
+import org.codetracker.api.Graph;
 import org.codetracker.api.History;
 import org.codetracker.change.Change;
 import org.codetracker.element.Block;
@@ -225,7 +231,28 @@ public class CommentTransitionScenarioTest {
             for (Change change : info.getChangeList())
                 titles.add(change.getType().getTitle().toLowerCase(Locale.ROOT));
         }
+        assertSingleChain(history.getGraph(), actual);
         return actual;
+    }
+
+    /**
+     * The history graph must be one connected chain: exactly one root (the origin), exactly one sink
+     * (the tracked block), and every node reachable from the root. A cycle or a disconnected piece fails.
+     */
+    private static void assertSingleChain(Graph<Block, Edge> graph, Map<String, List<String>> actual) {
+        Set<Block> nodes = graph.getNodeList();
+        List<Block> roots = nodes.stream().filter(n -> graph.predecessors(n).isEmpty()).collect(Collectors.toList());
+        List<Block> sinks = nodes.stream().filter(n -> graph.successors(n).isEmpty()).collect(Collectors.toList());
+        assertEquals(1, roots.size(), "history graph must have exactly one root; roots " + roots + "; history " + actual);
+        assertEquals(1, sinks.size(), "history graph must have exactly one sink; sinks " + sinks + "; history " + actual);
+        Set<Block> reached = new HashSet<>();
+        Deque<Block> toVisit = new ArrayDeque<>(roots);
+        while (!toVisit.isEmpty()) {
+            Block node = toVisit.poll();
+            if (reached.add(node))
+                toVisit.addAll(graph.successors(node));
+        }
+        assertEquals(nodes.size(), reached.size(), "every node must be reachable from the root; history " + actual);
     }
 
     private static void verify(FixtureRepo repo, String blockMarker, Map<String, List<String>> expected) throws Exception {

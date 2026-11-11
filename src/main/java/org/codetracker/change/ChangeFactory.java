@@ -153,6 +153,10 @@ public final class ChangeFactory {
                 change = new UncommentedBlock();
                 break;
             }
+            case COMMENTED_OUT_BLOCK: {
+                change = new CommentedOutBlock();
+                break;
+            }
 
             case CATCH_BLOCK_CHANGE: {
                 change = new CatchBlockChange();

@@ -711,6 +711,33 @@ public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
     }
 
     /**
+     * Returns the block that was uncommented, if {@code virtualBlockBefore} is the still-pending virtual
+     * "before" node of an uncommented block, or {@code null} otherwise (ADR 0008).
+     */
+    public Block getPendingUncommentedBlock(Block virtualBlockBefore) {
+        return pendingUncommentedBlocks.get(virtualBlockBefore);
+    }
+
+    /**
+     * Confirms a pending uncommented block: {@code activeBlock} is its last active version, and
+     * {@code commentedOutVersion} is the commit that commented it out. Records
+     * {@code COMMENTED_OUT_BLOCK} on the edge active block → commented-out node, links the
+     * commented-out node to the virtual node (when they are different commits), and continues normal
+     * tracking from {@code activeBlock} (ADR 0008).
+     */
+    public void confirmCommentedOut(Block virtualBlockBefore, Block activeBlock, Version commentedOutVersion) {
+        Block commentedOutNode = virtualBlockBefore;
+        if (!commentedOutVersion.getId().equals(virtualBlockBefore.getVersion().getId())) {
+            commentedOutNode = Block.of((CompositeStatementObject) virtualBlockBefore.getComposite(), virtualBlockBefore.getOperation(), commentedOutVersion);
+            blockChangeHistory.addChange(commentedOutNode, virtualBlockBefore, ChangeFactory.of(AbstractChange.Type.NO_CHANGE));
+        }
+        blockChangeHistory.addChange(activeBlock, commentedOutNode, ChangeFactory.forBlock(Change.Type.COMMENTED_OUT_BLOCK));
+        pendingUncommentedBlocks.remove(virtualBlockBefore);
+        elements.add(activeBlock);
+        blockChangeHistory.connectRelatedNodes();
+    }
+
+    /**
      * Ends the history of every block that was detected as uncommented but could not be linked to an
      * earlier active version: an {@code introduced} change is added on its uncommented edge, so the
      * history always has an origin (ADR 0004). Must be called once, after the tracking loop.

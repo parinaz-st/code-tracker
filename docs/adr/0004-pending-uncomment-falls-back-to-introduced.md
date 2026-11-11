@@ -1,6 +1,6 @@
 # 0004. An unresolved uncommented block ends the history with "introduced"
 
-- Status: Proposed
+- Status: Proposed (cycle guard detail superseded by 0008: the guard now checks reachability, not a direct edge)
 - Date: 2026-11-11
 - Phase: 1
 - Related: analysis 4.1; report *Enhancing CodeTracker Accuracy*, Section 5.1 ("pending" restoration mark)
