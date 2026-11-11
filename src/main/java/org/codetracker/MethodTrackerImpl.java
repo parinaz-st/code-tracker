@@ -25,6 +25,7 @@ public class MethodTrackerImpl extends BaseTracker implements MethodTracker {
     public MethodTrackerImpl(Repository repository, String startCommitId, String filePath, String methodName, int methodDeclarationLineNumber) {
         super(repository, startCommitId, filePath);
         this.changeHistory = new MethodTrackerChangeHistory(methodName, methodDeclarationLineNumber);
+        this.changeHistory.setCommitFileSource(commitFileSource());
     }
 
     @Override
@@ -55,6 +56,10 @@ public class MethodTrackerImpl extends BaseTracker implements MethodTracker {
                     commits = getCommits(repository, currentMethod.getVersion().getId(), lastFileName, git);
                     historyReport.gitLogCommandCallsPlusPlus();
                     analysedCommits.clear();
+                }
+                if (changeHistory.isPendingUncommented(currentMethod)) {
+                    changeHistory.followCommentedMethod(currentMethod, commits, analysedCommits);
+                    continue;
                 }
                 if (analysedCommits.containsAll(commits))
                     break;
@@ -137,6 +142,10 @@ public class MethodTrackerImpl extends BaseTracker implements MethodTracker {
                         continue;
                     }
 
+                    // commented-out method restored (report Algorithm 3, ADR 0010)
+                    if (changeHistory.isMethodUncommented(rightMethod, leftModel, rightModel, currentVersion, parentVersion))
+                        break;
+
                     //Local Refactoring
                     UMLModelDiff umlModelDiffLocal = leftModel.diff(rightModel);
                     {
@@ -254,6 +263,7 @@ public class MethodTrackerImpl extends BaseTracker implements MethodTracker {
                     }
                 }
             }
+            changeHistory.closePendingUncommentedMethods();
             return new HistoryImpl<>(changeHistory.get().getCompleteGraph(), historyReport);
         }
     }
@@ -288,6 +298,10 @@ public class MethodTrackerImpl extends BaseTracker implements MethodTracker {
                     commits = getCommits(repository, currentMethod.getVersion().getId(), lastFileName, git);
                     historyReport.gitLogCommandCallsPlusPlus();
                     analysedCommits.clear();
+                }
+                if (changeHistory.isPendingUncommented(currentMethod)) {
+                    changeHistory.followCommentedMethod(currentMethod, commits, analysedCommits);
+                    continue;
                 }
                 if (analysedCommits.containsAll(commits))
                     break;
@@ -338,6 +352,10 @@ public class MethodTrackerImpl extends BaseTracker implements MethodTracker {
                         continue;
                     }
 
+                    // commented-out method restored (report Algorithm 3, ADR 0010)
+                    if (changeHistory.isMethodUncommented(rightMethod, leftModel, rightModel, currentVersion, parentVersion))
+                        break;
+
                     //Local Refactoring
                     UMLModelDiff umlModelDiffLocal = leftModel.diff(rightModel);
                     {
@@ -455,6 +473,8 @@ public class MethodTrackerImpl extends BaseTracker implements MethodTracker {
                     }
                 }
             }
+            if (changeHistory.closePendingUncommentedMethods())
+                return changeHistory.blameReturn(start);
         }
         return null;
     }

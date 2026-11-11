@@ -1,33 +1,15 @@
 package org.codetracker.commenttransition;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.codetracker.api.BlockTracker;
 import org.codetracker.api.CodeTracker;
-import org.codetracker.api.Edge;
-import org.codetracker.api.Graph;
-import org.codetracker.api.History;
 import org.codetracker.change.Change;
-import org.codetracker.element.Block;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.junit.jupiter.api.function.Executable;
 
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 
@@ -222,15 +204,8 @@ public class CommentTransitionScenarioTest {
 
     // ---------------------------------------------------------------- harness
 
-    /**
-     * Expected history as label → keywords. Keywords for one commit are separated by '|';
-     * each must be contained in the title of some change recorded at that commit.
-     */
     private static Map<String, List<String>> expected(String... labelKeywordPairs) {
-        Map<String, List<String>> map = new TreeMap<>();
-        for (int i = 0; i < labelKeywordPairs.length; i += 2)
-            map.put(labelKeywordPairs[i], Arrays.asList(labelKeywordPairs[i + 1].split("\\|")));
-        return map;
+        return ScenarioAssertions.expected(labelKeywordPairs);
     }
 
     private static Map<String, List<String>> track(FixtureRepo repo, String blockMarker) throws Exception {
@@ -248,79 +223,19 @@ public class CommentTransitionScenarioTest {
                 .blockStartLineNumber(blockStart)
                 .blockEndLineNumber(blockEnd)
                 .build();
-        History<Block> history = tracker.track();
-        Map<String, List<String>> actual = new TreeMap<>();
-        for (History.HistoryInfo<Block> info : history.getHistoryInfoList()) {
-            List<String> titles = actual.computeIfAbsent(repo.label(info.getCommitId()), k -> new ArrayList<>());
-            for (Change change : info.getChangeList())
-                titles.add(change.getType().getTitle().toLowerCase(Locale.ROOT));
-        }
-        assertSingleChain(history.getGraph(), actual);
-        return actual;
-    }
-
-    /**
-     * The history graph must be one connected chain: exactly one root (the origin), exactly one sink
-     * (the tracked block), and every node reachable from the root. A cycle or a disconnected piece fails.
-     */
-    private static void assertSingleChain(Graph<Block, Edge> graph, Map<String, List<String>> actual) {
-        Set<Block> nodes = graph.getNodeList();
-        List<Block> roots = nodes.stream().filter(n -> graph.predecessors(n).isEmpty()).collect(Collectors.toList());
-        List<Block> sinks = nodes.stream().filter(n -> graph.successors(n).isEmpty()).collect(Collectors.toList());
-        assertEquals(1, roots.size(), "history graph must have exactly one root; roots " + roots + "; history " + actual);
-        assertEquals(1, sinks.size(), "history graph must have exactly one sink; sinks " + sinks + "; history " + actual);
-        Set<Block> reached = new HashSet<>();
-        Deque<Block> toVisit = new ArrayDeque<>(roots);
-        while (!toVisit.isEmpty()) {
-            Block node = toVisit.poll();
-            if (reached.add(node))
-                toVisit.addAll(graph.successors(node));
-        }
-        assertEquals(nodes.size(), reached.size(), "every node must be reachable from the root; history " + actual);
+        return ScenarioAssertions.historyOf(tracker.track(), repo);
     }
 
     private static void verify(FixtureRepo repo, String blockMarker, Map<String, List<String>> expected) throws Exception {
         Map<String, List<String>> actual = track(repo, blockMarker);
-        String scenario = Thread.currentThread().getStackTrace()[2].getMethodName();
-        print(scenario, actual);
-        List<Executable> checks = new ArrayList<>();
-        checks.add(() -> assertEquals(expected.keySet(), actual.keySet(),
-                "commits in history; expected " + expected + " but was " + actual));
-        for (Map.Entry<String, List<String>> entry : expected.entrySet()) {
-            for (String keyword : entry.getValue()) {
-                checks.add(() -> assertTrue(containsKeyword(actual.get(entry.getKey()), keyword),
-                        "commit " + entry.getKey() + " should have a '" + keyword + "' change; actual " + actual));
-            }
-        }
-        boolean expectsComments = expected.values().stream().flatMap(List::stream)
-                .anyMatch(k -> k.equals(COMMENTED_OUT) || k.equals(UNCOMMENTED));
-        if (!expectsComments) {
-            checks.add(() -> assertTrue(actual.values().stream().flatMap(List::stream).noneMatch(t -> t.contains("comment")),
-                    "no comment transition expected; actual " + actual));
-        }
-        checks.add(() -> assertSingleOrigin(actual));
-        assertAll(scenario, checks);
+        ScenarioAssertions.check(Thread.currentThread().getStackTrace()[2].getMethodName(), expected, actual);
     }
 
     private static void assertSingleOrigin(Map<String, List<String>> actual) {
-        Map<String, Long> introducedCount = actual.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-                e -> e.getValue().stream().filter(t -> t.contains(INTRODUCED)).count(), (a, b) -> a, LinkedHashMap::new));
-        long total = introducedCount.values().stream().mapToLong(Long::longValue).sum();
-        assertEquals(1, total, "history must have exactly one 'introduced' change; actual " + actual);
-        String oldest = ((TreeMap<String, List<String>>) actual).firstKey();
-        assertTrue(introducedCount.getOrDefault(oldest, 0L) == 1, "'introduced' must be the oldest entry; actual " + actual);
-    }
-
-    private static boolean containsKeyword(List<String> titles, String keyword) {
-        if (titles == null)
-            return false;
-        Function<String, Boolean> matches = keyword.equals(COMMENTED_OUT)
-                ? t -> t.contains(COMMENTED_OUT) && !t.contains(UNCOMMENTED)
-                : t -> t.contains(keyword);
-        return titles.stream().anyMatch(matches::apply);
+        ScenarioAssertions.assertSingleOrigin(actual);
     }
 
     private static void print(String scenario, Map<String, List<String>> actual) {
-        System.out.println("[comment-transition] " + scenario + " -> " + actual);
+        ScenarioAssertions.print(scenario, actual);
     }
 }

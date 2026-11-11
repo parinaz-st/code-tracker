@@ -24,6 +24,7 @@ public class MethodTrackerWithLocalFilesImpl extends BaseTrackerWithLocalFiles i
     public MethodTrackerWithLocalFilesImpl(String cloneURL, String startCommitId, String filePath, String methodName, int methodDeclarationLineNumber) {
         super(cloneURL, startCommitId, filePath);
         this.changeHistory = new MethodTrackerChangeHistory(methodName, methodDeclarationLineNumber);
+        this.changeHistory.setCommitFileSource(commitFileSource());
     }
 
     @Override
@@ -66,6 +67,10 @@ public class MethodTrackerWithLocalFilesImpl extends BaseTrackerWithLocalFiles i
                 commits = getCommits(currentMethod.getVersion().getId(), jsonFile);
                 historyReport.gitLogCommandCallsPlusPlus();
                 analysedCommits.clear();
+            }
+            if (changeHistory.isPendingUncommented(currentMethod)) {
+                changeHistory.followCommentedMethod(currentMethod, commits, analysedCommits);
+                continue;
             }
             if (analysedCommits.containsAll(commits))
                 break;
@@ -133,6 +138,10 @@ public class MethodTrackerWithLocalFilesImpl extends BaseTrackerWithLocalFiles i
                     historyReport.step3PlusPlus();
                     continue;
                 }
+
+                // commented-out method restored (report Algorithm 3, ADR 0010)
+                if (changeHistory.isMethodUncommented(rightMethod, leftModel, rightModel, currentVersion, parentVersion))
+                    break;
 
                 //Local Refactoring
                 UMLModelDiff umlModelDiffLocal = leftModel.diff(rightModel);
@@ -251,6 +260,7 @@ public class MethodTrackerWithLocalFilesImpl extends BaseTrackerWithLocalFiles i
                 }
             }
         }
+        changeHistory.closePendingUncommentedMethods();
         return new HistoryImpl<>(changeHistory.get().getCompleteGraph(), historyReport);
     }
 }

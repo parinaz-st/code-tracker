@@ -49,6 +49,31 @@ public class CommentedCodeUncommenterTest {
         assertFalse(CommentedCodeUncommenter.isJavaStatements(text), text);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"public int run(int x) {\n return x;\n}", "private int count = 0;", "void a() {}\nvoid b() {}",
+            "@Override\npublic String toString() {\n return \"x\";\n}", "static {\n init();\n}"})
+    public void membersParseAsClassBodyDeclarations(String text) {
+        assertTrue(CommentedCodeUncommenter.isJavaClassBodyDeclarations(text), text);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"TODO remove after release", "count++;", "public int run(int x) {", "return x;", "see Sample#run(int)"})
+    public void statementsAndProseAreNotClassBodyDeclarations(String text) {
+        assertFalse(CommentedCodeUncommenter.isJavaClassBodyDeclarations(text), text);
+    }
+
+    @Test
+    public void commentedMethodIsUncommentedAsClassMember() throws Exception {
+        String source = "package demo;\npublic class Sample {\n    // public int run(int x) {\n    //     return x;\n    // }\n}\n";
+        UMLModel model = GitHistoryRefactoringMinerImpl.createModel(Collections.singletonMap(PATH, source), new LinkedHashSet<>());
+        List<UMLComment> classComments = model.getClassList().get(0).getComments();
+        CommentedCodeUncommenter.Result asMembers = CommentedCodeUncommenter.uncomment(source, classComments, CommentedCodeUncommenter.Kind.CLASS_BODY_DECLARATIONS);
+        assertEquals(new HashSet<>(Arrays.asList(3, 4, 5)), asMembers.getUncommentedLines());
+        assertTrue(asMembers.getContent().contains("   public int run(int x) {"));
+        CommentedCodeUncommenter.Result asStatements = CommentedCodeUncommenter.uncomment(source, classComments);
+        assertTrue(asStatements.isEmpty(), "a method declaration is not a statement");
+    }
+
     @Test
     public void lineCommentRunIsUncommentedInPlace() throws Exception {
         String source = method("int result = 0;", "// if (x > 0) {", "//     result = x * 2;", "// }", "return result;");

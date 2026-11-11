@@ -19,12 +19,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.codetracker.api.History;
 import org.codetracker.api.History.HistoryInfo;
 import org.codetracker.api.Version;
+import org.codetracker.change.AbstractChange;
 import org.codetracker.change.Change;
 import org.codetracker.change.ChangeFactory;
 import org.codetracker.change.Introduced;
 import org.codetracker.change.method.MethodAnnotationChange;
 import org.codetracker.change.method.MethodSignatureChange;
 import org.codetracker.element.Method;
+import org.codetracker.util.CommentedCodeUncommenter;
 import org.codetracker.util.Util;
 import org.refactoringminer.api.Refactoring;
 
@@ -34,11 +36,13 @@ import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.InsertDelta;
 import com.github.difflib.patch.Patch;
 
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.UMLComment;
 import gr.uom.java.xmi.UMLInitializer;
+import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.OperationBody;
@@ -110,6 +114,177 @@ public class MethodTrackerChangeHistory extends AbstractChangeHistory<Method> {
 	public ChangeHistory<Method> get() {
 		return methodChangeHistory;
 	}
+
+    // ------------------------------------------------------------------ commented-out methods (ADR 0010)
+
+    /** Virtual "before" node of an uncommented method → what is known about it, until it is confirmed or closed. */
+    private final Map<Method, PendingUncommentedMethod> pendingUncommentedMethods = new LinkedHashMap<>();
+    private CommitFileSource commitFileSource;
+
+    /** Sets where older versions of files are read from; without it, comment transitions are not detected. */
+    public void setCommitFileSource(CommitFileSource commitFileSource) {
+        this.commitFileSource = commitFileSource;
+    }
+
+    /** Whether {@code method} is the still-pending virtual "before" node of an uncommented method. */
+    public boolean isPendingUncommented(Method method) {
+        return pendingUncommentedMethods.containsKey(method);
+    }
+
+    /**
+     * Report Algorithm 3: checks whether {@code rightMethod}, which has no counterpart with the same signature
+     * in the parent, is a commented-out method that was uncommented. The class-level comments deleted in this
+     * commit that parse as class members are uncommented in place, the parent file is re-parsed, and the
+     * method is uncommented if a method with the same signature appears on the uncommented lines. Differences
+     * in the body are recorded as {@code BODY_CHANGE} on the same edge. The method then stays pending until
+     * {@link #followCommentedMethod} finds its earlier active version, or {@link #closePendingUncommentedMethods}
+     * gives it an origin.
+     */
+    public boolean isMethodUncommented(Method rightMethod, UMLModel leftModel, UMLModel rightModel, Version currentVersion, Version parentVersion) {
+        if (commitFileSource == null || leftModel == null || rightModel == null)
+            return false;
+        String className = rightMethod.getUmlOperation().getClassName();
+        UMLAbstractClass leftClass = findClass(leftModel, className);
+        UMLAbstractClass rightClass = findClass(rightModel, className);
+        if (leftClass == null || rightClass == null)
+            return false;
+        List<UMLComment> deletedComments = deletedComments(leftClass.getComments(), rightClass.getComments());
+        if (deletedComments.isEmpty())
+            return false;
+        try {
+            CommitFileSource.FileSnapshot parentFile = commitFileSource.fileBefore(currentVersion.getId(), rightMethod.getFilePath());
+            if (parentFile == null)
+                return false;
+            CommentedCodeUncommenter.Result uncommented = CommentedCodeUncommenter.uncomment(parentFile.getContent(), deletedComments, CommentedCodeUncommenter.Kind.CLASS_BODY_DECLARATIONS);
+            if (uncommented.isEmpty())
+                return false;
+            Method commentedForm = AbstractTracker.getMethod(parentFile.toModel(uncommented.getContent()), parentVersion, rightMethod::equalIdentifierIgnoringVersionAndDocumentAndBody);
+            if (commentedForm == null || !uncommented.getUncommentedLines().contains(commentedForm.getUmlOperation().getLocationInfo().getEndLine()))
+                return false;
+            // Like uncommented blocks (ADR 0004), the virtual node keeps the current method's identity.
+            Method virtualMethodBefore = Method.of(rightMethod.getUmlOperation(), parentVersion);
+            methodChangeHistory.addChange(virtualMethodBefore, rightMethod, ChangeFactory.forMethod(Change.Type.UNCOMMENTED_METHOD));
+            if (!commentedForm.equalBody(rightMethod))
+                methodChangeHistory.addChange(virtualMethodBefore, rightMethod, ChangeFactory.forMethod(Change.Type.BODY_CHANGE));
+            pendingUncommentedMethods.put(virtualMethodBefore, new PendingUncommentedMethod(rightMethod, commentedForm));
+            elements.add(virtualMethodBefore);
+            methodChangeHistory.connectRelatedNodes();
+            return true;
+        }
+        catch (Exception e) {
+            // the virtual version could not be built; fall back to the normal steps
+            return false;
+        }
+    }
+
+    /**
+     * Commented-state tracking for methods (ADR 0008, 0010). Walks back through {@code commits} (newest first)
+     * while the method is still found in commented-out form in its class. At the first commit where it is
+     * active code again, records {@code COMMENTED_OUT_METHOD} and continues normal tracking from it.
+     * Limitation: the method must keep its signature and class while it is commented out.
+     */
+    public void followCommentedMethod(Method virtualMethod, List<String> commits, Set<String> analysedCommits) throws Exception {
+        PendingUncommentedMethod pending = pendingUncommentedMethods.get(virtualMethod);
+        if (pending == null || commitFileSource == null)
+            return;
+        String filePath = pending.uncommentedMethod.getFilePath();
+        String className = pending.uncommentedMethod.getUmlOperation().getClassName();
+        String uncommentedCommitId = pending.uncommentedMethod.getVersion().getId();
+        Version commentedVersion = virtualMethod.getVersion();
+        for (int i = commits.indexOf(uncommentedCommitId) + 1; i < commits.size(); i++) {
+            String commitId = commits.get(i);
+            if (commitId.equals(uncommentedCommitId))
+                continue;
+            CommitFileSource.FileSnapshot file = commitFileSource.fileAt(commitId, filePath);
+            if (file == null)
+                return;
+            Version version = commitFileSource.version(commitId);
+            UMLModel model = file.toModel();
+            Method activeMethod = AbstractTracker.getMethod(model, version, pending.commentedForm::equalIdentifierIgnoringVersionAndDocumentAndBody);
+            if (activeMethod != null) {
+                confirmCommentedOut(virtualMethod, activeMethod, commentedVersion);
+                return;
+            }
+            UMLAbstractClass umlClass = findClass(model, className);
+            if (umlClass == null)
+                return;
+            CommentedCodeUncommenter.Result uncommented = CommentedCodeUncommenter.uncomment(file.getContent(), umlClass.getComments(), CommentedCodeUncommenter.Kind.CLASS_BODY_DECLARATIONS);
+            if (uncommented.isEmpty())
+                return;
+            if (AbstractTracker.getMethod(file.toModel(uncommented.getContent()), version, pending.commentedForm::equalIdentifierIgnoringVersionAndDocumentAndBody) == null)
+                return;
+            analysedCommits.add(commitId);
+            commentedVersion = version;
+        }
+    }
+
+    private void confirmCommentedOut(Method virtualMethodBefore, Method activeMethod, Version commentedOutVersion) {
+        Method commentedOutNode = virtualMethodBefore;
+        if (!commentedOutVersion.getId().equals(virtualMethodBefore.getVersion().getId())) {
+            commentedOutNode = Method.of(virtualMethodBefore.getUmlOperation(), commentedOutVersion);
+            methodChangeHistory.addChange(commentedOutNode, virtualMethodBefore, ChangeFactory.of(AbstractChange.Type.NO_CHANGE));
+        }
+        methodChangeHistory.addChange(activeMethod, commentedOutNode, ChangeFactory.forMethod(Change.Type.COMMENTED_OUT_METHOD));
+        pendingUncommentedMethods.remove(virtualMethodBefore);
+        elements.add(activeMethod);
+        methodChangeHistory.connectRelatedNodes();
+    }
+
+    /**
+     * Ends the history of every uncommented method that could not be linked to an earlier active version
+     * with an {@code introduced} change on its uncommented edge (ADR 0004 for methods). Call once, after the loop.
+     *
+     * @return {@code true} if at least one pending method was closed
+     */
+    public boolean closePendingUncommentedMethods() {
+        boolean closed = false;
+        for (Map.Entry<Method, PendingUncommentedMethod> entry : pendingUncommentedMethods.entrySet()) {
+            if (methodChangeHistory.predecessors(entry.getKey()).isEmpty()) {
+                methodChangeHistory.handleAdd(entry.getKey(), entry.getValue().uncommentedMethod, "uncommented method; no earlier active version found");
+                closed = true;
+            }
+        }
+        pendingUncommentedMethods.clear();
+        return closed;
+    }
+
+    private static UMLAbstractClass findClass(UMLModel model, String className) {
+        for (UMLClass umlClass : model.getClassList()) {
+            if (umlClass.getName().equals(className))
+                return umlClass;
+        }
+        return null;
+    }
+
+    /** The comments of {@code before} whose text no longer appears in {@code after} (whitespace ignored). */
+    private static List<UMLComment> deletedComments(List<UMLComment> before, List<UMLComment> after) {
+        Map<String, Integer> remaining = new LinkedHashMap<>();
+        for (UMLComment comment : after)
+            remaining.merge(comment.getFullText().replaceAll("\\s+", ""), 1, Integer::sum);
+        List<UMLComment> deleted = new ArrayList<>();
+        for (UMLComment comment : before) {
+            String key = comment.getFullText().replaceAll("\\s+", "");
+            Integer count = remaining.get(key);
+            if (count == null || count == 0)
+                deleted.add(comment);
+            else
+                remaining.put(key, count - 1);
+        }
+        return deleted;
+    }
+
+    /** A virtual node waiting for its earlier active version. */
+    private static final class PendingUncommentedMethod {
+        /** The method in the commit where it was uncommented. */
+        private final Method uncommentedMethod;
+        /** The method as it looked while commented out (parsed from the virtual parent). */
+        private final Method commentedForm;
+
+        PendingUncommentedMethod(Method uncommentedMethod, Method commentedForm) {
+            this.uncommentedMethod = uncommentedMethod;
+            this.commentedForm = commentedForm;
+        }
+    }
 
 	public String getMethodName() {
 		return methodName;

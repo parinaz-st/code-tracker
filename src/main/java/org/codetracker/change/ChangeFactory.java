@@ -157,6 +157,14 @@ public final class ChangeFactory {
                 change = new CommentedOutBlock();
                 break;
             }
+            case UNCOMMENTED_METHOD: {
+                change = new UncommentedMethod();
+                break;
+            }
+            case COMMENTED_OUT_METHOD: {
+                change = new CommentedOutMethod();
+                break;
+            }
 
             case CATCH_BLOCK_CHANGE: {
                 change = new CatchBlockChange();

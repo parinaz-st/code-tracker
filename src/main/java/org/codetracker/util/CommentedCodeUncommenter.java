@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import gr.uom.java.xmi.UMLComment;
 
@@ -53,8 +54,21 @@ public final class CommentedCodeUncommenter {
     private CommentedCodeUncommenter() {
     }
 
-    /** Uncomments every run of {@code comments} (all from the file {@code content}) that is valid Java code. */
+    /** What kind of code a comment run must be to count as commented-out code. */
+    public enum Kind {
+        /** Statements inside a method body (blocks, variables). */
+        STATEMENTS,
+        /** Members of a class body: methods, fields, initializers (methods, attributes). */
+        CLASS_BODY_DECLARATIONS
+    }
+
+    /** Uncomments every run of {@code comments} (all from the file {@code content}) that is valid Java statements. */
     public static Result uncomment(String content, List<UMLComment> comments) {
+        return uncomment(content, comments, Kind.STATEMENTS);
+    }
+
+    /** Uncomments every run of {@code comments} (all from the file {@code content}) that is valid code of the given kind. */
+    public static Result uncomment(String content, List<UMLComment> comments, Kind kind) {
         char[] chars = content.toCharArray();
         Set<Integer> uncommentedLines = new LinkedHashSet<>();
         for (List<UMLComment> run : groupIntoRuns(comments)) {
@@ -65,7 +79,7 @@ public final class CommentedCodeUncommenter {
             int end = run.get(run.size() - 1).getLocationInfo().getEndOffset();
             if (start < 0 || end > candidate.length || start >= end)
                 continue;
-            if (isJavaStatements(new String(candidate, start, end - start))) {
+            if (isJava(new String(candidate, start, end - start), kind)) {
                 chars = candidate;
                 for (int line = run.get(0).getLocationInfo().getStartLine(); line <= run.get(run.size() - 1).getLocationInfo().getEndLine(); line++)
                     uncommentedLines.add(line);
@@ -134,16 +148,27 @@ public final class CommentedCodeUncommenter {
 
     /** Whether {@code text} parses as one or more Java statements without syntax errors. */
     static boolean isJavaStatements(String text) {
+        return isJava(text, Kind.STATEMENTS);
+    }
+
+    /** Whether {@code text} parses as one or more Java class members (methods, fields, ...) without syntax errors. */
+    static boolean isJavaClassBodyDeclarations(String text) {
+        return isJava(text, Kind.CLASS_BODY_DECLARATIONS);
+    }
+
+    private static boolean isJava(String text, Kind kind) {
         if (text.trim().isEmpty())
             return false;
         ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
-        parser.setKind(ASTParser.K_STATEMENTS);
+        parser.setKind(kind == Kind.STATEMENTS ? ASTParser.K_STATEMENTS : ASTParser.K_CLASS_BODY_DECLARATIONS);
         Map<String, String> options = JavaCore.getOptions();
         JavaCore.setComplianceOptions(JavaCore.latestSupportedJavaVersion(), options);
         parser.setCompilerOptions(options);
         parser.setSource(text.toCharArray());
         ASTNode node = parser.createAST(null);
-        if (!(node instanceof Block) || ((Block) node).statements().isEmpty())
+        if (kind == Kind.STATEMENTS && (!(node instanceof Block) || ((Block) node).statements().isEmpty()))
+            return false;
+        if (kind == Kind.CLASS_BODY_DECLARATIONS && (!(node instanceof TypeDeclaration) || ((TypeDeclaration) node).bodyDeclarations().isEmpty()))
             return false;
         boolean[] broken = {false};
         node.accept(new ASTVisitor() {
