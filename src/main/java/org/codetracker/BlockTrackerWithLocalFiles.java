@@ -41,6 +41,7 @@ public class BlockTrackerWithLocalFiles extends BaseTrackerWithLocalFiles implem
                             CodeElementType blockType, int blockStartLineNumber, int blockEndLineNumber) {
         super(cloneURL, startCommitId, filePath);
         this.changeHistory = new BlockTrackerChangeHistory(methodName, methodDeclarationLineNumber, blockType, blockStartLineNumber, blockEndLineNumber);
+        this.changeHistory.setCommitFileSource(commitFileSource());
     }
 
     @Override
@@ -87,6 +88,10 @@ public class BlockTrackerWithLocalFiles extends BaseTrackerWithLocalFiles implem
                 commits = getCommits(currentBlock.getVersion().getId(), jsonFile);
                 historyReport.gitLogCommandCallsPlusPlus();
                 analysedCommits.clear();
+            }
+            if (changeHistory.isPendingUncommented(currentBlock)) {
+                changeHistory.followCommentedBlock(currentBlock, commits, analysedCommits);
+                continue;
             }
             if (analysedCommits.containsAll(commits))
                 break;
@@ -347,6 +352,7 @@ public class BlockTrackerWithLocalFiles extends BaseTrackerWithLocalFiles implem
                 }
             }
         }
+        changeHistory.closePendingUncommentedBlocks();
         return new HistoryImpl<>(changeHistory.get().getCompleteGraph(), historyReport);
     }
 }

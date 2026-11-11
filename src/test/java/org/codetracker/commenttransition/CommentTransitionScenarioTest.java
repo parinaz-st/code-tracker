@@ -196,6 +196,30 @@ public class CommentTransitionScenarioTest {
         }
     }
 
+    /** A statement inside the block is edited while the whole block is uncommented (Phase 3). */
+    @Test
+    public void s11_restoredWithBodyEdit() throws Exception {
+        try (FixtureRepo repo = activeHistory("s11")
+                .commit("D", src(D_LINE_COMMENTED))
+                .commit("F", src("int result = 0;", "if (x > 0) {", "    result = x * 3;", "    count++;", "}", "return result;"))) {
+            verify(repo, "if (x > 0) {", expected(
+                    "F", UNCOMMENTED + "|" + BODY_CHANGE, "D", COMMENTED_OUT, "C", BODY_CHANGE, "B", BODY_CHANGE, "A", INTRODUCED));
+        }
+    }
+
+    /**
+     * Negative control (Phase 3): an unrelated commented-out loop is deleted in the same commit that
+     * introduces a new block. The new block must not be reported as uncommented.
+     */
+    @Test
+    public void s12_unrelatedCommentedCodeDeletedWhileBlockAdded() throws Exception {
+        try (FixtureRepo repo = FixtureRepo.create("s12")
+                .commit("A", src("int result = 0;", "// for (int i = 0; i < x; i++) {", "//     count += i;", "// }", "return result;"))
+                .commit("B", src("int result = 0;", "if (x > 0) {", "    result = x * 2;", "}", "return result;"))) {
+            verify(repo, "if (x > 0) {", expected("B", INTRODUCED));
+        }
+    }
+
     // ---------------------------------------------------------------- harness
 
     /**

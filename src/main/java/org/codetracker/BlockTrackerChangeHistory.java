@@ -37,6 +37,7 @@ import org.codetracker.change.block.SplitBlock;
 import org.codetracker.change.method.BodyChange;
 import org.codetracker.element.Block;
 import org.codetracker.element.Method;
+import org.codetracker.util.CommentedCodeUncommenter;
 import org.refactoringminer.api.Refactoring;
 
 import com.github.difflib.DiffUtils;
@@ -88,6 +89,8 @@ import static org.codetracker.util.CommentTransitionAnalyzer.generateCommentText
 import static org.codetracker.util.CommentTransitionAnalyzer.generateUncommentedBlockSignatureHashMap;
 import static org.codetracker.util.CommentTransitionAnalyzer.isBlockBodyUnchangedDuringUncomment;
 import static org.codetracker.util.CommentTransitionAnalyzer.codeHash;
+import static org.codetracker.util.CommentTransitionAnalyzer.containsCommentedBlock;
+import static org.codetracker.util.CommentTransitionAnalyzer.findActiveBlock;
 
 public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
 	private final ChangeHistory<Block> blockChangeHistory = new ChangeHistory<>();
@@ -97,8 +100,9 @@ public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
     private final int blockStartLineNumber;
     private final int blockEndLineNumber;
     private final Map<Block, BlockTrackerChangeHistory> nested = new LinkedHashMap<Block, BlockTrackerChangeHistory>();
-    /** Virtual "before" node of an uncommented block → its "after" node, until the history is closed. */
-    private final Map<Block, Block> pendingUncommentedBlocks = new LinkedHashMap<>();
+    /** Virtual "before" node of an uncommented block → what is known about it, until it is confirmed or closed. */
+    private final Map<Block, PendingUncomment> pendingUncommentedBlocks = new LinkedHashMap<>();
+    private CommitFileSource commitFileSource;
 
 	public BlockTrackerChangeHistory(String methodName, int methodDeclarationLineNumber, CodeElementType blockType,
 			int blockStartLineNumber, int blockEndLineNumber) {
@@ -703,19 +707,66 @@ public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
         // check if it is in the matched
         if (isMatched(umlOperationBodyMapper, currentVersion, parentVersion, equalOperator))
             return true;
-        // check if the block was uncommented
+        // check if the block was uncommented (exact match, then edit-tolerant)
         if (isBlockUncommented(umlOperationBodyMapper, currentVersion, parentVersion, equalOperator))
+            return true;
+        if (isBlockUncommentedWithEdits(umlOperationBodyMapper, currentVersion, parentVersion, equalOperator))
             return true;
         // check if it is added
         return isAdded(umlOperationBodyMapper, currentVersion, parentVersion, equalOperator);
     }
 
+    /** Sets where older versions of files are read from; without it, only exact uncomment detection runs (ADR 0009). */
+    public void setCommitFileSource(CommitFileSource commitFileSource) {
+        this.commitFileSource = commitFileSource;
+    }
+
+    /** Whether {@code block} is the still-pending virtual "before" node of an uncommented block (ADR 0008). */
+    public boolean isPendingUncommented(Block block) {
+        return pendingUncommentedBlocks.containsKey(block);
+    }
+
     /**
-     * Returns the block that was uncommented, if {@code virtualBlockBefore} is the still-pending virtual
-     * "before" node of an uncommented block, or {@code null} otherwise (ADR 0008).
+     * Commented-state tracking (ADR 0008). {@code virtualBlock} stands for an uncommented block in the commit
+     * before it was uncommented, where it only existed as a comment. Walks back through {@code commits}
+     * (newest first) while the block is found in comment form in the same method. At the first commit where
+     * it is active code again, the comment-out is confirmed and normal tracking continues from that active
+     * block. If the method or the commented-out code disappears first, the block stays pending and
+     * {@link #closePendingUncommentedBlocks()} gives it an origin.
+     * <p>
+     * Limitations: the enclosing method must keep its signature, and the block must keep its signature
+     * while it is commented out.
      */
-    public Block getPendingUncommentedBlock(Block virtualBlockBefore) {
-        return pendingUncommentedBlocks.get(virtualBlockBefore);
+    public void followCommentedBlock(Block virtualBlock, List<String> commits, Set<String> analysedCommits) throws Exception {
+        PendingUncomment pending = pendingUncommentedBlocks.get(virtualBlock);
+        if (pending == null || commitFileSource == null)
+            return;
+        Block uncommentedBlock = pending.uncommentedBlock;
+        String filePath = uncommentedBlock.getFilePath();
+        String uncommentedCommitId = uncommentedBlock.getVersion().getId();
+        Method uncommentedMethod = Method.of(uncommentedBlock.getOperation(), uncommentedBlock.getVersion());
+        Version commentedVersion = virtualBlock.getVersion();
+        for (int i = commits.indexOf(uncommentedCommitId) + 1; i < commits.size(); i++) {
+            String commitId = commits.get(i);
+            if (commitId.equals(uncommentedCommitId))
+                continue;
+            CommitFileSource.FileSnapshot file = commitFileSource.fileAt(commitId, filePath);
+            if (file == null)
+                return;
+            Version version = commitFileSource.version(commitId);
+            Method method = AbstractTracker.getMethod(file.toModel(), version, uncommentedMethod::equalIdentifierIgnoringVersionAndDocumentAndBody);
+            if (method == null)
+                return;
+            CompositeStatementObject activeComposite = findActiveBlock(method.getUmlOperation(), pending.commentedForm);
+            if (activeComposite != null) {
+                confirmCommentedOut(virtualBlock, Block.of(activeComposite, method), commentedVersion);
+                return;
+            }
+            if (!containsCommentedBlock(method.getUmlOperation(), pending.commentedForm))
+                return;
+            analysedCommits.add(commitId);
+            commentedVersion = version;
+        }
     }
 
     /**
@@ -746,10 +797,10 @@ public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
      */
     public boolean closePendingUncommentedBlocks() {
         boolean closed = false;
-        for (Map.Entry<Block, Block> entry : pendingUncommentedBlocks.entrySet()) {
+        for (Map.Entry<Block, PendingUncomment> entry : pendingUncommentedBlocks.entrySet()) {
             Block virtualBlockBefore = entry.getKey();
             if (blockChangeHistory.predecessors(virtualBlockBefore).isEmpty()) {
-                blockChangeHistory.handleAdd(virtualBlockBefore, entry.getValue(), "uncommented block; no earlier active version found");
+                blockChangeHistory.handleAdd(virtualBlockBefore, entry.getValue().uncommentedBlock, "uncommented block; no earlier active version found");
                 closed = true;
             }
         }
@@ -783,12 +834,97 @@ public class BlockTrackerChangeHistory extends AbstractChangeHistory<Block> {
             // (via connectRelatedNodes). Otherwise closePendingUncommentedBlocks() gives it an origin.
             Block virtualBlockBefore = Block.of(nonMappedInnerNode, umlOperationBodyMapper.getContainer2(), parentVersion);
             blockChangeHistory.addChange(virtualBlockBefore, blockAfter, ChangeFactory.forBlock(Change.Type.UNCOMMENTED_BLOCK));
-            pendingUncommentedBlocks.put(virtualBlockBefore, blockAfter);
+            pendingUncommentedBlocks.put(virtualBlockBefore, new PendingUncomment(blockAfter, nonMappedInnerNode));
             elements.add(virtualBlockBefore);
             blockChangeHistory.connectRelatedNodes();
             return true;
         }
         return false;
+    }
+
+    /**
+     * Edit-tolerant uncomment detection (ADR 0009). Builds a "virtual" parent in which the deleted
+     * comments that are valid Java code are uncommented in place, maps it against the current method with
+     * RefactoringMiner, and reports the tracked block as uncommented if RefactoringMiner maps it to code
+     * that was a comment. Differences between the commented form and the restored block are recorded as
+     * {@code EXPRESSION_CHANGE} / {@code BODY_CHANGE} on the same edge.
+     * <p>
+     * Only runs when the tracked block is unmatched and the method lost comments in this commit.
+     */
+    public boolean isBlockUncommentedWithEdits(UMLOperationBodyMapper umlOperationBodyMapper, Version currentVersion, Version parentVersion, Predicate<Block> equalOperator) {
+        if (commitFileSource == null)
+            return false;
+        if (!(umlOperationBodyMapper.getContainer1() instanceof UMLOperation) || !(umlOperationBodyMapper.getContainer2() instanceof UMLOperation))
+            return false;
+        List<UMLComment> deletedComments = umlOperationBodyMapper.getCommentListDiff().getDeletedComments();
+        if (deletedComments == null || deletedComments.isEmpty())
+            return false;
+        CompositeStatementObject trackedComposite = null;
+        for (CompositeStatementObject nonMappedInnerNode : umlOperationBodyMapper.getNonMappedInnerNodesT2()) {
+            if (equalOperator.test(Block.of(nonMappedInnerNode, umlOperationBodyMapper.getContainer2(), currentVersion))) {
+                trackedComposite = nonMappedInnerNode;
+                break;
+            }
+        }
+        if (trackedComposite == null)
+            return false;
+        try {
+            UMLOperation leftOperation = (UMLOperation) umlOperationBodyMapper.getContainer1();
+            UMLOperation rightOperation = (UMLOperation) umlOperationBodyMapper.getContainer2();
+            CommitFileSource.FileSnapshot parentFile = commitFileSource.fileBefore(currentVersion.getId(), leftOperation.getLocationInfo().getFilePath());
+            if (parentFile == null)
+                return false;
+            CommentedCodeUncommenter.Result uncommented = CommentedCodeUncommenter.uncomment(parentFile.getContent(), deletedComments);
+            if (uncommented.isEmpty())
+                return false;
+            Method leftMethod = Method.of(leftOperation, parentVersion);
+            Method virtualMethod = AbstractTracker.getMethod(parentFile.toModel(uncommented.getContent()), parentVersion, leftMethod::equalIdentifierIgnoringVersionAndDocumentAndBody);
+            if (virtualMethod == null || !(virtualMethod.getUmlOperation() instanceof UMLOperation))
+                return false;
+            UMLOperationBodyMapper virtualMapper = new UMLOperationBodyMapper((UMLOperation) virtualMethod.getUmlOperation(), rightOperation, umlOperationBodyMapper.getClassDiff());
+            for (AbstractCodeMapping mapping : virtualMapper.getMappings()) {
+                if (!(mapping instanceof CompositeStatementObjectMapping))
+                    continue;
+                if (!mapping.getFragment2().getLocationInfo().equals(trackedComposite.getLocationInfo()))
+                    continue;
+                if (!uncommented.getUncommentedLines().contains(mapping.getFragment1().getLocationInfo().getStartLine()))
+                    continue;
+                CompositeStatementObject commentedForm = (CompositeStatementObject) mapping.getFragment1();
+                Block blockAfter = Block.of(trackedComposite, rightOperation, currentVersion);
+                Block virtualBlockBefore = Block.of(trackedComposite, rightOperation, parentVersion);
+                blockChangeHistory.addChange(virtualBlockBefore, blockAfter, ChangeFactory.forBlock(Change.Type.UNCOMMENTED_BLOCK));
+                if (!codeHash(commentedForm.getActualSignature()).equals(codeHash(trackedComposite.getActualSignature())))
+                    blockChangeHistory.addChange(virtualBlockBefore, blockAfter, ChangeFactory.forBlock(Change.Type.EXPRESSION_CHANGE));
+                if (!bodyHash(commentedForm).equals(bodyHash(trackedComposite)))
+                    blockChangeHistory.addChange(virtualBlockBefore, blockAfter, ChangeFactory.forBlock(Change.Type.BODY_CHANGE));
+                pendingUncommentedBlocks.put(virtualBlockBefore, new PendingUncomment(blockAfter, commentedForm));
+                elements.add(virtualBlockBefore);
+                blockChangeHistory.connectRelatedNodes();
+                return true;
+            }
+        }
+        catch (Exception e) {
+            // the virtual version could not be built or mapped; fall back to "added"
+        }
+        return false;
+    }
+
+    private static String bodyHash(CompositeStatementObject composite) {
+        List<String> lines = composite.stringRepresentation();
+        return codeHash(String.join("", lines.subList(Math.min(1, lines.size()), lines.size())));
+    }
+
+    /** A virtual node waiting for its earlier active version (ADR 0004, 0008). */
+    private static final class PendingUncomment {
+        /** The block in the commit where it was uncommented. */
+        private final Block uncommentedBlock;
+        /** The block as it looked while commented out; used to find it in older commits. */
+        private final CompositeStatementObject commentedForm;
+
+        PendingUncomment(Block uncommentedBlock, CompositeStatementObject commentedForm) {
+            this.uncommentedBlock = uncommentedBlock;
+            this.commentedForm = commentedForm;
+        }
     }
 
     public boolean isBlockRefactored(Collection<Refactoring> refactorings, Version currentVersion, Version parentVersion, Predicate<Block> equalOperator) {

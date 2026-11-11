@@ -89,6 +89,35 @@ public abstract class BaseTrackerWithLocalFiles extends AbstractTracker {
 		return null;
     }
 
+    /**
+     * Reads files from the cached commits in {@code oracle/commits}, so it never touches the network.
+     * A commit that is not cached reads as missing (ADR 0009).
+     */
+    protected CommitFileSource commitFileSource() {
+        return new CommitFileSource() {
+            @Override
+            public org.codetracker.api.Version version(String commitId) {
+                return new VersionImpl(commitId, 0, 0, "");
+            }
+
+            @Override
+            public FileSnapshot fileAt(String commitId, String filePath) throws Exception {
+                CommitModel model = getLightCommitModel(commitId, filePath);
+                if (model == null || !model.fileContentsCurrentOriginal.containsKey(filePath))
+                    return null;
+                return new FileSnapshot(filePath, model.fileContentsCurrentOriginal.get(filePath), model.repositoryDirectoriesCurrent);
+            }
+
+            @Override
+            public FileSnapshot fileBefore(String commitId, String filePath) throws Exception {
+                CommitModel model = getLightCommitModel(commitId, filePath);
+                if (model == null || !model.fileContentsBeforeOriginal.containsKey(filePath))
+                    return null;
+                return new FileSnapshot(filePath, model.fileContentsBeforeOriginal.get(filePath), model.repositoryDirectoriesBefore);
+            }
+        };
+    }
+
     public CommitModel getCommitModel(String commitId) throws Exception {
     	Set<String> repositoryDirectoriesBefore = ConcurrentHashMap.newKeySet();
 		Set<String> repositoryDirectoriesCurrent = ConcurrentHashMap.newKeySet();

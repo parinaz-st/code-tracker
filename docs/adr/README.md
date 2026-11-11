@@ -33,5 +33,6 @@ What becomes easier or harder, including the known downsides.
 | [0006](0006-whitespace-insensitive-code-matching.md) | Whitespace-insensitive matching and trivial-line filtering | Proposed | 1 |
 | [0007](0007-oracle-regression-runs-once-at-the-end.md) | The oracle regression run happens once, after the last phase | Accepted | 1 |
 | [0008](0008-commented-state-tracking-by-direct-search.md) | Commented-state tracking by a direct backward search | Proposed | 2 |
+| [0009](0009-virtual-uncomment-with-refactoringminer-mapping.md) | Edit-tolerant uncomment detection with a virtual parent and RefactoringMiner mapping | Proposed | 3 |
 
 ADRs from Phase 1 onward stay **Proposed** until the branch author (Parinaz Sattarzadeh) reviews them and moves the changes to `feature/CmtTransitionDetectionBlock`.

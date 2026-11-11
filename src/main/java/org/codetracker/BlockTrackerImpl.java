@@ -11,7 +11,6 @@ import org.codetracker.api.History;
 import org.codetracker.api.Version;
 import org.codetracker.element.Block;
 import org.codetracker.element.Method;
-import org.codetracker.util.CommentTransitionAnalyzer;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.Refactoring;
@@ -29,6 +28,7 @@ public class BlockTrackerImpl extends BaseTracker implements BlockTracker {
                             CodeElementType blockType, int blockStartLineNumber, int blockEndLineNumber, int blameLineNumber) {
         super(repository, startCommitId, filePath);
         this.changeHistory = new BlockTrackerChangeHistory(methodName, methodDeclarationLineNumber, blockType, blockStartLineNumber, blockEndLineNumber);
+        this.changeHistory.setCommitFileSource(commitFileSource());
         this.blameLineNumber = blameLineNumber;
     }
 
@@ -58,16 +58,15 @@ public class BlockTrackerImpl extends BaseTracker implements BlockTracker {
                     commits = null;
                     continue;
                 }
-                Block uncommentedBlock = changeHistory.getPendingUncommentedBlock(currentBlock);
-                if (uncommentedBlock != null) {
-                    followCommentedBlock(currentBlock, uncommentedBlock, analysedCommits, git);
-                    continue;
-                }
                 if (commits == null || !currentBlock.getFilePath().equals(lastFileName)) {
                     lastFileName = currentBlock.getFilePath();
                     commits = getCommits(repository, currentBlock.getVersion().getId(), currentBlock.getFilePath(), git);
                     historyReport.gitLogCommandCallsPlusPlus();
                     analysedCommits.clear();
+                }
+                if (changeHistory.isPendingUncommented(currentBlock)) {
+                    changeHistory.followCommentedBlock(currentBlock, commits, analysedCommits);
+                    continue;
                 }
                 if (analysedCommits.containsAll(commits))
                     break;
@@ -329,43 +328,6 @@ public class BlockTrackerImpl extends BaseTracker implements BlockTracker {
         }
     }
 
-    /**
-     * Commented-state tracking (ADR 0008). {@code virtualBlock} stands for {@code uncommentedBlock} in the
-     * commit before it was uncommented, where it only existed as a comment. Walks back through the commits
-     * that touched the file while the block is still found in comment form in the same method. At the
-     * first commit where it is active code again, the comment-out is confirmed and normal tracking
-     * continues from that active block. If the method or the commented-out code disappears first, the
-     * block stays pending and {@code closePendingUncommentedBlocks()} gives it an origin.
-     * <p>
-     * Limitations: the enclosing method must keep its signature, and the block must keep its signature
-     * while it is commented out.
-     */
-    private void followCommentedBlock(Block virtualBlock, Block uncommentedBlock, Set<String> analysedCommits, Git git) throws Exception {
-        String filePath = uncommentedBlock.getFilePath();
-        String uncommentedCommitId = uncommentedBlock.getVersion().getId();
-        Method uncommentedMethod = Method.of(uncommentedBlock.getOperation(), uncommentedBlock.getVersion());
-        CompositeStatementObject composite = (CompositeStatementObject) uncommentedBlock.getComposite();
-        Version commentedVersion = virtualBlock.getVersion();
-        for (String commitId : getCommits(repository, uncommentedCommitId, filePath, git)) {
-            if (commitId.equals(uncommentedCommitId))
-                continue;
-            Version version = gitRepository.getVersion(commitId);
-            UMLModel model = getUMLModel(commitId, Collections.singleton(filePath));
-            Method method = getMethod(model, version, uncommentedMethod::equalIdentifierIgnoringVersionAndDocumentAndBody);
-            if (method == null)
-                return;
-            CompositeStatementObject activeComposite = CommentTransitionAnalyzer.findActiveBlock(method.getUmlOperation(), composite);
-            if (activeComposite != null) {
-                changeHistory.confirmCommentedOut(virtualBlock, Block.of(activeComposite, method), commentedVersion);
-                return;
-            }
-            if (!CommentTransitionAnalyzer.containsCommentedBlock(method.getUmlOperation(), composite))
-                return;
-            analysedCommits.add(commitId);
-            commentedVersion = version;
-        }
-    }
-
     public History.HistoryInfo<Block> blame() throws Exception {
         HistoryImpl.HistoryReportImpl historyReport = new HistoryImpl.HistoryReportImpl();
         try (Git git = new Git(repository)) {
@@ -396,16 +358,15 @@ public class BlockTrackerImpl extends BaseTracker implements BlockTracker {
                     commits = null;
                     continue;
                 }
-                Block uncommentedBlock = changeHistory.getPendingUncommentedBlock(currentBlock);
-                if (uncommentedBlock != null) {
-                    followCommentedBlock(currentBlock, uncommentedBlock, analysedCommits, git);
-                    continue;
-                }
                 if (commits == null || !currentBlock.getFilePath().equals(lastFileName)) {
                     lastFileName = currentBlock.getFilePath();
                     commits = getCommits(repository, currentBlock.getVersion().getId(), currentBlock.getFilePath(), git);
                     historyReport.gitLogCommandCallsPlusPlus();
                     analysedCommits.clear();
+                }
+                if (changeHistory.isPendingUncommented(currentBlock)) {
+                    changeHistory.followCommentedBlock(currentBlock, commits, analysedCommits);
+                    continue;
                 }
                 if (analysedCommits.containsAll(commits))
                     break;

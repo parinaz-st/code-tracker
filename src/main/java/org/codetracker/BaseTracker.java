@@ -78,6 +78,35 @@ public abstract class BaseTracker extends AbstractTracker {
         return getUMLModel(repository, commitId, fileNames);
     }
 
+    /** Reads files from the Git repository (ADR 0009). */
+    protected CommitFileSource commitFileSource() {
+        return new CommitFileSource() {
+            @Override
+            public org.codetracker.api.Version version(String commitId) {
+                return gitRepository.getVersion(commitId);
+            }
+
+            @Override
+            public FileSnapshot fileAt(String commitId, String filePath) throws Exception {
+                if (commitId == null || "0".equals(commitId))
+                    return null;
+                try (RevWalk walk = new RevWalk(repository)) {
+                    RevCommit revCommit = walk.parseCommit(repository.resolve(commitId));
+                    Set<String> repositoryDirectories = new LinkedHashSet<>();
+                    Map<String, String> fileContents = new LinkedHashMap<>();
+                    GitHistoryRefactoringMinerImpl.populateFileContents(repository, revCommit, Collections.singleton(filePath), fileContents, repositoryDirectories);
+                    String content = fileContents.get(filePath);
+                    return content == null ? null : new FileSnapshot(filePath, content, repositoryDirectories);
+                }
+            }
+
+            @Override
+            public FileSnapshot fileBefore(String commitId, String filePath) throws Exception {
+                return fileAt(gitRepository.getParentId(commitId), filePath);
+            }
+        };
+    }
+
     public void populateFileSets(String commitId, Set<String> filePathsBefore, Set<String> filePathsCurrent, Map<String, String> renamedFilesHint) throws Exception {
     	try (RevWalk walk = new RevWalk(repository)) {
             RevCommit currentCommit = walk.parseCommit(repository.resolve(commitId));

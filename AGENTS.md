@@ -35,7 +35,7 @@ CodeTracker is a refactoring-aware tool that builds the commit change history of
 
 - Match the upstream style of each file: most files use **explicit imports** (some, such as `BlockTrackerImpl`, already use wildcards; leave those as they are), keep the existing indentation (tabs and spaces are mixed in older files; keep each file consistent with itself), and do no unrelated reformatting.
 - When adding a new `Change.Type`, give it a unique lower-case title, add a change class, and add a case to `ChangeFactory`. REST and the oracle look types up by title (`Change.Type.get(title)`), so they need no extra mapping. Add oracle/test JSON once the type's name is final.
-- `*TrackerImpl` often has two near-identical loops (`track()` and `blame()`). Change both.
+- `*TrackerImpl` often has two near-identical loops (`track()` and `blame()`), and `*TrackerWithLocalFiles` has a third copy of `track()` that the oracle tests use (`buildWithLocalFiles()`). Change all of them, and prefer moving shared logic into `*TrackerChangeHistory`.
 - Every new element node pushed back into the queue must either be matchable in older commits (consistent identifier) or be terminated with `handleAdd`. Otherwise the history silently loses its origin.
 - Keep changes small and PR-friendly for upstream: tests first, then logic.
 

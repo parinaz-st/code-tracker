@@ -40,6 +40,13 @@
             <artifactId>refactoring-miner</artifactId>
             <version>${rm.version}</version>
         </dependency>
+        <!-- Used directly to check that commented-out text parses as Java statements (ADR 0009).
+             Keep the version equal to the one RefactoringMiner resolves (mvn dependency:tree). -->
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>3.47.0</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>junit</groupId>-->
 <!--            <artifactId>junit</artifactId>-->
