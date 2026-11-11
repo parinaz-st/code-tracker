@@ -1,0 +1,30 @@
+{
+  "validation": "Block text extracted at every version (blockevo): 2e24f36 adds the if-statement, 610af83 changes its statements (Separator -> Tokens), 7649ce9 turns it into // comments with identical text, c73ae5d restores it with identical text. The tool reports only 'introduced' at the restore commit c73ae5d and loses the history, although it tracks the TYPE block of the same commit pair.",
+  "drop": ["c73ae5d79b62de91209477538b45ab5216fb108e:introduced"],
+  "add": [
+    {"commitId": "c73ae5d79b62de91209477538b45ab5216fb108e", "changeType": "uncommented block",
+     "elementFileBefore": "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+     "elementNameBefore": "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(178-189)",
+     "elementFileAfter": "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+     "elementNameAfter": "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(183-194)",
+     "comment": "manually validated: block restored from // comments with identical text"},
+    {"commitId": "7649ce9c13de8eeabe53f314b3abd1dba48d1feb", "changeType": "commented out block",
+     "elementFileBefore": "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+     "elementNameBefore": "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(178-189)",
+     "elementFileAfter": "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+     "elementNameAfter": "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(178-189)",
+     "comment": "manually validated: whole block turned into // comments"},
+    {"commitId": "610af83700d73f244d26508f7a8f5321b0bc25bd", "changeType": "body change",
+     "elementFileBefore": "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+     "elementNameBefore": "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(171-182)",
+     "elementFileAfter": "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+     "elementNameAfter": "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(174-185)",
+     "comment": "manually validated: addToken(Separator.X) -> addElement(x())"},
+    {"commitId": "2e24f3622913118e442635a726d60cfdb50cdc91", "changeType": "introduced",
+     "elementFileBefore": "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+     "elementNameBefore": "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(126-137)",
+     "elementFileAfter": "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+     "elementNameAfter": "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(126-137)",
+     "comment": "new block"}
+  ]
+}

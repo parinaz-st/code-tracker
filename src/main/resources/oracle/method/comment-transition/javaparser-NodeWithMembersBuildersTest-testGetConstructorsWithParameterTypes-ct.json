@@ -1,0 +1,50 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "startCommitId" : "abc79f1a388ea61d2bddb0d66e4bd41b6738fc6c",
+  "filePath" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+  "functionName" : "testGetConstructorsWithParameterTypes",
+  "functionKey" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+  "functionStartLine" : 146,
+  "expectedChanges" : [ {
+    "parentCommitId" : "3d9850dd7a1efb9180fa845cff716d3087568f0b",
+    "commitId" : "abc79f1a388ea61d2bddb0d66e4bd41b6738fc6c",
+    "commitTime" : 1566391735,
+    "changeType" : "body change",
+    "elementFileBefore" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+    "elementNameBefore" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+    "elementFileAfter" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+    "elementNameAfter" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "3d9850dd7a1efb9180fa845cff716d3087568f0b",
+    "commitId" : "abc79f1a388ea61d2bddb0d66e4bd41b6738fc6c",
+    "commitTime" : 1566391735,
+    "changeType" : "uncommented method",
+    "elementFileBefore" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+    "elementNameBefore" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+    "elementFileAfter" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+    "elementNameAfter" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+    "comment" : "Method Change, Uncommented Method"
+  }, {
+    "parentCommitId" : "dc2445b916200f54383be1293da7f2ab017a0fc9",
+    "commitId" : "3d9850dd7a1efb9180fa845cff716d3087568f0b",
+    "commitTime" : 1566390903,
+    "changeType" : "commented out method",
+    "elementFileBefore" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+    "elementNameBefore" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+    "elementFileAfter" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+    "elementNameAfter" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+    "comment" : "Method Change, Commented-out Method"
+  }, {
+    "parentCommitId" : "0b5486790627b69c0f7d088aea6cd1da4381b38f",
+    "commitId" : "18e019db77dbcf5c8420d1c8478ad3a0492b12c7",
+    "commitTime" : 1565961985,
+    "changeType" : "introduced",
+    "elementFileBefore" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+    "elementNameBefore" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+    "elementFileAfter" : "javaparser-core-testing/src/test/java/com/github/javaparser/builders/NodeWithMembersBuildersTest.java",
+    "elementNameAfter" : "javaparser-core-testing/src/test/java/com.github.javaparser.builders.NodeWithMembersBuildersTest#testGetConstructorsWithParameterTypes()",
+    "comment" : "new method"
+  } ]
+}

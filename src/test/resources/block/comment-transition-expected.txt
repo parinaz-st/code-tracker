@@ -1,0 +1,7 @@
+javaparser-BulkParseTest-parseOpenJdkSourceRepository-IF_STATEMENT-ct.json, 1, 1, 2
+javaparser-LexicalPreservingPrinter-concretePropertyChange-IF_STATEMENT-INITIALIZER-ct.json, 0, 1, 4
+javaparser-LexicalPreservingPrinter-concretePropertyChange-IF_STATEMENT-TYPE-ct.json, 6, 0, 0
+javaparser-MethodResolutionLogic-isApplicable-FOR_STATEMENT-ct.json, 22, 0, 2
+javaparser-MethodResolutionLogic-isApplicable-IF_STATEMENT-reachedVariadicParam-ct.json, 2, 1, 4
+javaparser-MethodResolutionLogic-isApplicable-IF_STATEMENT-vararg-break-ct.json, 3, 0, 0
+javaparser-MethodResolutionLogic-isMoreSpecific-IF_STATEMENT-vararg-ct.json, 3, 0, 0

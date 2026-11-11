@@ -1,0 +1,5 @@
+{
+  "validation": "Negative case. The declaration is never commented out: c3a08e1 keeps an active declaration (initializer added) next to a commented copy, and fc0e703 removes the copy. 8824799, c3a08e1, 2507785, fc0e703 and 8d23496 only change the initializer or indentation, which the variable oracle does not track. Type changes 82eb447 (TypeUsage -> Type) and e15d5a8 (Type -> ResolvedType) confirmed in the diffs; introduced at 52869e6. No comment transition may be reported.",
+  "drop": [],
+  "add": []
+}

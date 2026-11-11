@@ -1,0 +1,18 @@
+{
+  "validation": "Every reported change checked against the block text before and after (LocalOracleBuilder check): all 22 are real. Unreported commits touching the block's lines: 7d93730 (whitespace only) and 7e962f5 / eb7bdb7 (only 'return true/false' lines of other methods). Added the two statement-level transitions the tool misses: c3a08e1 turns statements of the loop body (two declarations, the variadic if-statement and the inner 'if (argumentsTypes.size() == j)') into // comments, and fc0e703 turns them back into code. These types cover any statement inside the block (CommentTransitionAnalyzer).",
+  "drop": [],
+  "add": [
+    {"commitId": "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6", "changeType": "uncommented statement",
+     "elementFileBefore": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameBefore": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$for(272-353)",
+     "elementFileAfter": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameAfter": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$for(271-351)",
+     "comment": "manually validated: commented statements of the loop body restored"},
+    {"commitId": "c3a08e18a2ea80ce0a7249ebd14f8f4556668704", "changeType": "commented out statement",
+     "elementFileBefore": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameBefore": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$for(270-348)",
+     "elementFileAfter": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameAfter": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$for(270-351)",
+     "comment": "manually validated: statements of the loop body turned into // comments"}
+  ]
+}

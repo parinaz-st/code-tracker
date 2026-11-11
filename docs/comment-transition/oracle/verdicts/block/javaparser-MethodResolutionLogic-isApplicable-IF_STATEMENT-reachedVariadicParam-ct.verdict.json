@@ -1,0 +1,30 @@
+{
+  "validation": "The if-statement is added at 8824799 as 'if (hasVariadicParam && i >= method.getNoParams() - 1)'. c3a08e1 turns it into // comments and, in the same commit, edits the commented copy: the condition becomes 'reachedVariadicParam' (an extracted variable) and the inner if uses a new local 'argumentIsArrayOrNonSingleValue'. The commented text does not change in ec03aaa and 2507785. fc0e703 restores it and edits the inner if again ('argumentIsArray'). The tool reports 'introduced' at fc0e703 and loses the history, because the block was edited while commented (known limit, ADRs 0008-0012).",
+  "drop": ["fc0e7034e15340fe8710c6b3f2ae2068363cc8d6:introduced"],
+  "add": [
+    {"commitId": "c3a08e18a2ea80ce0a7249ebd14f8f4556668704", "changeType": "commented out block",
+     "elementFileBefore": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameBefore": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+     "elementFileAfter": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameAfter": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+     "comment": "manually validated: block turned into // comments"},
+    {"commitId": "c3a08e18a2ea80ce0a7249ebd14f8f4556668704", "changeType": "expression change",
+     "elementFileBefore": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameBefore": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+     "elementFileAfter": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameAfter": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+     "comment": "manually validated: condition replaced by reachedVariadicParam inside the comment"},
+    {"commitId": "c3a08e18a2ea80ce0a7249ebd14f8f4556668704", "changeType": "body change",
+     "elementFileBefore": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameBefore": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+     "elementFileAfter": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameAfter": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+     "comment": "manually validated: inner if rewritten with argumentIsArrayOrNonSingleValue inside the comment"},
+    {"commitId": "8824799b82e7b1cfb8ca8069fd3a0c224ea9cdcb", "changeType": "introduced",
+     "elementFileBefore": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameBefore": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+     "elementFileAfter": "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+     "elementNameAfter": "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+     "comment": "new block"}
+  ]
+}

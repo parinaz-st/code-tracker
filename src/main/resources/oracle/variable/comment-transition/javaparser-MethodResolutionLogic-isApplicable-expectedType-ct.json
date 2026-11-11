@@ -1,0 +1,43 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "filePath" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+  "functionName" : "isApplicable",
+  "functionKey" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)",
+  "functionStartLine" : 261,
+  "variableName" : "expectedType",
+  "variableKey" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$expectedType:ResolvedType(272)",
+  "variableStartLine" : 272,
+  "startCommitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+  "expectedChanges" : [ {
+    "parentCommitId" : "5d8d0cb7947efcf2282f7d056302dd905f348532",
+    "commitId" : "e15d5a8aa84a34917e4ef47135dfc62e58ea7650",
+    "commitTime" : 1506665261,
+    "changeType" : "type change",
+    "elementFileBefore" : "java-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "java-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$expectedType:Type(291)",
+    "elementFileAfter" : "java-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "java-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$expectedType:ResolvedType(285)",
+    "comment" : "Change Variable Type expectedType : Type to expectedType : ResolvedType in method public isApplicable(method MethodUsage, name String, argumentsTypes List<ResolvedType>, typeSolver TypeSolver) : boolean from class com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic"
+  }, {
+    "parentCommitId" : "b75d0c51157475833e5364ec6df88b2b6fe0db79",
+    "commitId" : "82eb44707b620803d424188a1eb8708fcaf093cb",
+    "commitTime" : 1476389491,
+    "changeType" : "type change",
+    "elementFileBefore" : "java-symbol-solver-core/src/main/java/me/tomassetti/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "java-symbol-solver-core/src/main/java/me.tomassetti.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$expectedType:TypeUsage(222)",
+    "elementFileAfter" : "java-symbol-solver-core/src/main/java/me/tomassetti/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "java-symbol-solver-core/src/main/java/me.tomassetti.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$expectedType:Type(222)",
+    "comment" : "Change Variable Type expectedType : TypeUsage to expectedType : Type in method public isApplicable(method MethodUsage, name String, paramTypes List<Type>, typeSolver TypeSolver) : boolean from class me.tomassetti.symbolsolver.resolution.MethodResolutionLogic"
+  }, {
+    "parentCommitId" : "f20c44f226d539b8a6f49db40fdd4aeb731ad3a6",
+    "commitId" : "52869e6fb17d3b13f60dea0064b90a81307392b4",
+    "commitTime" : 1446384918,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/main/java/me/tomassetti/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "src/main/java/me.tomassetti.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$expectedType:TypeUsage(130)",
+    "elementFileAfter" : "src/main/java/me/tomassetti/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "src/main/java/me.tomassetti.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$expectedType:TypeUsage(130)",
+    "comment" : "Extract Variable expectedType : TypeUsage in method public isApplicable(method MethodUsage, name String, paramTypes List<TypeUsage>, typeSolver TypeSolver) : boolean from class me.tomassetti.symbolsolver.resolution.MethodResolutionLogic"
+  } ]
+}

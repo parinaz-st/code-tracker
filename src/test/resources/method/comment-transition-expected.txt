@@ -1,0 +1,4 @@
+javaparser-AnnotationDeclarationTransformationsTest-removingJavadoc-ct.json, 2, 0, 0
+javaparser-JavaParserAPIIntegrationTest-annotationMemberDeclarationResolve-ct.json, 1, 0, 1
+javaparser-JavaParserAPIIntegrationTest-enumConstantDeclarationResolve-ct.json, 2, 0, 0
+javaparser-NodeWithMembersBuildersTest-testGetConstructorsWithParameterTypes-ct.json, 4, 0, 0

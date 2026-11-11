@@ -1,0 +1,54 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "filePath" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+  "functionName" : "concretePropertyChange",
+  "functionKey" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)",
+  "functionStartLine" : 129,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(183-194)",
+  "blockStartLine" : 183,
+  "blockEndLine" : 194,
+  "startCommitId" : "c73ae5d79b62de91209477538b45ab5216fb108e",
+  "expectedChanges" : [ {
+    "parentCommitId" : "583393ba258bcb03bf8783a4ff9b898211e3ac42",
+    "commitId" : "610af83700d73f244d26508f7a8f5321b0bc25bd",
+    "commitTime" : 1487866773,
+    "changeType" : "body change",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(171-182)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(174-185)",
+    "comment" : "manually validated: addToken(Separator.X) -> addElement(x())"
+  }, {
+    "parentCommitId" : "4229bb73c4ead6fe52b31c4a8fd7247266281f6e",
+    "commitId" : "7649ce9c13de8eeabe53f314b3abd1dba48d1feb",
+    "commitTime" : 1487866773,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(178-189)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(178-189)",
+    "comment" : "manually validated: whole block turned into // comments"
+  }, {
+    "parentCommitId" : "90399e0246d997244851ee6caad3e634ce2e748e",
+    "commitId" : "2e24f3622913118e442635a726d60cfdb50cdc91",
+    "commitTime" : 1487866773,
+    "changeType" : "introduced",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(126-137)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(126-137)",
+    "comment" : "new block"
+  }, {
+    "parentCommitId" : "7649ce9c13de8eeabe53f314b3abd1dba48d1feb",
+    "commitId" : "c73ae5d79b62de91209477538b45ab5216fb108e",
+    "commitTime" : 1487866773,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(178-189)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(183-194)",
+    "comment" : "manually validated: block restored from // comments with identical text"
+  } ]
+}

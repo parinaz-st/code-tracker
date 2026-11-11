@@ -1,0 +1,5 @@
+{
+  "validation": "Born as a comment: 57714d6 adds the test as // comments (at the old path of the test class), 140ec18 moves the file with the method still commented, 0c57e59 turns it into code. Labelled with the convention of scenario M4: introduced where it becomes code, together with 'uncommented method'. This label depends on that convention.",
+  "drop": [],
+  "add": []
+}

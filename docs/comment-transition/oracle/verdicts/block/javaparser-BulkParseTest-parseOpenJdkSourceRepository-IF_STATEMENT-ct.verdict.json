@@ -1,0 +1,18 @@
+{
+  "validation": "Block text extracted at every version of the file (blockevo): the if-statement exists from the file's first commit 7e3f1d0 (in parseOpenJdk()) with the same text, c9123a7 turns it into // comments unchanged, 260f854 restores it unchanged while renaming the enclosing method parseOpenJdk() -> parseOpenJdkSourceRepository(). The tool reports 'introduced' at 260f854 and loses the history, because the container must keep its signature while the block is commented (known limit, ADR 0008).",
+  "drop": ["260f854838a06d3618a77fd643784a0ba735f932:introduced"],
+  "add": [
+    {"commitId": "c9123a785af0f1acd5c674a69d1a7cff88e4e7c2", "changeType": "commented out block",
+     "elementFileBefore": "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+     "elementNameBefore": "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdk()$if(45-48)",
+     "elementFileAfter": "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+     "elementNameAfter": "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdk()$if(54-57)",
+     "comment": "manually validated: block turned into // comments"},
+    {"commitId": "7e3f1d0a94e514bb42fc199dac3f3d6126913311", "changeType": "introduced",
+     "elementFileBefore": "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+     "elementNameBefore": "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdk()$if(38-41)",
+     "elementFileAfter": "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+     "elementNameAfter": "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdk()$if(38-41)",
+     "comment": "new block"}
+  ]
+}

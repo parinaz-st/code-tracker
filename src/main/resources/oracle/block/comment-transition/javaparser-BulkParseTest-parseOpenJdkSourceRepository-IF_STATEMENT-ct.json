@@ -1,0 +1,44 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "filePath" : "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+  "functionName" : "parseOpenJdkSourceRepository",
+  "functionKey" : "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdkSourceRepository()",
+  "functionStartLine" : 37,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdkSourceRepository()$if(46-49)",
+  "blockStartLine" : 46,
+  "blockEndLine" : 49,
+  "startCommitId" : "260f854838a06d3618a77fd643784a0ba735f932",
+  "expectedChanges" : [ {
+    "parentCommitId" : "c9123a785af0f1acd5c674a69d1a7cff88e4e7c2",
+    "commitId" : "260f854838a06d3618a77fd643784a0ba735f932",
+    "commitTime" : 1504548359,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+    "elementNameBefore" : "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdkSourceRepository()$if(46-49)",
+    "elementFileAfter" : "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+    "elementNameAfter" : "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdkSourceRepository()$if(46-49)",
+    "comment" : "Block Change, Uncommented Block"
+  }, {
+    "parentCommitId" : "3333b59f2d150be1e5a02246600417687ed08cb3",
+    "commitId" : "c9123a785af0f1acd5c674a69d1a7cff88e4e7c2",
+    "commitTime" : 1504545178,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+    "elementNameBefore" : "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdk()$if(45-48)",
+    "elementFileAfter" : "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+    "elementNameAfter" : "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdk()$if(54-57)",
+    "comment" : "manually validated: block turned into // comments"
+  }, {
+    "parentCommitId" : "79d74371dc647b90d16dce831cd33b7dfa3291a0",
+    "commitId" : "7e3f1d0a94e514bb42fc199dac3f3d6126913311",
+    "commitTime" : 1488321172,
+    "changeType" : "introduced",
+    "elementFileBefore" : "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+    "elementNameBefore" : "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdk()$if(38-41)",
+    "elementFileAfter" : "javaparser-testing/src/test/java/com/github/javaparser/manual/BulkParseTest.java",
+    "elementNameAfter" : "javaparser-testing/src/test/java/com.github.javaparser.manual.BulkParseTest#parseOpenJdk()$if(38-41)",
+    "comment" : "new block"
+  } ]
+}

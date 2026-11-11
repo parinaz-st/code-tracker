@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class AttributeOracleTest extends OracleTest {
 	private static final String EXPECTED = System.getProperty("user.dir") + "/src/test/resources/attribute/";
 
-	private static History<Attribute> attributeTracker(AttributeHistoryInfo attributeHistoryInfo, String gitURL) throws Exception {
+	static History<Attribute> attributeTracker(AttributeHistoryInfo attributeHistoryInfo, String gitURL) throws Exception {
 		AttributeTracker attributeTracker = CodeTracker.attributeTracker()
 			.gitURL(gitURL)
 			.filePath(attributeHistoryInfo.getFilePath())

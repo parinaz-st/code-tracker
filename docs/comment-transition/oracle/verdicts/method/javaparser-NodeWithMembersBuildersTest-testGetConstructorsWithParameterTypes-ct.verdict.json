@@ -1,0 +1,5 @@
+{
+  "validation": "Real /* ... */ round trip. git log -L on the method: 18e019d adds it; 3d9850d wraps it in a block comment (a lone '/*' line before @Test and '*/' after the closing brace; the text inside is unchanged); abc79f1 removes the wrapper and rewrites the body. dc2445b and the older commits of the file do not touch the method. Tool output matches.",
+  "drop": [],
+  "add": []
+}

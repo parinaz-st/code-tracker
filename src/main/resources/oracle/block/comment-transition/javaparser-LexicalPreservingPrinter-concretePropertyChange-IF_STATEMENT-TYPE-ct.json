@@ -1,0 +1,74 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "filePath" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+  "functionName" : "concretePropertyChange",
+  "functionKey" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)",
+  "functionStartLine" : 129,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(145-161)",
+  "blockStartLine" : 145,
+  "blockEndLine" : 161,
+  "startCommitId" : "c73ae5d79b62de91209477538b45ab5216fb108e",
+  "expectedChanges" : [ {
+    "parentCommitId" : "c5f60788a9f56fe9f483fbb87ccb615644365f5e",
+    "commitId" : "cc90dd3e35e3c996d3e6d395fc86e2940ac4f711",
+    "commitTime" : 1487866773,
+    "changeType" : "body change",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(136-152)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(138-154)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "583393ba258bcb03bf8783a4ff9b898211e3ac42",
+    "commitId" : "610af83700d73f244d26508f7a8f5321b0bc25bd",
+    "commitTime" : 1487866773,
+    "changeType" : "body change",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(133-149)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(136-152)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "f75eb59f8930d3d53864470e115772345f40363c",
+    "commitId" : "7649ce9c13de8eeabe53f314b3abd1dba48d1feb",
+    "commitTime" : 1487866773,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(140-156)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(145-161)",
+    "comment" : "Block Change, Commented-out Block"
+  }, {
+    "parentCommitId" : "a96a2c38c42516057bb150b7ce5140e3a9c5f904",
+    "commitId" : "de11a2ae80166defacd1f9c51b77f52be4b53eb1",
+    "commitTime" : 1487866773,
+    "changeType" : "expression change",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(114-130)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(115-131)",
+    "comment" : "Expression Change"
+  }, {
+    "parentCommitId" : "d819913c3a4d0b9b1db11729497f1f8b07a641c6",
+    "commitId" : "9a7cda9c8fb4cbb33b5f38daea68921ae201ef31",
+    "commitTime" : 1487866773,
+    "changeType" : "introduced",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(114-130)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(114-130)",
+    "comment" : "new block"
+  }, {
+    "parentCommitId" : "7649ce9c13de8eeabe53f314b3abd1dba48d1feb",
+    "commitId" : "c73ae5d79b62de91209477538b45ab5216fb108e",
+    "commitTime" : 1487866773,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameBefore" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(145-161)",
+    "elementFileAfter" : "javaparser-core/src/main/java/com/github/javaparser/printer/lexicalpreservation/LexicalPreservingPrinter.java",
+    "elementNameAfter" : "javaparser-core/src/main/java/com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter.createObserver.new PropagatingAstObserver#concretePropertyChange(Node, ObservableProperty, Object, Object)$if(145-161)",
+    "comment" : "Block Change, Uncommented Block"
+  } ]
+}

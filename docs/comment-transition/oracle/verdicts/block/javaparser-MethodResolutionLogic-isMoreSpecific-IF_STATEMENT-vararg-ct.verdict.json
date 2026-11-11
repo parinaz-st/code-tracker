@@ -1,0 +1,5 @@
+{
+  "validation": "git log -L 576,578 from fc0e703 shows exactly three commits: 72b1d0c adds the if-statement, c3a08e1 turns it into // comments unchanged, fc0e703 restores it unchanged.",
+  "drop": [],
+  "add": []
+}

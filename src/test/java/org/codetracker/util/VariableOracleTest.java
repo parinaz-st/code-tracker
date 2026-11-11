@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class VariableOracleTest extends OracleTest {
 	private static final String EXPECTED = System.getProperty("user.dir") + "/src/test/resources/variable/";
 
-    private static History<Variable> variableTracker(VariableHistoryInfo variableHistoryInfo, String gitURL) throws Exception {
+    static History<Variable> variableTracker(VariableHistoryInfo variableHistoryInfo, String gitURL) throws Exception {
         VariableTracker variableTracker = CodeTracker.variableTracker()
         	.gitURL(gitURL)
             .filePath(variableHistoryInfo.getFilePath())

@@ -1,0 +1,30 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "startCommitId" : "e5abd783e6d1ff0e2511a03b706820972ccb8fd7",
+  "filePath" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+  "functionName" : "enumConstantDeclarationResolve",
+  "functionKey" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#enumConstantDeclarationResolve()",
+  "functionStartLine" : 111,
+  "expectedChanges" : [ {
+    "parentCommitId" : "ad244dee7ecc61e90ec3e0906b03805176a78af5",
+    "commitId" : "e5abd783e6d1ff0e2511a03b706820972ccb8fd7",
+    "commitTime" : 1511380073,
+    "changeType" : "introduced",
+    "elementFileBefore" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+    "elementNameBefore" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#enumConstantDeclarationResolve()",
+    "elementFileAfter" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+    "elementNameAfter" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#enumConstantDeclarationResolve()",
+    "comment" : "uncommented method; no earlier active version found"
+  }, {
+    "parentCommitId" : "ad244dee7ecc61e90ec3e0906b03805176a78af5",
+    "commitId" : "e5abd783e6d1ff0e2511a03b706820972ccb8fd7",
+    "commitTime" : 1511380073,
+    "changeType" : "uncommented method",
+    "elementFileBefore" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+    "elementNameBefore" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#enumConstantDeclarationResolve()",
+    "elementFileAfter" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+    "elementNameAfter" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#enumConstantDeclarationResolve()",
+    "comment" : "Method Change, Uncommented Method"
+  } ]
+}

@@ -1,0 +1,2 @@
+javaparser-MethodResolutionLogic-isApplicable-expectedType-ct.json, 3, 0, 0
+javaparser-MethodResolutionLogic-isApplicable-reachedVariadicParam-ct.json, 2, 0, 0

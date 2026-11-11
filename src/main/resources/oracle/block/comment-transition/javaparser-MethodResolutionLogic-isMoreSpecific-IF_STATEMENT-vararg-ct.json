@@ -1,0 +1,44 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "filePath" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+  "functionName" : "isMoreSpecific",
+  "functionKey" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isMoreSpecific(MethodUsage, MethodUsage)",
+  "functionStartLine" : 557,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isMoreSpecific(MethodUsage, MethodUsage)$if(576-578)",
+  "blockStartLine" : 576,
+  "blockEndLine" : 578,
+  "startCommitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+  "expectedChanges" : [ {
+    "parentCommitId" : "25077858689da705dd342bb6e46fe67f86d9d4e6",
+    "commitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+    "commitTime" : 1589750844,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isMoreSpecific(MethodUsage, MethodUsage)$if(576-578)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isMoreSpecific(MethodUsage, MethodUsage)$if(576-578)",
+    "comment" : "Block Change, Uncommented Block"
+  }, {
+    "parentCommitId" : "72b1d0c30fdfff1bbcfab4a2dd9cd9ff81dea3cc",
+    "commitId" : "c3a08e18a2ea80ce0a7249ebd14f8f4556668704",
+    "commitTime" : 1589750843,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isMoreSpecific(MethodUsage, MethodUsage)$if(573-575)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isMoreSpecific(MethodUsage, MethodUsage)$if(576-578)",
+    "comment" : "Block Change, Commented-out Block"
+  }, {
+    "parentCommitId" : "8824799b82e7b1cfb8ca8069fd3a0c224ea9cdcb",
+    "commitId" : "72b1d0c30fdfff1bbcfab4a2dd9cd9ff81dea3cc",
+    "commitTime" : 1589750843,
+    "changeType" : "introduced",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isMoreSpecific(MethodUsage, MethodUsage)$if(573-575)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isMoreSpecific(MethodUsage, MethodUsage)$if(573-575)",
+    "comment" : "new block"
+  } ]
+}

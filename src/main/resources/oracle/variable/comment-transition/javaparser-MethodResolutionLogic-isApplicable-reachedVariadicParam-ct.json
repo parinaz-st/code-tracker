@@ -1,0 +1,33 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "filePath" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+  "functionName" : "isApplicable",
+  "functionKey" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)",
+  "functionStartLine" : 261,
+  "variableName" : "reachedVariadicParam",
+  "variableKey" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$reachedVariadicParam:boolean(273)",
+  "variableStartLine" : 273,
+  "startCommitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+  "expectedChanges" : [ {
+    "parentCommitId" : "25077858689da705dd342bb6e46fe67f86d9d4e6",
+    "commitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+    "commitTime" : 1589750844,
+    "changeType" : "introduced",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$reachedVariadicParam:boolean(273)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$reachedVariadicParam:boolean(273)",
+    "comment" : "uncommented variable; no earlier active version found"
+  }, {
+    "parentCommitId" : "25077858689da705dd342bb6e46fe67f86d9d4e6",
+    "commitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+    "commitTime" : 1589750844,
+    "changeType" : "uncommented variable",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$reachedVariadicParam:boolean(273)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$reachedVariadicParam:boolean(273)",
+    "comment" : "Variable Change, Uncommented Variable"
+  } ]
+}

@@ -17,6 +17,11 @@ public class MethodOracle extends AbstractOracle<MethodHistoryInfo> {
         return new MethodOracle("test");
     }
 
+    /** Real histories with comment transitions, kept apart from the published training and test sets. */
+    public static MethodOracle commentTransition() throws IOException {
+        return new MethodOracle("comment-transition");
+    }
+
     public static MethodOracle training() throws IOException {
         return new MethodOracle("training");
     }

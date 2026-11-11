@@ -17,6 +17,11 @@ public class BlockOracle extends AbstractOracle<BlockHistoryInfo> {
     return new BlockOracle("test");
   }
 
+  /** Real histories with comment transitions, kept apart from the published training and test sets. */
+  public static BlockOracle commentTransition() throws IOException {
+    return new BlockOracle("comment-transition");
+  }
+
   public static BlockOracle training() throws IOException {
     return new BlockOracle("training");
   }

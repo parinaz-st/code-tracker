@@ -1,0 +1,5 @@
+{
+  "validation": "Block text extracted at every version of the file (blockevo): 9a7cda9 adds it, de11a2a changes the condition, 610af83 and cc90dd3 each change one statement, 7649ce9 turns it into // comments with identical text, c73ae5d restores it with identical text. The other commits that git log -L lists only touch neighbouring if-statements of the same commented region.",
+  "drop": [],
+  "add": []
+}

@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class MethodOracleTest extends OracleTest {
 	private static final String EXPECTED = System.getProperty("user.dir") + "/src/test/resources/method/";
 
-	private static History<Method> methodTracker(MethodHistoryInfo methodHistoryInfo, String gitURL) throws Exception {
+	static History<Method> methodTracker(MethodHistoryInfo methodHistoryInfo, String gitURL) throws Exception {
 		MethodTracker methodTracker = CodeTracker.methodTracker()
 			.gitURL(gitURL)
 			.filePath(methodHistoryInfo.getFilePath())

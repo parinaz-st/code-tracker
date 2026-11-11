@@ -1,0 +1,30 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "startCommitId" : "ad244dee7ecc61e90ec3e0906b03805176a78af5",
+  "filePath" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+  "functionName" : "annotationMemberDeclarationResolve",
+  "functionKey" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#annotationMemberDeclarationResolve()",
+  "functionStartLine" : 58,
+  "expectedChanges" : [ {
+    "parentCommitId" : "c2547fc26bc3431c802234af83484d81b0fbe119",
+    "commitId" : "ad244dee7ecc61e90ec3e0906b03805176a78af5",
+    "commitTime" : 1511379880,
+    "changeType" : "introduced",
+    "elementFileBefore" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+    "elementNameBefore" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#annotationMemberDeclarationResolve()",
+    "elementFileAfter" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+    "elementNameAfter" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#annotationMemberDeclarationResolve()",
+    "comment" : "new method"
+  }, {
+    "parentCommitId" : "c2547fc26bc3431c802234af83484d81b0fbe119",
+    "commitId" : "ad244dee7ecc61e90ec3e0906b03805176a78af5",
+    "commitTime" : 1511379880,
+    "changeType" : "uncommented method",
+    "elementFileBefore" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+    "elementNameBefore" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#annotationMemberDeclarationResolve()",
+    "elementFileAfter" : "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+    "elementNameAfter" : "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#annotationMemberDeclarationResolve()",
+    "comment" : "manually validated: method restored from // comments with identical text"
+  } ]
+}

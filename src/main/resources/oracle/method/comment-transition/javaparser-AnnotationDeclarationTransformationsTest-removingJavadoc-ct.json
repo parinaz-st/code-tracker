@@ -1,0 +1,30 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "startCommitId" : "0c57e5931daabf22632ad49f2ad0657df59b858b",
+  "filePath" : "javaparser-testing/src/test/java/com/github/javaparser/printer/lexicalpreservation/transformations/ast/body/AnnotationDeclarationTransformationsTest.java",
+  "functionName" : "removingJavadoc",
+  "functionKey" : "javaparser-testing/src/test/java/com.github.javaparser.printer.lexicalpreservation.transformations.ast.body.AnnotationDeclarationTransformationsTest#removingJavadoc()",
+  "functionStartLine" : 112,
+  "expectedChanges" : [ {
+    "parentCommitId" : "1ad5ce425842135b0e71f371a54e7ce7446fdc4d",
+    "commitId" : "0c57e5931daabf22632ad49f2ad0657df59b858b",
+    "commitTime" : 1487866773,
+    "changeType" : "introduced",
+    "elementFileBefore" : "javaparser-testing/src/test/java/com/github/javaparser/printer/lexicalpreservation/transformations/ast/body/AnnotationDeclarationTransformationsTest.java",
+    "elementNameBefore" : "javaparser-testing/src/test/java/com.github.javaparser.printer.lexicalpreservation.transformations.ast.body.AnnotationDeclarationTransformationsTest#removingJavadoc()",
+    "elementFileAfter" : "javaparser-testing/src/test/java/com/github/javaparser/printer/lexicalpreservation/transformations/ast/body/AnnotationDeclarationTransformationsTest.java",
+    "elementNameAfter" : "javaparser-testing/src/test/java/com.github.javaparser.printer.lexicalpreservation.transformations.ast.body.AnnotationDeclarationTransformationsTest#removingJavadoc()",
+    "comment" : "uncommented method; no earlier active version found"
+  }, {
+    "parentCommitId" : "1ad5ce425842135b0e71f371a54e7ce7446fdc4d",
+    "commitId" : "0c57e5931daabf22632ad49f2ad0657df59b858b",
+    "commitTime" : 1487866773,
+    "changeType" : "uncommented method",
+    "elementFileBefore" : "javaparser-testing/src/test/java/com/github/javaparser/printer/lexicalpreservation/transformations/ast/body/AnnotationDeclarationTransformationsTest.java",
+    "elementNameBefore" : "javaparser-testing/src/test/java/com.github.javaparser.printer.lexicalpreservation.transformations.ast.body.AnnotationDeclarationTransformationsTest#removingJavadoc()",
+    "elementFileAfter" : "javaparser-testing/src/test/java/com/github/javaparser/printer/lexicalpreservation/transformations/ast/body/AnnotationDeclarationTransformationsTest.java",
+    "elementNameAfter" : "javaparser-testing/src/test/java/com.github.javaparser.printer.lexicalpreservation.transformations.ast.body.AnnotationDeclarationTransformationsTest#removingJavadoc()",
+    "comment" : "Method Change, Uncommented Method"
+  } ]
+}

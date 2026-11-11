@@ -17,6 +17,11 @@ public class VariableOracle extends AbstractOracle<VariableHistoryInfo> {
         return new VariableOracle("test");
     }
 
+    /** Real histories with comment transitions, kept apart from the published training and test sets. */
+    public static VariableOracle commentTransition() throws IOException {
+        return new VariableOracle("comment-transition");
+    }
+
     public static VariableOracle training() throws IOException {
         return new VariableOracle("training");
     }

@@ -1,0 +1,12 @@
+{
+  "validation": "Born as a comment: 660f9c1 adds the test as // comments, ad244de turns it into code with identical text (11 commits of the file in between, none touching it). Same situation as enumConstantDeclarationResolve in the same class, where the tool does report 'uncommented method'; here it reports only 'introduced'. Labelled with the convention of scenario M4: introduced plus 'uncommented method' at ad244de.",
+  "drop": [],
+  "add": [
+    {"commitId": "ad244dee7ecc61e90ec3e0906b03805176a78af5", "changeType": "uncommented method",
+     "elementFileBefore": "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+     "elementNameBefore": "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#annotationMemberDeclarationResolve()",
+     "elementFileAfter": "java-symbol-solver-testing/src/test/java/com/github/javaparser/symbolsolver/JavaParserAPIIntegrationTest.java",
+     "elementNameAfter": "java-symbol-solver-testing/src/test/java/com.github.javaparser.symbolsolver.JavaParserAPIIntegrationTest#annotationMemberDeclarationResolve()",
+     "comment": "manually validated: method restored from // comments with identical text"}
+  ]
+}

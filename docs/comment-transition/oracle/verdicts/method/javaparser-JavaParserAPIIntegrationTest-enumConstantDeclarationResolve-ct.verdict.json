@@ -1,0 +1,5 @@
+{
+  "validation": "Born as a comment: 349f923 adds the test as // comments, e5abd78 turns it into code with identical text. Labelled with the convention of scenario M4: introduced plus 'uncommented method' at e5abd78. This label depends on that convention.",
+  "drop": [],
+  "add": []
+}

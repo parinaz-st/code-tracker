@@ -1,0 +1,74 @@
+{
+  "repositoryName" : "javaparser",
+  "repositoryWebURL" : "https://github.com/javaparser/javaparser.git",
+  "filePath" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+  "functionName" : "isApplicable",
+  "functionKey" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)",
+  "functionStartLine" : 261,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+  "blockStartLine" : 274,
+  "blockEndLine" : 282,
+  "startCommitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+  "expectedChanges" : [ {
+    "parentCommitId" : "25077858689da705dd342bb6e46fe67f86d9d4e6",
+    "commitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+    "commitTime" : 1589750844,
+    "changeType" : "body change",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "25077858689da705dd342bb6e46fe67f86d9d4e6",
+    "commitId" : "fc0e7034e15340fe8710c6b3f2ae2068363cc8d6",
+    "commitTime" : 1589750844,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+    "comment" : "Block Change, Uncommented Block"
+  }, {
+    "parentCommitId" : "72b1d0c30fdfff1bbcfab4a2dd9cd9ff81dea3cc",
+    "commitId" : "c3a08e18a2ea80ce0a7249ebd14f8f4556668704",
+    "commitTime" : 1589750843,
+    "changeType" : "body change",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+    "comment" : "manually validated: inner if rewritten with argumentIsArrayOrNonSingleValue inside the comment"
+  }, {
+    "parentCommitId" : "72b1d0c30fdfff1bbcfab4a2dd9cd9ff81dea3cc",
+    "commitId" : "c3a08e18a2ea80ce0a7249ebd14f8f4556668704",
+    "commitTime" : 1589750843,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+    "comment" : "manually validated: block turned into // comments"
+  }, {
+    "parentCommitId" : "72b1d0c30fdfff1bbcfab4a2dd9cd9ff81dea3cc",
+    "commitId" : "c3a08e18a2ea80ce0a7249ebd14f8f4556668704",
+    "commitTime" : 1589750843,
+    "changeType" : "expression change",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(274-282)",
+    "comment" : "manually validated: condition replaced by reachedVariadicParam inside the comment"
+  }, {
+    "parentCommitId" : "a980661fda886fc5d984b5cb152b06fdd5ff9a15",
+    "commitId" : "8824799b82e7b1cfb8ca8069fd3a0c224ea9cdcb",
+    "commitTime" : 1589750843,
+    "changeType" : "introduced",
+    "elementFileBefore" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameBefore" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+    "elementFileAfter" : "javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/resolution/MethodResolutionLogic.java",
+    "elementNameAfter" : "javaparser-symbol-solver-core/src/main/java/com.github.javaparser.symbolsolver.resolution.MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)$if(272-279)",
+    "comment" : "new block"
+  } ]
+}

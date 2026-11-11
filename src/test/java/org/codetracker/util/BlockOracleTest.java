@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.Arguments;
 public class BlockOracleTest extends OracleTest {
 	private static final String EXPECTED = System.getProperty("user.dir") + "/src/test/resources/block/";
 
-	private static History<Block> blockTracker(BlockHistoryInfo blockHistoryInfo, String gitURL) throws Exception {
+	static History<Block> blockTracker(BlockHistoryInfo blockHistoryInfo, String gitURL) throws Exception {
 		BlockTracker blockTracker = CodeTracker
 			.blockTracker()
 			.gitURL(gitURL)

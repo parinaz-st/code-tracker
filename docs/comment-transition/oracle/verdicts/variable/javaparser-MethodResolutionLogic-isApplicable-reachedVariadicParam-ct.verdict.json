@@ -1,0 +1,5 @@
+{
+  "validation": "The declaration first appears as a // comment at c3a08e1 (extracted from the old if condition while the code was being commented out) and becomes code at fc0e703. Labelled with the convention of scenario M4: an element born as a comment is introduced where it becomes code, together with the uncommented change. This label depends on that convention.",
+  "drop": [],
+  "add": []
+}
