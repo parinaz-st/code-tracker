@@ -18,6 +18,11 @@ public class AttributeOracle extends AbstractOracle<AttributeHistoryInfo> {
         return new AttributeOracle("test");
     }
 
+    /** Real histories with comment transitions, kept apart from the published training and test sets. */
+    public static AttributeOracle commentTransition() throws IOException {
+        return new AttributeOracle("comment-transition");
+    }
+
     public static AttributeOracle training() throws IOException {
         return new AttributeOracle("training");
     }

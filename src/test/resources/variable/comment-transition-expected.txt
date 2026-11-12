@@ -1,2 +1,4 @@
 javaparser-MethodResolutionLogic-isApplicable-expectedType-ct.json, 3, 0, 0
 javaparser-MethodResolutionLogic-isApplicable-reachedVariadicParam-ct.json, 2, 0, 0
+elasticsearch-ESToParentBlockJoinQueryTests-testRewrite-expected-ct.json, 1, 0, 1
+elasticsearch-LifecyclePolicyTests-testToSteps-client-ct.json, 0, 1, 3

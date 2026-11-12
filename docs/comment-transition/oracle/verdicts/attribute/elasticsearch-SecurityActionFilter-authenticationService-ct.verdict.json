@@ -1,0 +1,17 @@
+{
+    "validation":  "Born commented: the initial security commit f727e29 adds the field, its constructor and filter logic as // comments; 3a4af4c (\u0027uncommented security filter now that the action filter chain is in\u0027) turns them into code. Convention M4: introduced plus \u0027uncommented attribute\u0027 at 3a4af4c. The tool reports only \u0027introduced\u0027.",
+    "drop":  [
+
+             ],
+    "add":  [
+                {
+                    "commitId":  "3a4af4c7bc",
+                    "changeType":  "uncommented attribute",
+                    "elementFileBefore":  "src/main/java/org/elasticsearch/shield/SecurityActionFilter.java",
+                    "elementNameBefore":  "src/main/java/org.elasticsearch.shield.SecurityActionFilter@(final)(private)authenticationService:AuthenticationService(21)",
+                    "elementFileAfter":  "src/main/java/org/elasticsearch/shield/SecurityActionFilter.java",
+                    "elementNameAfter":  "src/main/java/org.elasticsearch.shield.SecurityActionFilter@(final)(private)authenticationService:AuthenticationService(21)",
+                    "comment":  "manually validated: restored from // comments"
+                }
+            ]
+}

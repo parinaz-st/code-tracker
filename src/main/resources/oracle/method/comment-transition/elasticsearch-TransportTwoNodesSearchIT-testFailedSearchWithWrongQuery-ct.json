@@ -1,0 +1,250 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "startCommitId" : "83771d36a8f4bfa6a964fb90fb5891cdef463dc8",
+  "filePath" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+  "functionName" : "testFailedSearchWithWrongQuery",
+  "functionKey" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+  "functionStartLine" : 373,
+  "expectedChanges" : [ {
+    "parentCommitId" : "78921e0486f9e14e0014c3a9fa03d699e2a7b816",
+    "commitId" : "83771d36a8f4bfa6a964fb90fb5891cdef463dc8",
+    "commitTime" : 1444305909,
+    "changeType" : "body change",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "comment" : "manually validated"
+  }, {
+    "parentCommitId" : "78921e0486f9e14e0014c3a9fa03d699e2a7b816",
+    "commitId" : "83771d36a8f4bfa6a964fb90fb5891cdef463dc8",
+    "commitTime" : 1444305909,
+    "changeType" : "uncommented method",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "comment" : "manually validated: restored from // comments"
+  }, {
+    "parentCommitId" : "41e63505b903e4b145017b0580d604babd04c2e3",
+    "commitId" : "ab01ec5b2892d347ca031ecf0da7667ed39b5da8",
+    "commitTime" : 1443001463,
+    "changeType" : "commented out method",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "comment" : "manually validated: turned into // comments"
+  }, {
+    "parentCommitId" : "b205875c430cad5e98fccdbcdbb3f8b4927c01d0",
+    "commitId" : "01a2ba1b95dbc98b366cb2449de73c379c019471",
+    "commitTime" : 1441985915,
+    "changeType" : "body change",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "22a73d3e65d69a084f320ab86a7fff3ca8f3f877",
+    "commitId" : "622d8a830e29baab16540ca942a41b646c32aca4",
+    "commitTime" : 1438638154,
+    "changeType" : "container change",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchIT.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchIT#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Rename Class org.elasticsearch.search.basic.TransportTwoNodesSearchTests renamed to org.elasticsearch.search.basic.TransportTwoNodesSearchIT"
+  }, {
+    "parentCommitId" : "7ccc193a666e2ae888e7ac93d677a2143e5e07c3",
+    "commitId" : "15a62448343fd24f8e63f43b1e4b16f50005e4a5",
+    "commitTime" : 1433502723,
+    "changeType" : "container change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Move Source Folder src to core/src"
+  }, {
+    "parentCommitId" : "bb63b3fa61f749c634ac4dccdf5cda8a0cca9b9d",
+    "commitId" : "d5aaa90f3466872d2e45a4df4db79ce182100f07",
+    "commitTime" : 1394452912,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "53359c0d3d04b57d9c9bae10423a78f32f903c2f",
+    "commitId" : "0d8330b50a081d4959ca4b4e245bf4d3594e0c8b",
+    "commitTime" : 1389964406,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "8d9af7e7a5c69205ae840a2722900dc8a1c60475",
+    "commitId" : "fa16969360ea43667ad11f827bbf86718c18fcc6",
+    "commitTime" : 1389090111,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "b5c9807ba258673054c28ae3b4eb4b29fc4c7e79",
+    "commitId" : "7425b85b0b6e2253a70bd70aabbe16951ee8a1aa",
+    "commitTime" : 1378921789,
+    "changeType" : "container change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Move Class org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests moved to org.elasticsearch.search.basic.TransportTwoNodesSearchTests"
+  }, {
+    "parentCommitId" : "78fb12bcaa4d544f06b2dd259b6dd66dfa424ada",
+    "commitId" : "dac2c559d43edb085807ec7c2a0fc2d76ec14e48",
+    "commitTime" : 1370961313,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "9323e677bd5b90af97a2a5acd49bc0fe4e96dfd4",
+    "commitId" : "7afffbe13bca22ff24b1fb307aef4b07a3630de0",
+    "commitTime" : 1370894184,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "47154a79c5d25e7dd5527638b0be79deff447a3a",
+    "commitId" : "e6a3c9c15308a6777f255334054c4ba1700d1210",
+    "commitTime" : 1369988625,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "a646e126e9a5d91f2e67872b4ad447fd9519a7bc",
+    "commitId" : "4c493ac71de7382f3ecda0b435c9ce2cc31ef2b2",
+    "commitTime" : 1361612276,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "ac2e6a3a4de751aeac61e7da9f0991bd1fc61749",
+    "commitId" : "cc83c2f848be69a77f1275fe1ff5363dcdd4c955",
+    "commitTime" : 1361203772,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "473b0f4dff504690754acc0f00967c275bf322a8",
+    "commitId" : "a8fd2d48b8f3f17d68ed27c3104e2c9e2eb6cc9c",
+    "commitTime" : 1323125963,
+    "changeType" : "container change",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Move Source Folder modules/test/integration/src to src"
+  }, {
+    "parentCommitId" : "256f1d3611df8139f2d5e65f999baa83f399e7ab",
+    "commitId" : "95dc08fa3bf7193bfa117deed1aca7fef3a58a76",
+    "commitTime" : 1295877988,
+    "changeType" : "container change",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/basic/TransportTwoNodesSearchTests.java",
+    "elementNameAfter" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Move And Rename Class org.elasticsearch.test.integration.search.TransportTwoServersSearchTests moved and renamed to org.elasticsearch.test.integration.search.basic.TransportTwoNodesSearchTests"
+  }, {
+    "parentCommitId" : "1a9c5d6b15e1f2e6674fc6196778189beb8d4515",
+    "commitId" : "2bb31fe74037a7ee2a04c9a994bc4bacbc8e8102",
+    "commitTime" : 1270594473,
+    "changeType" : "body change",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearchWithWrongQuery()",
+    "elementFileAfter" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameAfter" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "297e2091e25e060b3529c13494693bc3f708910d",
+    "commitId" : "a039a6cc3865da08c7427a37359418ab79cd68fb",
+    "commitTime" : 1269182704,
+    "changeType" : "body change",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "elementFileAfter" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameAfter" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "297e2091e25e060b3529c13494693bc3f708910d",
+    "commitId" : "a039a6cc3865da08c7427a37359418ab79cd68fb",
+    "commitTime" : 1269182704,
+    "changeType" : "rename",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "elementFileAfter" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameAfter" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearchWithWrongQuery()",
+    "comment" : "validated active history: Rename Method public testFailedSearch() : void renamed to public testFailedSearchWithWrongQuery() : void in class org.elasticsearch.test.integration.search.TransportTwoServersSearchTests"
+  }, {
+    "parentCommitId" : "2ae6de24338d8bceb7f3ee65119362e8b904d069",
+    "commitId" : "1e455789d09295742ead819ad748886fad8e8a57",
+    "commitTime" : 1269126889,
+    "changeType" : "body change",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "elementFileAfter" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameAfter" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "2ae6de24338d8bceb7f3ee65119362e8b904d069",
+    "commitId" : "1e455789d09295742ead819ad748886fad8e8a57",
+    "commitTime" : 1269126889,
+    "changeType" : "documentation change",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "elementFileAfter" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameAfter" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "comment" : "validated active history: Documentation Change"
+  }, {
+    "parentCommitId" : "defb6a336daa8fb13e22a6b05ac47886f20e819f",
+    "commitId" : "46ff97af5e05034de8f171945f0847a98c15c5e3",
+    "commitTime" : 1266953410,
+    "changeType" : "body change",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "elementFileAfter" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameAfter" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "comment" : "validated active history: Body Change"
+  }, {
+    "parentCommitId" : "f94ff19f33db48235fa79af012ba96da42c5d015",
+    "commitId" : "a8281065535d6e140c5d563d6487ad2a160605e0",
+    "commitTime" : 1266680126,
+    "changeType" : "introduced",
+    "elementFileBefore" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameBefore" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "elementFileAfter" : "modules/test/integration/src/test/java/org/elasticsearch/test/integration/search/TransportTwoServersSearchTests.java",
+    "elementNameAfter" : "modules/test/integration/src/test/java/org.elasticsearch.test.integration.search.TransportTwoServersSearchTests#testFailedSearch()",
+    "comment" : "validated active history: new method"
+  } ]
+}

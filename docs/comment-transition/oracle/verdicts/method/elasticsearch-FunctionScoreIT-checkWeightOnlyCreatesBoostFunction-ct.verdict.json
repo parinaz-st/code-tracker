@@ -1,0 +1,101 @@
+{
+    "validation":  "2015 search-request refactoring: ab01ec5 turns the test into // comments with the marker \u0027} NOCOMMIT fix this\u0027 appended to the commented closing brace; 851af9e restores it rewritten for the new API (body change). The active history was validated against git log -L across the file move src/test -\u003e core/src/test (15a6244) and the class rename FunctionScoreTests -\u003e FunctionScoreIT (622d8a8): 7eedd84, 01a2ba1, be7c75c body changes, c5ff70b introduced. The tool reports only \u0027introduced\u0027 at 851af9e: the marker text makes the commented run unparseable.",
+    "drop":  [
+                 "851af9e1006aa0290bfe02ff41c09e7d5c8a352d:introduced"
+             ],
+    "add":  [
+                {
+                    "commitId":  "851af9e1006aa0290bfe02ff41c09e7d5c8a352d",
+                    "changeType":  "uncommented method",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "manually validated: restored from // comments"
+                },
+                {
+                    "commitId":  "851af9e1006aa0290bfe02ff41c09e7d5c8a352d",
+                    "changeType":  "body change",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "manually validated"
+                },
+                {
+                    "commitId":  "ab01ec5b2892d347ca031ecf0da7667ed39b5da8",
+                    "changeType":  "commented out method",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "manually validated: turned into // comments"
+                },
+                {
+                    "parentCommitId":  "6350470ee30dddc1ba40c97797db96af30796780",
+                    "commitId":  "7eedd84dc38edd097ee8b43ad71859f11bc52501",
+                    "commitTime":  1443000774,
+                    "changeType":  "body change",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "validated active history: Body Change"
+                },
+                {
+                    "parentCommitId":  "b205875c430cad5e98fccdbcdbb3f8b4927c01d0",
+                    "commitId":  "01a2ba1b95dbc98b366cb2449de73c379c019471",
+                    "commitTime":  1441985915,
+                    "changeType":  "body change",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "validated active history: Body Change"
+                },
+                {
+                    "parentCommitId":  "22a73d3e65d69a084f320ab86a7fff3ca8f3f877",
+                    "commitId":  "622d8a830e29baab16540ca942a41b646c32aca4",
+                    "commitTime":  1438638154,
+                    "changeType":  "container change",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreTests.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreTests#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreIT#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "validated active history: Rename Class org.elasticsearch.search.functionscore.FunctionScoreTests renamed to org.elasticsearch.search.functionscore.FunctionScoreIT"
+                },
+                {
+                    "parentCommitId":  "7ccc193a666e2ae888e7ac93d677a2143e5e07c3",
+                    "commitId":  "15a62448343fd24f8e63f43b1e4b16f50005e4a5",
+                    "commitTime":  1433502723,
+                    "changeType":  "container change",
+                    "elementFileBefore":  "src/test/java/org/elasticsearch/search/functionscore/FunctionScoreTests.java",
+                    "elementNameBefore":  "src/test/java/org.elasticsearch.search.functionscore.FunctionScoreTests#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/functionscore/FunctionScoreTests.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.functionscore.FunctionScoreTests#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "validated active history: Move Source Folder src to core/src"
+                },
+                {
+                    "parentCommitId":  "3142fec2063d6ce769e366b26cbfd3f34a96e051",
+                    "commitId":  "be7c75c7450ab3538dc393ed876b791819bdc15b",
+                    "commitTime":  1410774380,
+                    "changeType":  "body change",
+                    "elementFileBefore":  "src/test/java/org/elasticsearch/search/functionscore/FunctionScoreTests.java",
+                    "elementNameBefore":  "src/test/java/org.elasticsearch.search.functionscore.FunctionScoreTests#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "src/test/java/org/elasticsearch/search/functionscore/FunctionScoreTests.java",
+                    "elementNameAfter":  "src/test/java/org.elasticsearch.search.functionscore.FunctionScoreTests#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "validated active history: Body Change"
+                },
+                {
+                    "parentCommitId":  "975037541291c9c2b220de060f63af212147fe44",
+                    "commitId":  "c5ff70bf430a81702c6e429942a8a56d0287f468",
+                    "commitTime":  1409562280,
+                    "changeType":  "introduced",
+                    "elementFileBefore":  "src/test/java/org/elasticsearch/search/functionscore/FunctionScoreTests.java",
+                    "elementNameBefore":  "src/test/java/org.elasticsearch.search.functionscore.FunctionScoreTests#checkWeightOnlyCreatesBoostFunction()",
+                    "elementFileAfter":  "src/test/java/org/elasticsearch/search/functionscore/FunctionScoreTests.java",
+                    "elementNameAfter":  "src/test/java/org.elasticsearch.search.functionscore.FunctionScoreTests#checkWeightOnlyCreatesBoostFunction()",
+                    "comment":  "validated active history: new method"
+                }
+            ]
+}

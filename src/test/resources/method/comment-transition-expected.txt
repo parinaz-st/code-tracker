@@ -2,3 +2,9 @@ javaparser-AnnotationDeclarationTransformationsTest-removingJavadoc-ct.json, 2, 
 javaparser-JavaParserAPIIntegrationTest-annotationMemberDeclarationResolve-ct.json, 1, 0, 1
 javaparser-JavaParserAPIIntegrationTest-enumConstantDeclarationResolve-ct.json, 2, 0, 0
 javaparser-NodeWithMembersBuildersTest-testGetConstructorsWithParameterTypes-ct.json, 4, 0, 0
+elasticsearch-FunctionScoreIT-checkWeightOnlyCreatesBoostFunction-ct.json, 0, 1, 9
+elasticsearch-JavaJodaTimeDuellingTests-testCustomTimeFormats-ct.json, 0, 1, 5
+elasticsearch-JsonSourceFieldMapper-enabled-ct.json, 0, 1, 3
+elasticsearch-SearchFieldsIT-testSingleValueFieldDatatField-ct.json, 0, 1, 6
+elasticsearch-TemplateQueryIT-testRawFSTemplate-ct.json, 0, 1, 8
+elasticsearch-TransportTwoNodesSearchIT-testFailedSearchWithWrongQuery-ct.json, 0, 1, 24

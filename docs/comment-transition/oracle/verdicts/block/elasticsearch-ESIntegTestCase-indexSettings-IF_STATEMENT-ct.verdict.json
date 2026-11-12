@@ -1,0 +1,9 @@
+{
+    "validation":  "Edited while uncommented. git log -L before the comment-out: introduced a4e2230 (in ElasticsearchIntegrationTest), body changes a3f0789, e5a699f, a312098 (data path API changes). 2db1db0 comments it out (\u0027norelease: disabled because custom data paths don\u0027t play well ...\u0027); ff5ad39 restores it with Path/createTempDir() replaced by String/randomAsciiOfLength(10) (uncommented + body change). Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

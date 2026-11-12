@@ -1,0 +1,60 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "startCommitId" : "35ed137684778ae80363576318d2919a32dce79e",
+  "filePath" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+  "functionName" : "testCustomTimeFormats",
+  "functionKey" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+  "functionStartLine" : 65,
+  "expectedChanges" : [ {
+    "parentCommitId" : "66e4fb4fb6e1b4cd1224409cb2f0541bcfb1900f",
+    "commitId" : "35ed137684778ae80363576318d2919a32dce79e",
+    "commitTime" : 1549032176,
+    "changeType" : "body change",
+    "elementFileBefore" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameBefore" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "elementFileAfter" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameAfter" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "comment" : "manually validated"
+  }, {
+    "parentCommitId" : "66e4fb4fb6e1b4cd1224409cb2f0541bcfb1900f",
+    "commitId" : "35ed137684778ae80363576318d2919a32dce79e",
+    "commitTime" : 1549032176,
+    "changeType" : "uncommented method",
+    "elementFileBefore" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameBefore" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "elementFileAfter" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameAfter" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "comment" : "manually validated: restored from // comments"
+  }, {
+    "parentCommitId" : "7b3dd3022da261a6f299567091034548a80a5ebd",
+    "commitId" : "daa2ec8a605d385a65b9ab3e89d016b3fd0dffe2",
+    "commitTime" : 1548236405,
+    "changeType" : "body change",
+    "elementFileBefore" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameBefore" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "elementFileAfter" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameAfter" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "comment" : "manually validated: edited inside the comment"
+  }, {
+    "parentCommitId" : "7b3dd3022da261a6f299567091034548a80a5ebd",
+    "commitId" : "daa2ec8a605d385a65b9ab3e89d016b3fd0dffe2",
+    "commitTime" : 1548236405,
+    "changeType" : "commented out method",
+    "elementFileBefore" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameBefore" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "elementFileAfter" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameAfter" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "comment" : "manually validated: turned into // comments"
+  }, {
+    "parentCommitId" : "991d17c8c40729420fe10db11071f9a1a91c3084",
+    "commitId" : "1c32497c44fcecaacea04170018ec62ef532b0e0",
+    "commitTime" : 1531207708,
+    "changeType" : "introduced",
+    "elementFileBefore" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameBefore" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "elementFileAfter" : "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+    "elementNameAfter" : "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+    "comment" : "validated active history: added with new class"
+  } ]
+}

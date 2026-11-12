@@ -5,3 +5,7 @@ javaparser-MethodResolutionLogic-isApplicable-FOR_STATEMENT-ct.json, 22, 0, 2
 javaparser-MethodResolutionLogic-isApplicable-IF_STATEMENT-reachedVariadicParam-ct.json, 2, 1, 4
 javaparser-MethodResolutionLogic-isApplicable-IF_STATEMENT-vararg-break-ct.json, 3, 0, 0
 javaparser-MethodResolutionLogic-isMoreSpecific-IF_STATEMENT-vararg-ct.json, 3, 0, 0
+elasticsearch-ESIntegTestCase-indexSettings-IF_STATEMENT-ct.json, 7, 0, 0
+elasticsearch-InternalTestCluster-ensureEstimatedStats-TRY_STATEMENT-ct.json, 0, 1, 3
+elasticsearch-MutableSearchResponse-createSearchResponseMerger-IF_STATEMENT-ct.json, 3, 0, 0
+elasticsearch-Querier-query-IF_STATEMENT-ct.json, 5, 1, 1

@@ -1,0 +1,43 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "filePath" : "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+  "functionName" : "testToSteps",
+  "functionKey" : "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testToSteps()",
+  "functionStartLine" : 120,
+  "variableName" : "client",
+  "variableKey" : "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testToSteps()$client:Client(121)",
+  "variableStartLine" : 121,
+  "startCommitId" : "74eaba2078dfd7f26331a632dc6575979fe47607",
+  "expectedChanges" : [ {
+    "parentCommitId" : "179074d3b0bf9cc684f1d5593d6b6fadf6b21d1f",
+    "commitId" : "74eaba2078dfd7f26331a632dc6575979fe47607",
+    "commitTime" : 1522282250,
+    "changeType" : "uncommented variable",
+    "elementFileBefore" : "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+    "elementNameBefore" : "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testToSteps()$client:Client(121)",
+    "elementFileAfter" : "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+    "elementNameAfter" : "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testToSteps()$client:Client(121)",
+    "comment" : "manually validated: restored from // comments"
+  }, {
+    "parentCommitId" : "d63cd8c9c3c09f50fdef1ef607e0a27e4e0f6148",
+    "commitId" : "57821cd55a01a2ae7ea06a3885624d84f32c4a07",
+    "commitTime" : 1522112055,
+    "changeType" : "commented out variable",
+    "elementFileBefore" : "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+    "elementNameBefore" : "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testSteps()$client:Client(132)",
+    "elementFileAfter" : "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+    "elementNameAfter" : "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testSteps()$client:Client(132)",
+    "comment" : "manually validated: turned into // comments"
+  }, {
+    "parentCommitId" : "fe22c08207563533632c9579364bafd1e95c94ba",
+    "commitId" : "d63cd8c9c3c09f50fdef1ef607e0a27e4e0f6148",
+    "commitTime" : 1522076403,
+    "changeType" : "introduced",
+    "elementFileBefore" : "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+    "elementNameBefore" : "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testSteps()$client:Client(132)",
+    "elementFileAfter" : "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+    "elementNameAfter" : "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testSteps()$client:Client(132)",
+    "comment" : "validated active history: added with method"
+  } ]
+}

@@ -1,0 +1,44 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "filePath" : "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+  "functionName" : "ensureEstimatedStats",
+  "functionKey" : "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()",
+  "functionStartLine" : 2212,
+  "blockType" : "TRY_STATEMENT",
+  "blockKey" : "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2228-2236)",
+  "blockStartLine" : 2228,
+  "blockEndLine" : 2236,
+  "startCommitId" : "4824148b71111ddaa9937bacc32cbabd98637d4e",
+  "expectedChanges" : [ {
+    "parentCommitId" : "ff664717fafd22908e9ee23f6e82b67b386c746a",
+    "commitId" : "4824148b71111ddaa9937bacc32cbabd98637d4e",
+    "commitTime" : 1563385516,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+    "elementNameBefore" : "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2228-2236)",
+    "elementFileAfter" : "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+    "elementNameAfter" : "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2228-2236)",
+    "comment" : "manually validated: restored from // comments"
+  }, {
+    "parentCommitId" : "e46622bb76338207f81e1426f8de1763b6c86453",
+    "commitId" : "4bec333f7264d1f154bcb17eb524d40bab68d746",
+    "commitTime" : 1558632454,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+    "elementNameBefore" : "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2337-2345)",
+    "elementFileAfter" : "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+    "elementNameAfter" : "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2337-2345)",
+    "comment" : "manually validated: turned into // comments"
+  }, {
+    "parentCommitId" : "3a5d4dcec2ce5a9ae50263891d5f49d24b0ea75b",
+    "commitId" : "1b1c157fbfdb4090f60f2a4f7a4816fd10dfebb5",
+    "commitTime" : 1550761203,
+    "changeType" : "introduced",
+    "elementFileBefore" : "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+    "elementNameBefore" : "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2416-2424)",
+    "elementFileAfter" : "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+    "elementNameAfter" : "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2416-2424)",
+    "comment" : "validated active history: new block"
+  } ]
+}

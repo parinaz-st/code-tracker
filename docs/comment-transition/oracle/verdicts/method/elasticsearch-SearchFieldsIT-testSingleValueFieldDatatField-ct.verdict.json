@@ -1,0 +1,68 @@
+{
+    "validation":  "Same refactoring as FunctionScoreIT: commented out at ab01ec5 with \u0027} NOCOMMIT fix this\u0027, restored and rewritten at 851af9e. Active history validated with git log -L: introduced ed79829, then only the file move (15a6244) and class rename (622d8a8). The tool reports only \u0027introduced\u0027 at 851af9e.",
+    "drop":  [
+                 "851af9e1006aa0290bfe02ff41c09e7d5c8a352d:introduced"
+             ],
+    "add":  [
+                {
+                    "commitId":  "851af9e1006aa0290bfe02ff41c09e7d5c8a352d",
+                    "changeType":  "uncommented method",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsIT.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsIT#testSingleValueFieldDatatField()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsIT#testSingleValueFieldDatatField()",
+                    "comment":  "manually validated: restored from // comments"
+                },
+                {
+                    "commitId":  "851af9e1006aa0290bfe02ff41c09e7d5c8a352d",
+                    "changeType":  "body change",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsIT.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsIT#testSingleValueFieldDatatField()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsIT#testSingleValueFieldDatatField()",
+                    "comment":  "manually validated"
+                },
+                {
+                    "commitId":  "ab01ec5b2892d347ca031ecf0da7667ed39b5da8",
+                    "changeType":  "commented out method",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsIT.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsIT#testSingleValueFieldDatatField()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsIT#testSingleValueFieldDatatField()",
+                    "comment":  "manually validated: turned into // comments"
+                },
+                {
+                    "parentCommitId":  "22a73d3e65d69a084f320ab86a7fff3ca8f3f877",
+                    "commitId":  "622d8a830e29baab16540ca942a41b646c32aca4",
+                    "commitTime":  1438638154,
+                    "changeType":  "container change",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsTests.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsTests#testSingleValueFieldDatatField()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsIT.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsIT#testSingleValueFieldDatatField()",
+                    "comment":  "validated active history: Rename Class org.elasticsearch.search.fields.SearchFieldsTests renamed to org.elasticsearch.search.fields.SearchFieldsIT"
+                },
+                {
+                    "parentCommitId":  "7ccc193a666e2ae888e7ac93d677a2143e5e07c3",
+                    "commitId":  "15a62448343fd24f8e63f43b1e4b16f50005e4a5",
+                    "commitTime":  1433502723,
+                    "changeType":  "container change",
+                    "elementFileBefore":  "src/test/java/org/elasticsearch/search/fields/SearchFieldsTests.java",
+                    "elementNameBefore":  "src/test/java/org.elasticsearch.search.fields.SearchFieldsTests#testSingleValueFieldDatatField()",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/search/fields/SearchFieldsTests.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.search.fields.SearchFieldsTests#testSingleValueFieldDatatField()",
+                    "comment":  "validated active history: Move Source Folder src to core/src"
+                },
+                {
+                    "parentCommitId":  "c13f5f21de04b37a79d854a3ef2b976f4ed247b7",
+                    "commitId":  "ed798296a55f0a9540b9ed666be76f173131518f",
+                    "commitTime":  1414065882,
+                    "changeType":  "introduced",
+                    "elementFileBefore":  "src/test/java/org/elasticsearch/search/fields/SearchFieldsTests.java",
+                    "elementNameBefore":  "src/test/java/org.elasticsearch.search.fields.SearchFieldsTests#testSingleValueFieldDatatField()",
+                    "elementFileAfter":  "src/test/java/org/elasticsearch/search/fields/SearchFieldsTests.java",
+                    "elementNameAfter":  "src/test/java/org.elasticsearch.search.fields.SearchFieldsTests#testSingleValueFieldDatatField()",
+                    "comment":  "validated active history: new method"
+                }
+            ]
+}

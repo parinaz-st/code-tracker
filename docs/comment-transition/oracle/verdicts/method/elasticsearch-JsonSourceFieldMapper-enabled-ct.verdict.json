@@ -1,0 +1,37 @@
+{
+    "validation":  "Production code, inner class Builder. git log -L on the method: added in the initial commit b3337c3, unchanged until 0545423 turns it into // comments (with a prose line \u0027// source is always enabled for now\u0027 above it), unchanged while commented (6 commits), restored with identical text at 3a55998. The tool reports only \u0027introduced\u0027 at 3a55998: the prose line makes the commented run unparseable, so the restoration is not recognised.",
+    "drop":  [
+                 "3a55998a3b2a733451c647599b5b714ce25ba6e5:introduced"
+             ],
+    "add":  [
+                {
+                    "commitId":  "3a55998a3b2a733451c647599b5b714ce25ba6e5",
+                    "changeType":  "uncommented method",
+                    "elementFileBefore":  "modules/elasticsearch/src/main/java/org/elasticsearch/index/mapper/json/JsonSourceFieldMapper.java",
+                    "elementNameBefore":  "modules/elasticsearch/src/main/java/org.elasticsearch.index.mapper.json.JsonSourceFieldMapper.Builder#enabled(boolean)",
+                    "elementFileAfter":  "modules/elasticsearch/src/main/java/org/elasticsearch/index/mapper/json/JsonSourceFieldMapper.java",
+                    "elementNameAfter":  "modules/elasticsearch/src/main/java/org.elasticsearch.index.mapper.json.JsonSourceFieldMapper.Builder#enabled(boolean)",
+                    "comment":  "manually validated: restored from // comments"
+                },
+                {
+                    "commitId":  "054542383762e28de1e0595ece9bbe3b137a86cf",
+                    "changeType":  "commented out method",
+                    "elementFileBefore":  "modules/elasticsearch/src/main/java/org/elasticsearch/index/mapper/json/JsonSourceFieldMapper.java",
+                    "elementNameBefore":  "modules/elasticsearch/src/main/java/org.elasticsearch.index.mapper.json.JsonSourceFieldMapper.Builder#enabled(boolean)",
+                    "elementFileAfter":  "modules/elasticsearch/src/main/java/org/elasticsearch/index/mapper/json/JsonSourceFieldMapper.java",
+                    "elementNameAfter":  "modules/elasticsearch/src/main/java/org.elasticsearch.index.mapper.json.JsonSourceFieldMapper.Builder#enabled(boolean)",
+                    "comment":  "manually validated: turned into // comments"
+                },
+                {
+                    "parentCommitId":  "ec72ca8b7a115f9b2eea3c76c518062b99a1d015",
+                    "commitId":  "b3337c312765e51cec7bde5883bbc0a08f56fb65",
+                    "commitTime":  1265635806,
+                    "changeType":  "introduced",
+                    "elementFileBefore":  "modules/elasticsearch/src/main/java/org/elasticsearch/index/mapper/json/JsonSourceFieldMapper.java",
+                    "elementNameBefore":  "modules/elasticsearch/src/main/java/org.elasticsearch.index.mapper.json.JsonSourceFieldMapper.Builder#enabled(boolean)",
+                    "elementFileAfter":  "modules/elasticsearch/src/main/java/org/elasticsearch/index/mapper/json/JsonSourceFieldMapper.java",
+                    "elementNameAfter":  "modules/elasticsearch/src/main/java/org.elasticsearch.index.mapper.json.JsonSourceFieldMapper.Builder#enabled(boolean)",
+                    "comment":  "validated active history: added with new class"
+                }
+            ]
+}

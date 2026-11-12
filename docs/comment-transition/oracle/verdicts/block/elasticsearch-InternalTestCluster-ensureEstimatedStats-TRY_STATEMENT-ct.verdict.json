@@ -1,0 +1,37 @@
+{
+    "validation":  "The accounting-breaker check was commented out twice: the statement is added at 623d370, commented out at b3e1585 (\u0027while diagnosing\u0027), re-enabled at f19fdcd, then wrapped in try/assertBusy at 1b1c157, where this try-block is introduced. 4bec333 comments the try-block out (\u0027Mute ... until we have a new Lucene snapshot\u0027), 4824148 restores it with identical text (15 commits in between). The block itself has no other change between 1b1c157 and 4bec333. The tool reports only \u0027introduced\u0027 at 4824148.",
+    "drop":  [
+                 "4824148b71111ddaa9937bacc32cbabd98637d4e:introduced"
+             ],
+    "add":  [
+                {
+                    "commitId":  "4824148b71111ddaa9937bacc32cbabd98637d4e",
+                    "changeType":  "uncommented block",
+                    "elementFileBefore":  "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+                    "elementNameBefore":  "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2228-2236)",
+                    "elementFileAfter":  "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+                    "elementNameAfter":  "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2228-2236)",
+                    "comment":  "manually validated: restored from // comments"
+                },
+                {
+                    "commitId":  "4bec333f7264d1f154bcb17eb524d40bab68d746",
+                    "changeType":  "commented out block",
+                    "elementFileBefore":  "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+                    "elementNameBefore":  "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2337-2345)",
+                    "elementFileAfter":  "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+                    "elementNameAfter":  "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2337-2345)",
+                    "comment":  "manually validated: turned into // comments"
+                },
+                {
+                    "parentCommitId":  "3a5d4dcec2ce5a9ae50263891d5f49d24b0ea75b",
+                    "commitId":  "1b1c157fbfdb4090f60f2a4f7a4816fd10dfebb5",
+                    "commitTime":  1550761203,
+                    "changeType":  "introduced",
+                    "elementFileBefore":  "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+                    "elementNameBefore":  "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2416-2424)",
+                    "elementFileAfter":  "test/framework/src/main/java/org/elasticsearch/test/InternalTestCluster.java",
+                    "elementNameAfter":  "test/framework/src/main/java/org.elasticsearch.test.InternalTestCluster#ensureEstimatedStats()$try(2416-2424)",
+                    "comment":  "validated active history: new block"
+                }
+            ]
+}

@@ -1,0 +1,17 @@
+{
+    "validation":  "Branch and merge case. On the compute-engine branch, 06507eb comments the if/else out; the merge 5429621 of elastic/main into compute-engine keeps the commented version (its first parent is the branch, where the block is already commented, so the merge changes nothing for the block); fe32fb6 restores it unchanged. The active history (c4253ad, 2b35157, 783c9ed body changes, introduced e5d18ad) matches git log -L. The tool attributes the comment-out to the merge 5429621, because in git-log order it reaches a main-branch commit with the block still active right after the merge. Ground truth follows the first-parent history: commented out at 06507eb.",
+    "drop":  [
+                 "542962188e:commented out block"
+             ],
+    "add":  [
+                {
+                    "commitId":  "06507eb9b5a",
+                    "changeType":  "commented out block",
+                    "elementFileBefore":  "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+                    "elementNameBefore":  "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(139-143)",
+                    "elementFileAfter":  "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+                    "elementNameAfter":  "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(172-176)",
+                    "comment":  "manually validated: turned into // comments on the compute-engine branch"
+                }
+            ]
+}

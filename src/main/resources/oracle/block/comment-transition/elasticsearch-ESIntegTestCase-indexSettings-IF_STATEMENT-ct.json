@@ -1,0 +1,84 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "filePath" : "core/src/test/java/org/elasticsearch/test/ESIntegTestCase.java",
+  "functionName" : "indexSettings",
+  "functionKey" : "core/src/test/java/org.elasticsearch.test.ESIntegTestCase#indexSettings()",
+  "functionStartLine" : 686,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "core/src/test/java/org.elasticsearch.test.ESIntegTestCase#indexSettings()$if(697-701)",
+  "blockStartLine" : 697,
+  "blockEndLine" : 701,
+  "startCommitId" : "ff5ad39c7a5f8ea21d3ff86d3ce50668602d7a74",
+  "expectedChanges" : [ {
+    "parentCommitId" : "bec07a7eb50c9f122c7b764a9c470362ad515882",
+    "commitId" : "ff5ad39c7a5f8ea21d3ff86d3ce50668602d7a74",
+    "commitTime" : 1439398306,
+    "changeType" : "body change",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/test/ESIntegTestCase.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.test.ESIntegTestCase#indexSettings()$if(697-701)",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/test/ESIntegTestCase.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.test.ESIntegTestCase#indexSettings()$if(697-701)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "bec07a7eb50c9f122c7b764a9c470362ad515882",
+    "commitId" : "ff5ad39c7a5f8ea21d3ff86d3ce50668602d7a74",
+    "commitTime" : 1439398306,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/test/ESIntegTestCase.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.test.ESIntegTestCase#indexSettings()$if(697-701)",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/test/ESIntegTestCase.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.test.ESIntegTestCase#indexSettings()$if(697-701)",
+    "comment" : "Block Change, Uncommented Block"
+  }, {
+    "parentCommitId" : "5dd5936fada799136ed6d990e0ee5ff151a09f94",
+    "commitId" : "2db1db0686204fde5335d17916e2530da9462d3a",
+    "commitTime" : 1438892920,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/test/ESIntegTestCase.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.test.ESIntegTestCase#indexSettings()$if(696-700)",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/test/ESIntegTestCase.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.test.ESIntegTestCase#indexSettings()$if(697-701)",
+    "comment" : "Block Change, Commented-out Block"
+  }, {
+    "parentCommitId" : "61b60da7d24b07b7c1d3c48f90ca2bec5ce211c7",
+    "commitId" : "a3120987856adf04fb15e4ff8ededeca1c5657d0",
+    "commitTime" : 1429319393,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/ElasticsearchIntegrationTest.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.ElasticsearchIntegrationTest#indexSettings()$if(772-776)",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/ElasticsearchIntegrationTest.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.ElasticsearchIntegrationTest#indexSettings()$if(766-770)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "401452608ea788ef374dc40df1b7257f552ad520",
+    "commitId" : "e5a699fa05a6e4ffcb919e8a2a6da8f57e1c2ce8",
+    "commitTime" : 1429160282,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/ElasticsearchIntegrationTest.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.ElasticsearchIntegrationTest#indexSettings()$if(810-814)",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/ElasticsearchIntegrationTest.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.ElasticsearchIntegrationTest#indexSettings()$if(772-776)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "c326738193dffe036757547855c92b903d01d6a5",
+    "commitId" : "a3f078985b1e3675117d134af7fd67ea39302549",
+    "commitTime" : 1429127120,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/ElasticsearchIntegrationTest.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.ElasticsearchIntegrationTest#indexSettings()$if(780-784)",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/ElasticsearchIntegrationTest.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.ElasticsearchIntegrationTest#indexSettings()$if(808-812)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "582d5e8d3c2eac4a981788c5a0f0bdf516eacf48",
+    "commitId" : "a4e2230ebd5d424a78c266dc98f0521f897e580b",
+    "commitTime" : 1419860450,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/test/ElasticsearchIntegrationTest.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.test.ElasticsearchIntegrationTest#indexSettings()$if(744-748)",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/test/ElasticsearchIntegrationTest.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.test.ElasticsearchIntegrationTest#indexSettings()$if(744-748)",
+    "comment" : "new block"
+  } ]
+}

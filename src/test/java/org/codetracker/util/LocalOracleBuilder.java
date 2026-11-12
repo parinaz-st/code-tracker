@@ -168,6 +168,11 @@ public class LocalOracleBuilder {
             }
         }
         for (List<String> log : logMap.values()) commits.addAll(log);
+        if (Boolean.getBoolean("ct.nocache")) {
+            // helper run (e.g. tracking the period before a comment-out): output only, no logs or cache
+            System.out.println("  (ct.nocache: commit logs and cache not written)");
+            return;
+        }
         new ObjectMapper().writeValue(logFile, new GitLog(logMap));
         int written = 0;
         for (String commit : commits)

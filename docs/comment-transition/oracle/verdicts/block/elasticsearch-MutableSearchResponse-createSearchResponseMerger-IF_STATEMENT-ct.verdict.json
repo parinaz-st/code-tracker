@@ -1,0 +1,9 @@
+{
+    "validation":  "Production code. Block text at every version (blockevo): added at 9cc331c, commented out at 8e53b0f (\u0027TODO uncomment this code once Kibana moves to polling ...\u0027), restored with identical text at e0d2616 ten days later. No other change. Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

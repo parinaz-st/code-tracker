@@ -1,0 +1,37 @@
+{
+    "validation":  "\u0027Client client = mock(Client.class);\u0027 is declared in testSteps at d63cd8c, commented out at 57821cd, and restored unchanged at 74eaba2, in the same commit that renames the method testSteps -\u003e testToSteps. The tool reports only \u0027introduced\u0027 at 74eaba2: the commented-state search needs the container to keep its signature (ADR 0008/0012 limit).",
+    "drop":  [
+                 "74eaba2078dfd7f26331a632dc6575979fe47607:introduced"
+             ],
+    "add":  [
+                {
+                    "commitId":  "74eaba2078dfd7f26331a632dc6575979fe47607",
+                    "changeType":  "uncommented variable",
+                    "elementFileBefore":  "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+                    "elementNameBefore":  "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testToSteps()$client:Client(121)",
+                    "elementFileAfter":  "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+                    "elementNameAfter":  "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testToSteps()$client:Client(121)",
+                    "comment":  "manually validated: restored from // comments"
+                },
+                {
+                    "commitId":  "57821cd55a01a2ae7ea06a3885624d84f32c4a07",
+                    "changeType":  "commented out variable",
+                    "elementFileBefore":  "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+                    "elementNameBefore":  "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testSteps()$client:Client(132)",
+                    "elementFileAfter":  "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+                    "elementNameAfter":  "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testSteps()$client:Client(132)",
+                    "comment":  "manually validated: turned into // comments"
+                },
+                {
+                    "parentCommitId":  "fe22c08207563533632c9579364bafd1e95c94ba",
+                    "commitId":  "d63cd8c9c3c09f50fdef1ef607e0a27e4e0f6148",
+                    "commitTime":  1522076403,
+                    "changeType":  "introduced",
+                    "elementFileBefore":  "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+                    "elementNameBefore":  "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testSteps()$client:Client(132)",
+                    "elementFileAfter":  "x-pack/plugin/index-lifecycle/src/test/java/org/elasticsearch/xpack/indexlifecycle/LifecyclePolicyTests.java",
+                    "elementNameAfter":  "x-pack/plugin/index-lifecycle/src/test/java/org.elasticsearch.xpack.indexlifecycle.LifecyclePolicyTests#testSteps()$client:Client(132)",
+                    "comment":  "validated active history: added with method"
+                }
+            ]
+}

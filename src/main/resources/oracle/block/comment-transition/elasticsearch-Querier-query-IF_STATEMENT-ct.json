@@ -1,0 +1,74 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "filePath" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+  "functionName" : "query",
+  "functionKey" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)",
+  "functionStartLine" : 115,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(141-145)",
+  "blockStartLine" : 141,
+  "blockEndLine" : 145,
+  "startCommitId" : "fe32fb6208d28784603a7e60aeb04114602de815",
+  "expectedChanges" : [ {
+    "parentCommitId" : "542962188ecf6b3c794bf049b03084623fa1db88",
+    "commitId" : "fe32fb6208d28784603a7e60aeb04114602de815",
+    "commitTime" : 1661340467,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameBefore" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(141-145)",
+    "elementFileAfter" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameAfter" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(141-145)",
+    "comment" : "Block Change, Uncommented Block"
+  }, {
+    "parentCommitId" : "90fe732024070b30d96735f86b09d2b82e88a833",
+    "commitId" : "06507eb9b5a4d17e4c66bf877b00e051687f0883",
+    "commitTime" : 1656923751,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameBefore" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(139-143)",
+    "elementFileAfter" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameAfter" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(172-176)",
+    "comment" : "manually validated: turned into // comments on the compute-engine branch"
+  }, {
+    "parentCommitId" : "e56d3d3de67e198663a61c72047a4baf0accd9c8",
+    "commitId" : "c4253ad29815d55b92746fd3e212ec33325ed54e",
+    "commitTime" : 1647267281,
+    "changeType" : "body change",
+    "elementFileBefore" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameBefore" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(139-143)",
+    "elementFileAfter" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameAfter" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(138-142)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "ad9005504477fe97f9484bd8942bd03a2b865064",
+    "commitId" : "2b351571961f172fd59290ee079126bbd081ceaf",
+    "commitTime" : 1552913760,
+    "changeType" : "body change",
+    "elementFileBefore" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameBefore" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(120-124)",
+    "elementFileAfter" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameAfter" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(120-124)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "630889baec86ab8edfd554566034155a5af7f713",
+    "commitId" : "783c9ed372428180295c52a2a589bba0fc53afd1",
+    "commitTime" : 1549064305,
+    "changeType" : "body change",
+    "elementFileBefore" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameBefore" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(Schema, QueryContainer, String, ActionListener)$if(102-106)",
+    "elementFileAfter" : "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameAfter" : "x-pack/plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(List, QueryContainer, String, ActionListener)$if(120-124)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "df61103b05d2d2784ebfe873a7dbde212448d998",
+    "commitId" : "e5d18ad45cc9530ec4a7f8b0328e8bc65dafc344",
+    "commitTime" : 1523553610,
+    "changeType" : "introduced",
+    "elementFileBefore" : "plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameBefore" : "plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(Schema, QueryContainer, String, ActionListener)$if(99-103)",
+    "elementFileAfter" : "plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java",
+    "elementNameAfter" : "plugin/sql/src/main/java/org.elasticsearch.xpack.sql.execution.search.Querier#query(Schema, QueryContainer, String, ActionListener)$if(99-103)",
+    "comment" : "new block"
+  } ]
+}

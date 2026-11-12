@@ -1,0 +1,44 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "filePath" : "x-pack/plugin/async-search/src/main/java/org/elasticsearch/xpack/search/MutableSearchResponse.java",
+  "functionName" : "createSearchResponseMerger",
+  "functionKey" : "x-pack/plugin/async-search/src/main/java/org.elasticsearch.xpack.search.MutableSearchResponse#createSearchResponseMerger(AsyncSearchTask)",
+  "functionStartLine" : 308,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "x-pack/plugin/async-search/src/main/java/org.elasticsearch.xpack.search.MutableSearchResponse#createSearchResponseMerger(AsyncSearchTask)$if(309-311)",
+  "blockStartLine" : 309,
+  "blockEndLine" : 311,
+  "startCommitId" : "e0d2616c3b522009b891403ca5e298cbd1d1b426",
+  "expectedChanges" : [ {
+    "parentCommitId" : "e568f7038daa8791f6f5db92e514cf9d8408418b",
+    "commitId" : "e0d2616c3b522009b891403ca5e298cbd1d1b426",
+    "commitTime" : 1708705062,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "x-pack/plugin/async-search/src/main/java/org/elasticsearch/xpack/search/MutableSearchResponse.java",
+    "elementNameBefore" : "x-pack/plugin/async-search/src/main/java/org.elasticsearch.xpack.search.MutableSearchResponse#createSearchResponseMerger(AsyncSearchTask)$if(309-311)",
+    "elementFileAfter" : "x-pack/plugin/async-search/src/main/java/org/elasticsearch/xpack/search/MutableSearchResponse.java",
+    "elementNameAfter" : "x-pack/plugin/async-search/src/main/java/org.elasticsearch.xpack.search.MutableSearchResponse#createSearchResponseMerger(AsyncSearchTask)$if(309-311)",
+    "comment" : "Block Change, Uncommented Block"
+  }, {
+    "parentCommitId" : "5c284ec9874492dd979a75a2da47b379731149b5",
+    "commitId" : "8e53b0f0bffd18e8ac09a2241b900dae98e954a7",
+    "commitTime" : 1707852084,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "x-pack/plugin/async-search/src/main/java/org/elasticsearch/xpack/search/MutableSearchResponse.java",
+    "elementNameBefore" : "x-pack/plugin/async-search/src/main/java/org.elasticsearch.xpack.search.MutableSearchResponse#createSearchResponseMerger(AsyncSearchTask)$if(309-311)",
+    "elementFileAfter" : "x-pack/plugin/async-search/src/main/java/org/elasticsearch/xpack/search/MutableSearchResponse.java",
+    "elementNameAfter" : "x-pack/plugin/async-search/src/main/java/org.elasticsearch.xpack.search.MutableSearchResponse#createSearchResponseMerger(AsyncSearchTask)$if(309-311)",
+    "comment" : "Block Change, Commented-out Block"
+  }, {
+    "parentCommitId" : "0c98fb2a8ec4ab6a41d10dec3171e0c57a5589cf",
+    "commitId" : "9cc331c79bd1b66a780dfbd490cea170ea1ea4fb",
+    "commitTime" : 1705412040,
+    "changeType" : "introduced",
+    "elementFileBefore" : "x-pack/plugin/async-search/src/main/java/org/elasticsearch/xpack/search/MutableSearchResponse.java",
+    "elementNameBefore" : "x-pack/plugin/async-search/src/main/java/org.elasticsearch.xpack.search.MutableSearchResponse#createSearchResponseMerger(AsyncSearchTask)$if(309-311)",
+    "elementFileAfter" : "x-pack/plugin/async-search/src/main/java/org/elasticsearch/xpack/search/MutableSearchResponse.java",
+    "elementNameAfter" : "x-pack/plugin/async-search/src/main/java/org.elasticsearch.xpack.search.MutableSearchResponse#createSearchResponseMerger(AsyncSearchTask)$if(309-311)",
+    "comment" : "added with method"
+  } ]
+}

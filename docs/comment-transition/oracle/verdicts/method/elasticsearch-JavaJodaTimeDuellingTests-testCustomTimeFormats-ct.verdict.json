@@ -1,0 +1,55 @@
+{
+    "validation":  "git log -L: added at 1c32497, unchanged until daa2ec8, which turns it into // comments AND extends it inside the comment (locale assertions added in commented form) under a new prose line \u0027// this test requires ... COMPAT\u0027. 35ed137 restores only the original four assertions (identical to the last active version); the extra commented lines become a separate commented test testCustomLocales. Edits made inside the comment are labelled at the commit where they happened (ADR 0013, convention 6): body change at daa2ec8 and at 35ed137. The tool reports only \u0027introduced\u0027 at 35ed137 (prose line, see above).",
+    "drop":  [
+                 "35ed137684778ae80363576318d2919a32dce79e:introduced"
+             ],
+    "add":  [
+                {
+                    "commitId":  "35ed137684778ae80363576318d2919a32dce79e",
+                    "changeType":  "uncommented method",
+                    "elementFileBefore":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameBefore":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "elementFileAfter":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameAfter":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "comment":  "manually validated: restored from // comments"
+                },
+                {
+                    "commitId":  "35ed137684778ae80363576318d2919a32dce79e",
+                    "changeType":  "body change",
+                    "elementFileBefore":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameBefore":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "elementFileAfter":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameAfter":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "comment":  "manually validated"
+                },
+                {
+                    "commitId":  "daa2ec8a605d385a65b9ab3e89d016b3fd0dffe2",
+                    "changeType":  "commented out method",
+                    "elementFileBefore":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameBefore":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "elementFileAfter":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameAfter":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "comment":  "manually validated: turned into // comments"
+                },
+                {
+                    "commitId":  "daa2ec8a605d385a65b9ab3e89d016b3fd0dffe2",
+                    "changeType":  "body change",
+                    "elementFileBefore":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameBefore":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "elementFileAfter":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameAfter":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "comment":  "manually validated: edited inside the comment"
+                },
+                {
+                    "parentCommitId":  "991d17c8c40729420fe10db11071f9a1a91c3084",
+                    "commitId":  "1c32497c44fcecaacea04170018ec62ef532b0e0",
+                    "commitTime":  1531207708,
+                    "changeType":  "introduced",
+                    "elementFileBefore":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameBefore":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "elementFileAfter":  "server/src/test/java/org/elasticsearch/common/joda/JavaJodaTimeDuellingTests.java",
+                    "elementNameAfter":  "server/src/test/java/org.elasticsearch.common.joda.JavaJodaTimeDuellingTests#testCustomTimeFormats()",
+                    "comment":  "validated active history: added with new class"
+                }
+            ]
+}

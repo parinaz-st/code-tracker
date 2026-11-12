@@ -1,0 +1,17 @@
+{
+    "validation":  "Born commented: f1d1cce adds \u0027//private final PlanExecutor planExecutor;\u0027 (with the constructor parameter in /* */ and the assignment in //); 17917b1 turns all of them into code. Convention M4: introduced plus \u0027uncommented attribute\u0027 at 17917b1. The tool reports only \u0027introduced\u0027.",
+    "drop":  [
+
+             ],
+    "add":  [
+                {
+                    "commitId":  "17917b15b3",
+                    "changeType":  "uncommented attribute",
+                    "elementFileBefore":  "x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/plugin/TransportEqlStatsAction.java",
+                    "elementNameBefore":  "x-pack/plugin/eql/src/main/java/org.elasticsearch.xpack.eql.plugin.TransportEqlStatsAction@(final)(private)planExecutor:PlanExecutor(29)",
+                    "elementFileAfter":  "x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/plugin/TransportEqlStatsAction.java",
+                    "elementNameAfter":  "x-pack/plugin/eql/src/main/java/org.elasticsearch.xpack.eql.plugin.TransportEqlStatsAction@(final)(private)planExecutor:PlanExecutor(29)",
+                    "comment":  "manually validated: restored from // comments"
+                }
+            ]
+}

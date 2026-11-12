@@ -1,0 +1,33 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "filePath" : "core/src/test/java/org/elasticsearch/index/search/ESToParentBlockJoinQueryTests.java",
+  "functionName" : "testRewrite",
+  "functionKey" : "core/src/test/java/org.elasticsearch.index.search.ESToParentBlockJoinQueryTests#testRewrite()",
+  "functionStartLine" : 77,
+  "variableName" : "expected",
+  "variableKey" : "core/src/test/java/org.elasticsearch.index.search.ESToParentBlockJoinQueryTests#testRewrite()$expected:Query(82)",
+  "variableStartLine" : 82,
+  "startCommitId" : "5c84640126e66de68f6e742ccb1a9d351f638fd4",
+  "expectedChanges" : [ {
+    "parentCommitId" : "48280a940379e5ba7839c9dd2d1483951855473a",
+    "commitId" : "5c84640126e66de68f6e742ccb1a9d351f638fd4",
+    "commitTime" : 1488217144,
+    "changeType" : "introduced",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/index/search/ESToParentBlockJoinQueryTests.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.index.search.ESToParentBlockJoinQueryTests#testRewrite()$expected:Query(82)",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/index/search/ESToParentBlockJoinQueryTests.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.index.search.ESToParentBlockJoinQueryTests#testRewrite()$expected:Query(82)",
+    "comment" : "new variable"
+  }, {
+    "parentCommitId" : "48280a940379e5ba7839c9dd2d1483951855473a",
+    "commitId" : "5c84640126e66de68f6e742ccb1a9d351f638fd4",
+    "commitTime" : 1488217144,
+    "changeType" : "uncommented variable",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/index/search/ESToParentBlockJoinQueryTests.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.index.search.ESToParentBlockJoinQueryTests#testRewrite()$expected:Query(82)",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/index/search/ESToParentBlockJoinQueryTests.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.index.search.ESToParentBlockJoinQueryTests#testRewrite()$expected:Query(82)",
+    "comment" : "manually validated: restored from // comments"
+  } ]
+}

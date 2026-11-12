@@ -1,0 +1,17 @@
+{
+    "validation":  "Born commented: 8d6a41f adds \u0027Query expected = ...\u0027 as // comments under \u0027// do this once LUCENE-7685 is addressed\u0027; 5c84640 turns it into code (no commit in between). Convention M4: introduced plus \u0027uncommented variable\u0027 at 5c84640. The tool reports only \u0027introduced\u0027.",
+    "drop":  [
+
+             ],
+    "add":  [
+                {
+                    "commitId":  "5c84640126",
+                    "changeType":  "uncommented variable",
+                    "elementFileBefore":  "core/src/test/java/org/elasticsearch/index/search/ESToParentBlockJoinQueryTests.java",
+                    "elementNameBefore":  "core/src/test/java/org.elasticsearch.index.search.ESToParentBlockJoinQueryTests#testRewrite()$expected:Query(82)",
+                    "elementFileAfter":  "core/src/test/java/org/elasticsearch/index/search/ESToParentBlockJoinQueryTests.java",
+                    "elementNameAfter":  "core/src/test/java/org.elasticsearch.index.search.ESToParentBlockJoinQueryTests#testRewrite()$expected:Query(82)",
+                    "comment":  "manually validated: restored from // comments"
+                }
+            ]
+}

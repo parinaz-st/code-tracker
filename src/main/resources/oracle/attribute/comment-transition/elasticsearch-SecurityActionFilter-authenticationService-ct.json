@@ -1,0 +1,30 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "startCommitId" : "3a4af4c7bcdcd05045a50d799877f91bd0639225",
+  "filePath" : "src/main/java/org/elasticsearch/shield/SecurityActionFilter.java",
+  "attributeName" : "authenticationService",
+  "attributeKey" : "src/main/java/org.elasticsearch.shield.SecurityActionFilter@(final)(private)authenticationService:AuthenticationService(21)",
+  "attributeDeclarationLine" : 21,
+  "expectedChanges" : [ {
+    "parentCommitId" : "0b751b12f152c5c4ec5ccbc0e2003c39c073363a",
+    "commitId" : "3a4af4c7bcdcd05045a50d799877f91bd0639225",
+    "commitTime" : 1406581005,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/main/java/org/elasticsearch/shield/SecurityActionFilter.java",
+    "elementNameBefore" : "src/main/java/org.elasticsearch.shield.SecurityActionFilter@(final)(private)authenticationService:AuthenticationService(21)",
+    "elementFileAfter" : "src/main/java/org/elasticsearch/shield/SecurityActionFilter.java",
+    "elementNameAfter" : "src/main/java/org.elasticsearch.shield.SecurityActionFilter@(final)(private)authenticationService:AuthenticationService(21)",
+    "comment" : "new attribute"
+  }, {
+    "parentCommitId" : "0b751b12f152c5c4ec5ccbc0e2003c39c073363a",
+    "commitId" : "3a4af4c7bcdcd05045a50d799877f91bd0639225",
+    "commitTime" : 1406581005,
+    "changeType" : "uncommented attribute",
+    "elementFileBefore" : "src/main/java/org/elasticsearch/shield/SecurityActionFilter.java",
+    "elementNameBefore" : "src/main/java/org.elasticsearch.shield.SecurityActionFilter@(final)(private)authenticationService:AuthenticationService(21)",
+    "elementFileAfter" : "src/main/java/org/elasticsearch/shield/SecurityActionFilter.java",
+    "elementNameAfter" : "src/main/java/org.elasticsearch.shield.SecurityActionFilter@(final)(private)authenticationService:AuthenticationService(21)",
+    "comment" : "manually validated: restored from // comments"
+  } ]
+}

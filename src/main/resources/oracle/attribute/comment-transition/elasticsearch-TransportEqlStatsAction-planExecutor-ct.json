@@ -1,0 +1,30 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "startCommitId" : "17917b15b3160eb4fa11108deab86ae963437aa0",
+  "filePath" : "x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/plugin/TransportEqlStatsAction.java",
+  "attributeName" : "planExecutor",
+  "attributeKey" : "x-pack/plugin/eql/src/main/java/org.elasticsearch.xpack.eql.plugin.TransportEqlStatsAction@(final)(private)planExecutor:PlanExecutor(29)",
+  "attributeDeclarationLine" : 29,
+  "expectedChanges" : [ {
+    "parentCommitId" : "79d2e1e7882c84fa9736ebfe7522556beb63e14c",
+    "commitId" : "17917b15b3160eb4fa11108deab86ae963437aa0",
+    "commitTime" : 1583376609,
+    "changeType" : "introduced",
+    "elementFileBefore" : "x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/plugin/TransportEqlStatsAction.java",
+    "elementNameBefore" : "x-pack/plugin/eql/src/main/java/org.elasticsearch.xpack.eql.plugin.TransportEqlStatsAction@(final)(private)planExecutor:PlanExecutor(29)",
+    "elementFileAfter" : "x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/plugin/TransportEqlStatsAction.java",
+    "elementNameAfter" : "x-pack/plugin/eql/src/main/java/org.elasticsearch.xpack.eql.plugin.TransportEqlStatsAction@(final)(private)planExecutor:PlanExecutor(29)",
+    "comment" : "new attribute"
+  }, {
+    "parentCommitId" : "79d2e1e7882c84fa9736ebfe7522556beb63e14c",
+    "commitId" : "17917b15b3160eb4fa11108deab86ae963437aa0",
+    "commitTime" : 1583376609,
+    "changeType" : "uncommented attribute",
+    "elementFileBefore" : "x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/plugin/TransportEqlStatsAction.java",
+    "elementNameBefore" : "x-pack/plugin/eql/src/main/java/org.elasticsearch.xpack.eql.plugin.TransportEqlStatsAction@(final)(private)planExecutor:PlanExecutor(29)",
+    "elementFileAfter" : "x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/plugin/TransportEqlStatsAction.java",
+    "elementNameAfter" : "x-pack/plugin/eql/src/main/java/org.elasticsearch.xpack.eql.plugin.TransportEqlStatsAction@(final)(private)planExecutor:PlanExecutor(29)",
+    "comment" : "manually validated: restored from // comments"
+  } ]
+}
