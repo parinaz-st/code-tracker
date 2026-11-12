@@ -1,0 +1,26 @@
+{
+    "validation":  "git log -L on the loop gives exactly the tool\u0027s 9 commits (introduced ffaf99e, then e8475b4 ... 47269755). 4b032f6 turns the \u0027Assert.assertTrue(... requires the following check(s) to appear ...)\u0027 statement of the loop body into // comments (\u0027till https://github.com/checkstyle/checkstyle/issues/5817\u0027); 47269755 (\u0027restore disabled UT\u0027) turns it back into code. Statement-level transitions are added as for the javaparser FOR loop; the scoring currently filters them out.",
+    "drop":  [
+
+             ],
+    "add":  [
+                {
+                    "commitId":  "47269755a8a5363d82f23cd660252394ac11be86",
+                    "changeType":  "uncommented statement",
+                    "elementFileBefore":  "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+                    "elementNameBefore":  "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1336)",
+                    "elementFileAfter":  "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+                    "elementNameAfter":  "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1335)",
+                    "comment":  "manually validated: a statement of the loop body restored"
+                },
+                {
+                    "commitId":  "4b032f6a40",
+                    "changeType":  "commented out statement",
+                    "elementFileBefore":  "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+                    "elementNameBefore":  "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1335)",
+                    "elementFileAfter":  "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+                    "elementNameAfter":  "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1336)",
+                    "comment":  "manually validated: a statement of the loop body turned into // comments"
+                }
+            ]
+}

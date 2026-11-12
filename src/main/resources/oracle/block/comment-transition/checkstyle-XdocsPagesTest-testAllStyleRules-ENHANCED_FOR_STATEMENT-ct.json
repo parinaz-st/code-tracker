@@ -1,0 +1,134 @@
+{
+  "repositoryName" : "checkstyle",
+  "repositoryWebURL" : "https://github.com/checkstyle/checkstyle.git",
+  "filePath" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+  "functionName" : "testAllStyleRules",
+  "functionKey" : "",
+  "functionStartLine" : 1281,
+  "blockType" : "ENHANCED_FOR_STATEMENT",
+  "blockKey" : "",
+  "blockStartLine" : 1282,
+  "blockEndLine" : 1335,
+  "startCommitId" : "47269755a8a5363d82f23cd660252394ac11be86",
+  "expectedChanges" : [ {
+    "parentCommitId" : "1d4d65b4b7b0839c9b74280fed860d4caf162e90",
+    "commitId" : "47269755a8a5363d82f23cd660252394ac11be86",
+    "commitTime" : 1526997402,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1336)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1335)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "1d4d65b4b7b0839c9b74280fed860d4caf162e90",
+    "commitId" : "47269755a8a5363d82f23cd660252394ac11be86",
+    "commitTime" : 1526997402,
+    "changeType" : "uncommented statement",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1336)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1335)",
+    "comment" : "manually validated: a statement of the loop body restored"
+  }, {
+    "parentCommitId" : "1d4eab34bcaf3f3bc3ac6a3217d8ecc29700df48",
+    "commitId" : "4b032f6a40a11db4790d952a8920aea1b849d7f2",
+    "commitTime" : 1526664395,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1335)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1336)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "1d4eab34bcaf3f3bc3ac6a3217d8ecc29700df48",
+    "commitId" : "4b032f6a40a11db4790d952a8920aea1b849d7f2",
+    "commitTime" : 1526664395,
+    "changeType" : "commented out statement",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1335)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(1282-1336)",
+    "comment" : "manually validated: a statement of the loop body turned into // comments"
+  }, {
+    "parentCommitId" : "a103ccf92ba26a1b7bfb4296f9d9ce85ca6dea79",
+    "commitId" : "6e8d1e06728b7defbd734253b3818a33676b62bc",
+    "commitTime" : 1487369078,
+    "changeType" : "expression change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(893-946)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XdocsPagesTest#testAllStyleRules()$for(893-946)",
+    "comment" : "Expression Change"
+  }, {
+    "parentCommitId" : "bbfe5a1b69b0b9855b0e6746e0015c00b7d1f972",
+    "commitId" : "ce5450737678eed3f42af24c42156eab3670b503",
+    "commitTime" : 1482194631,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(913-962)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(913-966)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "032742cf6c6a7bc00ae82d3b84eae28799ddef4c",
+    "commitId" : "e60d4545a7af685608fd53e0237fb118475f8c2c",
+    "commitTime" : 1481419810,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(881-917)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(881-930)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "fbf3f95c2273be23b966cba6e6ef89390a6fb020",
+    "commitId" : "ee66d82723cb6f2f4c74f6d91dd9c4f58beb5775",
+    "commitTime" : 1474497317,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(769-806)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(767-803)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "2d32a5a94a343e805093ae787c7ae8bacacb224f",
+    "commitId" : "0c652234f8f920adea2687f1672f851c34056f47",
+    "commitTime" : 1456925976,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(651-683)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(651-688)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "0d843780fc3dbe96fa513166a18a192d969dc232",
+    "commitId" : "e8475b41261f724128c869b4de371713d86228c3",
+    "commitTime" : 1449495363,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/XDocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.XDocsPagesTest#testAllStyleRules()$for(665-700)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(565-597)",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "0d843780fc3dbe96fa513166a18a192d969dc232",
+    "commitId" : "e8475b41261f724128c869b4de371713d86228c3",
+    "commitTime" : 1449495363,
+    "changeType" : "expression change",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/XDocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.XDocsPagesTest#testAllStyleRules()$for(665-700)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/internal/XDocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.internal.XDocsPagesTest#testAllStyleRules()$for(565-597)",
+    "comment" : "Expression Change"
+  }, {
+    "parentCommitId" : "a847a8424e08b9a860045570261f2392dc707bfd",
+    "commitId" : "ffaf99ed9905b6df24bdeb770bfee43066db7b75",
+    "commitTime" : 1447076334,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/test/java/com/puppycrawl/tools/checkstyle/XDocsPagesTest.java",
+    "elementNameBefore" : "src/test/java/com.puppycrawl.tools.checkstyle.XDocsPagesTest#testAllStyleRules()$for(668-703)",
+    "elementFileAfter" : "src/test/java/com/puppycrawl/tools/checkstyle/XDocsPagesTest.java",
+    "elementNameAfter" : "src/test/java/com.puppycrawl.tools.checkstyle.XDocsPagesTest#testAllStyleRules()$for(668-703)",
+    "comment" : "added with method"
+  } ]
+}

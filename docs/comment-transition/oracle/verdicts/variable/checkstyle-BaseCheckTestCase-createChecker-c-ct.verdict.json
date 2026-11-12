@@ -1,0 +1,9 @@
+{
+    "validation":  "Born commented: in createChecker the body was \u0027throw new IllegalStateException(\\\"not implemented yet\\\")\u0027 followed by the planned code as // comments (cff42d4); 8bb244d (\u0027implement createChecker for real\u0027) turns \u0027final Checker c = new Checker();\u0027 into code. Convention M4: introduced plus \u0027uncommented variable\u0027. Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

@@ -89,11 +89,11 @@ public class BlockTrackerWithLocalFiles extends BaseTrackerWithLocalFiles implem
                 historyReport.gitLogCommandCallsPlusPlus();
                 analysedCommits.clear();
             }
-            if (changeHistory.isPendingUncommented(currentBlock)) {
+            if (commits != null && changeHistory.isPendingUncommented(currentBlock)) {
                 changeHistory.followCommentedBlock(currentBlock, commits, analysedCommits);
                 continue;
             }
-            if (analysedCommits.containsAll(commits))
+            if (commits == null || analysedCommits.containsAll(commits))
                 break;
             for (String commitId : commits) {
                 if (analysedCommits.contains(commitId))

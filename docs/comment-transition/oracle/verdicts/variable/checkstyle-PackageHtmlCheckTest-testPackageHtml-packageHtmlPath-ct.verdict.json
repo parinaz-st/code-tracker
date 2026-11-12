@@ -1,0 +1,9 @@
+{
+    "validation":  "Declaration text at every version of the file: added at 0de0817 in testPackageHtml, unchanged until fbbaff4 turns it into a // comment, restored with identical text at e09a108 the same day. Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

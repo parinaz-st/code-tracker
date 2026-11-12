@@ -1,0 +1,40 @@
+{
+  "repositoryName" : "checkstyle",
+  "repositoryWebURL" : "https://github.com/checkstyle/checkstyle.git",
+  "startCommitId" : "0eeb5e4fd6aa2c4b8a559e55384bba67d7d695c7",
+  "filePath" : "src/testinputs/com/puppycrawl/tools/checkstyle/indentation/InputValidIfIndent.java",
+  "functionName" : "parenIfTest",
+  "functionKey" : "src/testinputs/com.puppycrawl.tools.checkstyle.indentation.InputValidIfIndent#parenIfTest()",
+  "functionStartLine" : 207,
+  "expectedChanges" : [ {
+    "parentCommitId" : "a4d63db21d57ab53aff8a467f89df3867518ab91",
+    "commitId" : "0eeb5e4fd6aa2c4b8a559e55384bba67d7d695c7",
+    "commitTime" : 1053008746,
+    "changeType" : "body change",
+    "elementFileBefore" : "src/testinputs/com/puppycrawl/tools/checkstyle/indentation/InputValidIfIndent.java",
+    "elementNameBefore" : "src/testinputs/com.puppycrawl.tools.checkstyle.indentation.InputValidIfIndent#parenIfTest()",
+    "elementFileAfter" : "src/testinputs/com/puppycrawl/tools/checkstyle/indentation/InputValidIfIndent.java",
+    "elementNameAfter" : "src/testinputs/com.puppycrawl.tools.checkstyle.indentation.InputValidIfIndent#parenIfTest()",
+    "comment" : "Body Change"
+  }, {
+    "parentCommitId" : "a4d63db21d57ab53aff8a467f89df3867518ab91",
+    "commitId" : "0eeb5e4fd6aa2c4b8a559e55384bba67d7d695c7",
+    "commitTime" : 1053008746,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/testinputs/com/puppycrawl/tools/checkstyle/indentation/InputValidIfIndent.java",
+    "elementNameBefore" : "src/testinputs/com.puppycrawl.tools.checkstyle.indentation.InputValidIfIndent#parenIfTest()",
+    "elementFileAfter" : "src/testinputs/com/puppycrawl/tools/checkstyle/indentation/InputValidIfIndent.java",
+    "elementNameAfter" : "src/testinputs/com.puppycrawl.tools.checkstyle.indentation.InputValidIfIndent#parenIfTest()",
+    "comment" : "uncommented method; no earlier active version found"
+  }, {
+    "parentCommitId" : "a4d63db21d57ab53aff8a467f89df3867518ab91",
+    "commitId" : "0eeb5e4fd6aa2c4b8a559e55384bba67d7d695c7",
+    "commitTime" : 1053008746,
+    "changeType" : "uncommented method",
+    "elementFileBefore" : "src/testinputs/com/puppycrawl/tools/checkstyle/indentation/InputValidIfIndent.java",
+    "elementNameBefore" : "src/testinputs/com.puppycrawl.tools.checkstyle.indentation.InputValidIfIndent#parenIfTest()",
+    "elementFileAfter" : "src/testinputs/com/puppycrawl/tools/checkstyle/indentation/InputValidIfIndent.java",
+    "elementNameAfter" : "src/testinputs/com.puppycrawl.tools.checkstyle.indentation.InputValidIfIndent#parenIfTest()",
+    "comment" : "Method Change, Uncommented Method"
+  } ]
+}

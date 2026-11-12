@@ -1,12 +1,15 @@
 package org.codetracker.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -24,7 +27,10 @@ import gr.uom.java.xmi.UMLComment;
  * <p>
  * Comments are grouped into runs (consecutive {@code //} lines, or one {@code /* *}{@code /} comment;
  * Javadoc is skipped). A run is uncommented only if the result parses as Java statements without
- * errors, so prose comments are left alone.
+ * errors, so prose comments are left alone. If a run of {@code //} lines with code-like lines does not
+ * parse, up to {@value #MAX_TRIMMED_LINES} prose lines are trimmed at each end and note text after the last
+ * code token of a line (such as {@code } NOCOMMIT fix this}) is blanked, and the result is parsed again
+ * (ADR 0014). Trimmed lines stay comments.
  */
 public final class CommentedCodeUncommenter {
 
@@ -67,25 +73,135 @@ public final class CommentedCodeUncommenter {
         return uncomment(content, comments, Kind.STATEMENTS);
     }
 
+    /** How many prose lines may be trimmed at each end of a line-comment run (ADR 0014). */
+    private static final int MAX_TRIMMED_LINES = 3;
+
+    /** Words that continue code after a closing brace, so the text after the brace is not a marker. */
+    private static final Set<String> CONTINUATION_KEYWORDS = new LinkedHashSet<>(Arrays.asList(
+            "else", "catch", "finally", "while", "return", "throw", "new", "instanceof", "case", "default"));
+
+    /** Text after the last code token of a line that is a note, not code: words and punctuation only. */
+    private static final Pattern MARKER = Pattern.compile("^\\s+([A-Za-z]\\w*)[^;{}()=\\[\\]\"']*$");
+
     /** Uncomments every run of {@code comments} (all from the file {@code content}) that is valid code of the given kind. */
     public static Result uncomment(String content, List<UMLComment> comments, Kind kind) {
         char[] chars = content.toCharArray();
         Set<Integer> uncommentedLines = new LinkedHashSet<>();
         for (List<UMLComment> run : groupIntoRuns(comments)) {
-            char[] candidate = chars.clone();
-            for (UMLComment comment : run)
-                stripMarkers(candidate, comment);
-            int start = run.get(0).getLocationInfo().getStartOffset();
-            int end = run.get(run.size() - 1).getLocationInfo().getEndOffset();
-            if (start < 0 || end > candidate.length || start >= end)
-                continue;
-            if (isJava(new String(candidate, start, end - start), kind)) {
-                chars = candidate;
-                for (int line = run.get(0).getLocationInfo().getStartLine(); line <= run.get(run.size() - 1).getLocationInfo().getEndLine(); line++)
+            List<UMLComment> kept = run;
+            char[] accepted = tryRun(chars, run, kind, false);
+            // Real commented-out code often carries a prose note above or below it, or a marker such as
+            // "} NOCOMMIT fix this" after it (ADR 0014). Retry without them, but only for runs with code-like lines.
+            if (accepted == null && isLineCommentRun(run) && hasCodeLikeLine(chars, run)) {
+                attempts:
+                for (int removed = 0; removed <= 2 * MAX_TRIMMED_LINES; removed++) {
+                    for (int head = Math.max(0, removed - MAX_TRIMMED_LINES); head <= Math.min(removed, MAX_TRIMMED_LINES); head++) {
+                        int tail = removed - head;
+                        if (head + tail >= run.size() || !onlyProse(chars, run.subList(0, head)) || !onlyProse(chars, run.subList(run.size() - tail, run.size())))
+                            continue;
+                        List<UMLComment> sub = run.subList(head, run.size() - tail);
+                        for (boolean cut : new boolean[]{false, true}) {
+                            if (removed == 0 && !cut)
+                                continue; // the whole run was already tried
+                            char[] candidate = tryRun(chars, sub, kind, cut);
+                            if (candidate != null) {
+                                accepted = candidate;
+                                kept = sub;
+                                break attempts;
+                            }
+                        }
+                    }
+                }
+            }
+            if (accepted != null) {
+                chars = accepted;
+                for (int line = kept.get(0).getLocationInfo().getStartLine(); line <= kept.get(kept.size() - 1).getLocationInfo().getEndLine(); line++)
                     uncommentedLines.add(line);
             }
         }
         return new Result(new String(chars), uncommentedLines);
+    }
+
+    /**
+     * Uncomments {@code run} in a copy of {@code chars} and returns it if the run is valid code of the given kind,
+     * otherwise {@code null}. With {@code cutMarkers}, note text after the last code token of each line is blanked;
+     * if that changes nothing, the attempt is skipped.
+     */
+    private static char[] tryRun(char[] chars, List<UMLComment> run, Kind kind, boolean cutMarkers) {
+        char[] candidate = chars.clone();
+        boolean cutSomething = false;
+        for (UMLComment comment : run) {
+            stripMarkers(candidate, comment);
+            if (cutMarkers)
+                cutSomething |= cutMarker(candidate, comment);
+        }
+        if (cutMarkers && !cutSomething)
+            return null;
+        int start = run.get(0).getLocationInfo().getStartOffset();
+        int end = run.get(run.size() - 1).getLocationInfo().getEndOffset();
+        if (start < 0 || end > candidate.length || start >= end)
+            return null;
+        return isJava(new String(candidate, start, end - start), kind) ? candidate : null;
+    }
+
+    private static boolean isLineCommentRun(List<UMLComment> run) {
+        return run.get(0).getFullText().startsWith("//");
+    }
+
+    /** Whether some line of the run, uncommented, ends like a statement or a block boundary. */
+    private static boolean hasCodeLikeLine(char[] chars, List<UMLComment> run) {
+        for (UMLComment comment : run) {
+            String text = commentBody(chars, comment).trim();
+            int lastCode = lastCodeToken(text);
+            if (lastCode >= 0 && (lastCode == text.length() - 1 || MARKER.matcher(text.substring(lastCode + 1)).matches()))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Whether every comment in {@code lines} is a note rather than code: it does not end like a statement or a
+     * block boundary. Only such lines may be trimmed, so a run is never cut into a parseable code fragment.
+     */
+    private static boolean onlyProse(char[] chars, List<UMLComment> lines) {
+        for (UMLComment comment : lines) {
+            String text = commentBody(chars, comment).trim();
+            int lastCode = lastCodeToken(text);
+            if (lastCode >= 0 && (lastCode == text.length() - 1 || MARKER.matcher(text.substring(lastCode + 1)).matches()))
+                return false;
+        }
+        return true;
+    }
+
+    /** Blanks the note text after the last code token of a {@code //} comment, in place. Returns whether it did. */
+    private static boolean cutMarker(char[] chars, UMLComment comment) {
+        int start = comment.getLocationInfo().getStartOffset() + 2;
+        int end = comment.getLocationInfo().getEndOffset();
+        if (start < 2 || end > chars.length || start >= end)
+            return false;
+        String body = new String(chars, start, end - start);
+        int lastCode = lastCodeToken(body);
+        if (lastCode < 0 || lastCode == body.length() - 1)
+            return false;
+        Matcher m = MARKER.matcher(body.substring(lastCode + 1));
+        if (!m.matches() || CONTINUATION_KEYWORDS.contains(m.group(1)))
+            return false;
+        for (int i = start + lastCode + 1; i < end; i++)
+            if (chars[i] != '\n' && chars[i] != '\r')
+                chars[i] = ' ';
+        return true;
+    }
+
+    private static int lastCodeToken(String text) {
+        return Math.max(text.lastIndexOf(';'), Math.max(text.lastIndexOf('{'), text.lastIndexOf('}')));
+    }
+
+    private static String commentBody(char[] chars, UMLComment comment) {
+        int start = comment.getLocationInfo().getStartOffset();
+        int end = comment.getLocationInfo().getEndOffset();
+        if (start < 0 || end > chars.length || end - start < 2)
+            return "";
+        return new String(chars, start + 2, end - start - 2);
     }
 
     static List<List<UMLComment>> groupIntoRuns(List<UMLComment> comments) {

@@ -1,0 +1,17 @@
+{
+    "validation":  "Declaration text at every version: added at 84eddc3 as \u0027= 72\u0027, initializer changed to \u0027= 71\u0027 at 2727c0a, turned into a // comment at 948a737 (\u0027removed token types that do not appear in the tree\u0027). While commented, e03dab4 rewrites the commented initializer to \u0027GeneratedJava14TokenTypes.LITERAL_interface\u0027 (cf089fe only re-wraps the line), and d2fb67f restores it with that initializer. Edits made inside the comment are labelled at the commit where they happened (ADR 0013, convention 6): initializer change at e03dab4. The tool cannot see edits inside comments, so that change is a known miss.",
+    "drop":  [
+
+             ],
+    "add":  [
+                {
+                    "commitId":  "e03dab4d1f",
+                    "changeType":  "initializer change",
+                    "elementFileBefore":  "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+                    "elementNameBefore":  "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1356)",
+                    "elementFileAfter":  "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+                    "elementNameAfter":  "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1356)",
+                    "comment":  "manually validated: initializer rewritten inside the comment"
+                }
+            ]
+}

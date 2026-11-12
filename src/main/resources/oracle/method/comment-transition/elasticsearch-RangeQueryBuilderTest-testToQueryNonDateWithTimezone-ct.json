@@ -1,0 +1,60 @@
+{
+  "repositoryName" : "elasticsearch",
+  "repositoryWebURL" : "https://github.com/elastic/elasticsearch.git",
+  "startCommitId" : "9fd61f786ec674a16feb20d13986d8ce246cd9c9",
+  "filePath" : "core/src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+  "functionName" : "testToQueryNonDateWithTimezone",
+  "functionKey" : "",
+  "functionStartLine" : 157,
+  "expectedChanges" : [ {
+    "parentCommitId" : "b8dd7e688e20f7cf4aa1dd86cb4d89c36046fb26",
+    "commitId" : "9fd61f786ec674a16feb20d13986d8ce246cd9c9",
+    "commitTime" : 1434104504,
+    "changeType" : "uncommented method",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "comment" : "Method Change, Uncommented Method"
+  }, {
+    "parentCommitId" : "c928852d4ab7d8c744063979208709ed4429b8e9",
+    "commitId" : "82cb0e66b4ee8cea00e471dd97ccdfbff98da59c",
+    "commitTime" : 1434043941,
+    "changeType" : "commented out method",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "comment" : "Method Change, Commented-out Method"
+  }, {
+    "parentCommitId" : "f1426abe3af878f10274f888ce59da7b2edbfb1a",
+    "commitId" : "b282ac6192b76cea828d0a946d1db220abe688de",
+    "commitTime" : 1433746849,
+    "changeType" : "container change",
+    "elementFileBefore" : "core/src/test/java/org/elasticsearch/index/query/query/RangeQueryBuilderTest.java",
+    "elementNameBefore" : "core/src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "comment" : "Move Source Folder core/src/test/java/org/elasticsearch/index/query to core/src/test/java/org/elasticsearch/index"
+  }, {
+    "parentCommitId" : "0f856cc7f96c819e5719a4f838bd7b1b66f8e3c8",
+    "commitId" : "b1a566fdf20fad4a0df25b4156495eaa0a92860b",
+    "commitTime" : 1433514383,
+    "changeType" : "container change",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "elementFileAfter" : "core/src/test/java/org/elasticsearch/index/query/query/RangeQueryBuilderTest.java",
+    "elementNameAfter" : "core/src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "comment" : "Move Source Folder src/test/java/org/elasticsearch/index to core/src/test/java/org/elasticsearch/index/query"
+  }, {
+    "parentCommitId" : "87d1bdd3fd6faf1d05457aeded65f0b195b89aa8",
+    "commitId" : "b99cb2103cf112ee799c4f2a9ecd434dcc5c86ec",
+    "commitTime" : 1431944275,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+    "elementNameBefore" : "src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "elementFileAfter" : "src/test/java/org/elasticsearch/index/query/RangeQueryBuilderTest.java",
+    "elementNameAfter" : "src/test/java/org.elasticsearch.index.query.RangeQueryBuilderTest#testToQueryNonDateWithTimezone()",
+    "comment" : "added with new class"
+  } ]
+}

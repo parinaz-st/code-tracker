@@ -1,0 +1,40 @@
+{
+  "repositoryName" : "checkstyle",
+  "repositoryWebURL" : "https://github.com/checkstyle/checkstyle.git",
+  "startCommitId" : "081f9e7f7f70a5da494c9e1185c27f1766e16acc",
+  "filePath" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+  "attributeName" : "EOF",
+  "attributeKey" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)EOF:int(51)",
+  "attributeDeclarationLine" : 51,
+  "expectedChanges" : [ {
+    "parentCommitId" : "46910b2061d852fa6b244ddb8804d4149be761ed",
+    "commitId" : "081f9e7f7f70a5da494c9e1185c27f1766e16acc",
+    "commitTime" : 1042290544,
+    "changeType" : "uncommented attribute",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)EOF:int(51)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)EOF:int(51)",
+    "comment" : "Attribute Change, Uncommented Attribute"
+  }, {
+    "parentCommitId" : "3a5f587882ed215b863a17c03104c8fff9766b68",
+    "commitId" : "37a3b814ead0ae2f74170e676d244f2e02ef393e",
+    "commitTime" : 1042267752,
+    "changeType" : "commented out attribute",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)EOF:int(38)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)EOF:int(51)",
+    "comment" : "Attribute Change, Commented-out Attribute"
+  }, {
+    "parentCommitId" : "3f14872d33910413734232fb16b9debe479e1bd8",
+    "commitId" : "84eddc36730c1eca845257201c71a0d1fb2d40cf",
+    "commitTime" : 1035008886,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)EOF:int(38)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)EOF:int(38)",
+    "comment" : "added with new class"
+  } ]
+}

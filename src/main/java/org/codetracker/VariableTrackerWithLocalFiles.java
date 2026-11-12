@@ -91,7 +91,7 @@ public class VariableTrackerWithLocalFiles extends BaseTrackerWithLocalFiles imp
                 changeHistory.followCommentedVariable(currentVariable, commits, analysedCommits);
                 continue;
             }
-            if (analysedCommits.containsAll(commits))
+            if (commits == null || analysedCommits.containsAll(commits))
                 break;
             for (String commitId : commits) {
                 if (analysedCommits.contains(commitId))

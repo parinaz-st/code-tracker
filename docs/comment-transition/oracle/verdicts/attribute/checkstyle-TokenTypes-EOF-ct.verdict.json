@@ -1,0 +1,9 @@
+{
+    "validation":  "Declaration text at every version of TokenTypes: \u0027public static final int EOF = 1;\u0027 is added at 84eddc3 (2002-10-19), turned into a // comment at 37a3b81 (\u0027Removed TokenTypes that never occur in a tree\u0027), and restored with identical text at 081f9e7 the same day. Only the neighbouring Javadoc changes in between. Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

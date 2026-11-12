@@ -1,0 +1,33 @@
+{
+  "repositoryName" : "checkstyle",
+  "repositoryWebURL" : "https://github.com/checkstyle/checkstyle.git",
+  "filePath" : "src/tests/com/puppycrawl/tools/checkstyle/BaseCheckTestCase.java",
+  "functionName" : "createChecker",
+  "functionKey" : "src/tests/com.puppycrawl.tools.checkstyle.BaseCheckTestCase#createChecker(Configuration)",
+  "functionStartLine" : 44,
+  "variableName" : "c",
+  "variableKey" : "src/tests/com.puppycrawl.tools.checkstyle.BaseCheckTestCase#createChecker(Configuration)$c:Checker(51)",
+  "variableStartLine" : 51,
+  "startCommitId" : "8bb244d50b7ef1b8028fa5492009d3ea367b1a19",
+  "expectedChanges" : [ {
+    "parentCommitId" : "0fb155232fd68c4a4546ec34e676fa655d7fe223",
+    "commitId" : "8bb244d50b7ef1b8028fa5492009d3ea367b1a19",
+    "commitTime" : 1038733378,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/tests/com/puppycrawl/tools/checkstyle/BaseCheckTestCase.java",
+    "elementNameBefore" : "src/tests/com.puppycrawl.tools.checkstyle.BaseCheckTestCase#createChecker(Configuration)$c:Checker(51)",
+    "elementFileAfter" : "src/tests/com/puppycrawl/tools/checkstyle/BaseCheckTestCase.java",
+    "elementNameAfter" : "src/tests/com.puppycrawl.tools.checkstyle.BaseCheckTestCase#createChecker(Configuration)$c:Checker(51)",
+    "comment" : "uncommented variable; no earlier active version found"
+  }, {
+    "parentCommitId" : "0fb155232fd68c4a4546ec34e676fa655d7fe223",
+    "commitId" : "8bb244d50b7ef1b8028fa5492009d3ea367b1a19",
+    "commitTime" : 1038733378,
+    "changeType" : "uncommented variable",
+    "elementFileBefore" : "src/tests/com/puppycrawl/tools/checkstyle/BaseCheckTestCase.java",
+    "elementNameBefore" : "src/tests/com.puppycrawl.tools.checkstyle.BaseCheckTestCase#createChecker(Configuration)$c:Checker(51)",
+    "elementFileAfter" : "src/tests/com/puppycrawl/tools/checkstyle/BaseCheckTestCase.java",
+    "elementNameAfter" : "src/tests/com.puppycrawl.tools.checkstyle.BaseCheckTestCase#createChecker(Configuration)$c:Checker(51)",
+    "comment" : "Variable Change, Uncommented Variable"
+  } ]
+}

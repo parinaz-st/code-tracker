@@ -1,0 +1,35 @@
+{
+    "validation":  "Declaration text at every version: added at 84eddc3 as \u0027= 48\u0027, turned into a // comment at 948a737. While commented, its initializer is rewritten three times as the generated grammar changes: GeneratedJava14TokenTypes.RBRACK (e03dab4), GeneratedJava15TokenTypes.RBRACK (6125bef), GeneratedJavaTokenTypes.RBRACK (083ab98). 865ba52 restores it with the last one. Edits inside the comment are labelled where they happened (ADR 0013, convention 6). The tool cannot see them.",
+    "drop":  [
+
+             ],
+    "add":  [
+                {
+                    "commitId":  "e03dab4d1f",
+                    "changeType":  "initializer change",
+                    "elementFileBefore":  "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+                    "elementNameBefore":  "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+                    "elementFileAfter":  "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+                    "elementNameAfter":  "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+                    "comment":  "manually validated: initializer rewritten inside the comment"
+                },
+                {
+                    "commitId":  "6125beffc4",
+                    "changeType":  "initializer change",
+                    "elementFileBefore":  "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+                    "elementNameBefore":  "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+                    "elementFileAfter":  "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+                    "elementNameAfter":  "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+                    "comment":  "manually validated: initializer rewritten inside the comment"
+                },
+                {
+                    "commitId":  "083ab98e4a",
+                    "changeType":  "initializer change",
+                    "elementFileBefore":  "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+                    "elementNameBefore":  "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+                    "elementFileAfter":  "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+                    "elementNameAfter":  "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+                    "comment":  "manually validated: initializer rewritten inside the comment"
+                }
+            ]
+}

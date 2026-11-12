@@ -68,11 +68,11 @@ public class MethodTrackerWithLocalFilesImpl extends BaseTrackerWithLocalFiles i
                 historyReport.gitLogCommandCallsPlusPlus();
                 analysedCommits.clear();
             }
-            if (changeHistory.isPendingUncommented(currentMethod)) {
+            if (commits != null && changeHistory.isPendingUncommented(currentMethod)) {
                 changeHistory.followCommentedMethod(currentMethod, commits, analysedCommits);
                 continue;
             }
-            if (analysedCommits.containsAll(commits))
+            if (commits == null || analysedCommits.containsAll(commits))
                 break;
             for (String commitId : commits) {
                 if (analysedCommits.contains(commitId))

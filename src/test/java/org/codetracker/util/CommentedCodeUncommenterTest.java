@@ -102,6 +102,96 @@ public class CommentedCodeUncommenterTest {
         assertTrue(result.isEmpty());
     }
 
+    private static List<UMLComment> classComments(String source) throws Exception {
+        UMLModel model = GitHistoryRefactoringMinerImpl.createModel(Collections.singletonMap(PATH, source), new LinkedHashSet<>());
+        return model.getClassList().get(0).getComments();
+    }
+
+    /** elasticsearch JsonSourceFieldMapper (3a55998): a prose note sits right above the commented method. */
+    @Test
+    public void proseLineAboveCommentedMethodIsLeftAsComment() throws Exception {
+        String source = "package demo;\npublic class Sample {\n"
+                + "    // source is always enabled for now\n"
+                + "//    public Sample enabled(boolean enabled) {\n"
+                + "//        this.enabled = enabled;\n"
+                + "//        return this;\n"
+                + "//    }\n"
+                + "}\n";
+        CommentedCodeUncommenter.Result result = CommentedCodeUncommenter.uncomment(source, classComments(source), CommentedCodeUncommenter.Kind.CLASS_BODY_DECLARATIONS);
+        assertEquals(new HashSet<>(Arrays.asList(4, 5, 6, 7)), result.getUncommentedLines());
+        assertTrue(result.getContent().contains("// source is always enabled for now"), "the prose line stays a comment");
+        assertTrue(result.getContent().contains("      public Sample enabled(boolean enabled) {"));
+        assertEquals(source.length(), result.getContent().length(), "offsets must not move");
+    }
+
+    /** elasticsearch FunctionScoreIT (ab01ec5): a marker follows the closing brace inside the comment. */
+    @Test
+    public void markerTextAfterCodeIsCut() throws Exception {
+        String source = "package demo;\npublic class Sample {\n"
+                + "//    public void testWeight() {\n"
+                + "//        check(2);\n"
+                + "//    } NOCOMMIT fix this\n"
+                + "}\n";
+        CommentedCodeUncommenter.Result result = CommentedCodeUncommenter.uncomment(source, classComments(source), CommentedCodeUncommenter.Kind.CLASS_BODY_DECLARATIONS);
+        assertEquals(new HashSet<>(Arrays.asList(3, 4, 5)), result.getUncommentedLines());
+        assertFalse(result.getContent().contains("NOCOMMIT"), "the marker is blanked in the uncommented copy");
+        assertEquals(source.length(), result.getContent().length(), "offsets must not move");
+    }
+
+    /** elasticsearch TransportTwoNodesSearchIT (ab01ec5): a question-like marker after the closing brace. */
+    @Test
+    public void markerWithPunctuationIsCut() throws Exception {
+        String source = "package demo;\npublic class Sample {\n"
+                + "//    public void testFailed() {\n"
+                + "//        fail();\n"
+                + "//    } NORELEASE can this still be tested? if so, how?\n"
+                + "}\n";
+        CommentedCodeUncommenter.Result result = CommentedCodeUncommenter.uncomment(source, classComments(source), CommentedCodeUncommenter.Kind.CLASS_BODY_DECLARATIONS);
+        assertEquals(new HashSet<>(Arrays.asList(3, 4, 5)), result.getUncommentedLines());
+    }
+
+    /** elasticsearch InternalTestCluster (4bec333): a prose note above a commented try statement. */
+    @Test
+    public void proseLineAboveCommentedBlockIsLeftAsComment() throws Exception {
+        String source = method("int result = 0;",
+                "// Mute this assertion until we have a new Lucene snapshot",
+                "// try {",
+                "//     result = check(x);",
+                "// } catch (Exception e) {",
+                "//     throw new AssertionError(e);",
+                "// }",
+                "return result;");
+        CommentedCodeUncommenter.Result result = CommentedCodeUncommenter.uncomment(source, comments(source));
+        assertEquals(new HashSet<>(Arrays.asList(6, 7, 8, 9, 10)), result.getUncommentedLines());
+        assertTrue(result.getContent().contains("// Mute this assertion"));
+    }
+
+    /** Trailing prose after the commented code is trimmed the same way. */
+    @Test
+    public void proseLineBelowCommentedBlockIsLeftAsComment() throws Exception {
+        String source = method("int result = 0;", "// if (x > 0) {", "//     result = x * 2;", "// }", "// re-enable when the fix is released", "return result;");
+        CommentedCodeUncommenter.Result result = CommentedCodeUncommenter.uncomment(source, comments(source));
+        assertEquals(new HashSet<>(Arrays.asList(5, 6, 7)), result.getUncommentedLines());
+    }
+
+    /** Prose-only runs, even with code-like words, stay comments. */
+    @Test
+    public void proseOnlyRunsStayComments() throws Exception {
+        String source = method("int result = 0;", "// we return early here; see the issue {123}", "// because the cache is not ready", "return result;");
+        CommentedCodeUncommenter.Result result = CommentedCodeUncommenter.uncomment(source, comments(source));
+        assertTrue(result.isEmpty());
+        assertEquals(source, result.getContent());
+    }
+
+    /** "} else" continues code: it must not be cut as if it were a marker. */
+    @Test
+    public void keywordAfterBraceIsNotAMarker() throws Exception {
+        String source = method("int result = 0;", "// if (x > 0) {", "//     result = 1;", "// } else", "//     result = 2;", "return result;");
+        CommentedCodeUncommenter.Result result = CommentedCodeUncommenter.uncomment(source, comments(source));
+        assertTrue(result.getContent().contains("} else"), "else is kept");
+        assertEquals(new HashSet<>(Arrays.asList(5, 6, 7, 8)), result.getUncommentedLines());
+    }
+
     @Test
     public void javadocIsSkipped() throws Exception {
         String source = "package demo;\npublic class Sample {\n    public int run(int x) {\n        /** count++; */\n        return x;\n    }\n}\n";

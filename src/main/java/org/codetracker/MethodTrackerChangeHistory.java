@@ -92,7 +92,7 @@ import gr.uom.java.xmi.diff.UMLClassMoveDiff;
 import gr.uom.java.xmi.diff.UMLClassRenameDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 
-import static org.codetracker.util.CommentTransitionAnalyzer.deletedComments;
+import static org.codetracker.util.CommentTransitionAnalyzer.deletedCommentRuns;
 import static org.codetracker.util.CommentTransitionAnalyzer.findClass;
 
 public class MethodTrackerChangeHistory extends AbstractChangeHistory<Method> {
@@ -151,7 +151,7 @@ public class MethodTrackerChangeHistory extends AbstractChangeHistory<Method> {
         UMLAbstractClass rightClass = findClass(rightModel, className);
         if (leftClass == null || rightClass == null)
             return false;
-        List<UMLComment> deletedComments = deletedComments(leftClass.getComments(), rightClass.getComments());
+        List<UMLComment> deletedComments = deletedCommentRuns(leftClass.getComments(), rightClass.getComments());
         if (deletedComments.isEmpty())
             return false;
         try {

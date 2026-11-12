@@ -1,0 +1,9 @@
+{
+    "validation":  "Part of the 2015 search-request refactoring: ab01ec5 turns the code into // comments (with NOCOMMIT markers), 851af9e restores it. \u0027SearchResponse resp;\u0027 is declared at 029b13c, commented out at ab01ec5 and restored at 851af9e with the same type and name; the statements using it were rewritten. No type change or rename in its active history. Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

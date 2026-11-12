@@ -1,0 +1,37 @@
+{
+    "validation":  "\u0027var e3 = expectThrows(...)\u0027 is added at de6ece6 in SystemIndexThreadPoolTests and moved into KibanaThreadPoolIT at 4e24cf9 (variable histories record no moves). ddf0029 (2024-06-24) turns it into // comments under \u0027// intentionally commented out this test until https://github.com/elastic/elasticsearch/issues/97916 is fixed\u0027; 160faa2 (2024-10-24) restores it unchanged, but keeps the prose note above it. The commented code contains a nested \u0027// // Request times out ...\u0027 line. The tool reports only \u0027introduced\u0027 at 160faa2; the cause is not yet diagnosed.",
+    "drop":  [
+                 "160faa2dfc:introduced"
+             ],
+    "add":  [
+                {
+                    "commitId":  "160faa2dfc8c590dcb398487b79eb51eb84f8f44",
+                    "changeType":  "uncommented variable",
+                    "elementFileBefore":  "modules/kibana/src/internalClusterTest/java/org/elasticsearch/kibana/KibanaThreadPoolIT.java",
+                    "elementNameBefore":  "modules/kibana/src/internalClusterTest/java/org.elasticsearch.kibana.KibanaThreadPoolIT#assertThreadPoolsBlocked()$e3:var(156)",
+                    "elementFileAfter":  "modules/kibana/src/internalClusterTest/java/org/elasticsearch/kibana/KibanaThreadPoolIT.java",
+                    "elementNameAfter":  "modules/kibana/src/internalClusterTest/java/org.elasticsearch.kibana.KibanaThreadPoolIT#assertThreadPoolsBlocked()$e3:var(156)",
+                    "comment":  "manually validated: restored from // comments"
+                },
+                {
+                    "commitId":  "ddf0029d4b3",
+                    "changeType":  "commented out variable",
+                    "elementFileBefore":  "modules/kibana/src/internalClusterTest/java/org/elasticsearch/kibana/KibanaThreadPoolIT.java",
+                    "elementNameBefore":  "modules/kibana/src/internalClusterTest/java/org.elasticsearch.kibana.KibanaThreadPoolIT#assertThreadPoolsBlocked()$e3:var(156)",
+                    "elementFileAfter":  "modules/kibana/src/internalClusterTest/java/org/elasticsearch/kibana/KibanaThreadPoolIT.java",
+                    "elementNameAfter":  "modules/kibana/src/internalClusterTest/java/org.elasticsearch.kibana.KibanaThreadPoolIT#assertThreadPoolsBlocked()$e3:var(156)",
+                    "comment":  "manually validated: turned into // comments"
+                },
+                {
+                    "parentCommitId":  "b643abab3b9749cf32ad3561de9b2233abaa978a",
+                    "commitId":  "de6ece610e6abdfb288803a8ac7bcbc2e976fbc0",
+                    "commitTime":  1711933045,
+                    "changeType":  "introduced",
+                    "elementFileBefore":  "test/framework/src/main/java/org/elasticsearch/indices/SystemIndexThreadPoolTests.java",
+                    "elementNameBefore":  "test/framework/src/main/java/org.elasticsearch.indices.SystemIndexThreadPoolTests#assertThreadPoolsBlocked()$e3:var(88)",
+                    "elementFileAfter":  "test/framework/src/main/java/org/elasticsearch/indices/SystemIndexThreadPoolTests.java",
+                    "elementNameAfter":  "test/framework/src/main/java/org.elasticsearch.indices.SystemIndexThreadPoolTests#assertThreadPoolsBlocked()$e3:var(88)",
+                    "comment":  "validated active history: added with method"
+                }
+            ]
+}

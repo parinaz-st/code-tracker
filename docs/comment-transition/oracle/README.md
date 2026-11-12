@@ -4,15 +4,16 @@ This folder documents an oracle of **real** change histories, taken from open-so
 
 - **Projects:**
   - javaparser (local clone `D:\GitHubProjects\javaparser`, HEAD `2761dca`, 10,039 commits);
-  - elasticsearch (local clone `D:\GitHubProjects\elasticsearch`, HEAD `29caa16`, 100,544 commits).
-- **Histories:** 27 in total: 11 block, 10 method, 4 variable, 2 attribute. javaparser has 13, elasticsearch has 14.
+  - elasticsearch (local clone `D:\GitHubProjects\elasticsearch`, HEAD `29caa16`, 100,544 commits);
+  - checkstyle (local clone `D:\GitHubProjects\checkstyle`, HEAD `6b82789`, 16,684 commits).
+- **Histories:** 42 in total: 13 block, 14 method, 10 variable, 5 attribute. javaparser has 13, elasticsearch 20, checkstyle 9.
 - **Run:**
 
   ```bash
   mvn test -Dtest='BlockCommentTransitionOracleTest,MethodCommentTransitionOracleTest,VariableCommentTransitionOracleTest,AttributeCommentTransitionOracleTest' -Dct.oracle=true
   ```
 
-  Use the JUnit-aligned temporary pom, as in `tools/run-oracles.sh`, while the 5.8.2/5.10.0 mix in `pom.xml` is not fixed. The run takes about 2 minutes. All 27 histories reproduce their expected TP/FP/FN.
+  Use the JUnit-aligned temporary pom, as in `tools/run-oracles.sh`, while the 5.8.2/5.10.0 mix in `pom.xml` is not fixed. The run takes about 3 minutes. All 42 histories reproduce their expected TP/FP/FN.
 
 ## Files
 
@@ -31,12 +32,15 @@ This folder documents an oracle of **real** change histories, taken from open-so
 
 1. **Mining.** `MineCommentTransitions.java` reads `git log -p -U0` and finds commits where removed code lines come back as added `//` lines (comment out), or the reverse (uncomment). It pairs the two on the same file. Separate scans looked for `/* … */` wrappers that enclose code, and for field declarations.
 
-   | | javaparser | elasticsearch |
-   |---|---|---|
-   | comment-out / uncomment events | 50 / 21 | 138 / 94 |
-   | same-file pairs | 6 | 39 |
-   | `/* */` unwraps enclosing ≥ 3 code lines | not measured (1 real round trip found by hand) | 13 |
-   | restored fields | 0 | 3 (all born commented) |
+   | | javaparser | elasticsearch | checkstyle |
+   |---|---|---|---|
+   | comment-out / uncomment events (≥ 3 lines) | 50 / 21 | 138 / 94 | 14 / 10 |
+   | same-file pairs (≥ 3 lines) | 6 | 39 | 3 |
+   | events / pairs with ≥ 1 line | – | – | 66 / 9 |
+   | `/* */` unwraps enclosing code | not measured (1 real round trip found by hand) | 13 (≥ 3 lines) | 7 (≥ 2 lines), all deletions of dead code |
+   | restored fields | 0 | 3 (all born commented) | 3 round trips (`TokenTypes`) |
+
+   checkstyle has the fewest: it runs its own checks against commented-out code on itself (for example, commit `6c19362`: *"Sections of code should not be commented out. Issue #46"*), so dead code is mostly deleted, not restored.
 
 2. **Selection.** Each candidate was inspected in git and classified as a round trip (active → commented → active), born-commented (first written as a comment, later made code), or out of scope (see *Rejected candidates*). Production code and test code were both used. Cases that hit known limits were kept on purpose, because they measure how often those limits occur.
 3. **Tool run.** `LocalOracleBuilder <kind> <clone> <history>` runs the git-based tracker on the clone and saves its output. It also writes the commit logs and cache entries for the offline tracker.
@@ -53,7 +57,9 @@ This folder documents an oracle of **real** change histories, taken from open-so
 
 TP/FP/FN as `OracleTest` counts them (one key per commit and change type). *Transitions* counts only the 10 comment-transition change types.
 
-### javaparser (13 histories)
+> **Phase 7 update.** The per-history tables below show the Phase 6 results, which motivated the fix. After the Phase 7 fix (ADR 0014), ten histories improve and none gets worse. See the summary table and [phase-7.md](../phase-7.md) for the per-history before/after values. `comment-transition-expected.txt` holds the Phase 7 values.
+
+### javaparser (13 histories, Phase 6 results)
 
 | Kind | History (`javaparser-…-ct.json`) | Case | TP | FP | FN | Transitions found |
 |---|---|---|---|---|---|---|
@@ -94,18 +100,55 @@ TP/FP/FN as `OracleTest` counts them (one key per commit and change type). *Tran
 | attribute | TransportEqlStatsAction-planExecutor | born commented (2020) | 1 | 0 | 1 | 0/1 |
 | | **Total** | | **18** | **9** | **65** | **5/25** |
 
+### checkstyle (9 histories, added in Phase 7; results with the Phase 7 code)
+
+| Kind | History (`checkstyle-…-ct.json`) | Case | TP | FP | FN |
+|---|---|---|---|---|---|
+| attribute | TokenTypes-EOF | round trip (2003), text unchanged | 3 | 0 | 0 |
+| attribute | TokenTypes-LITERAL_INTERFACE | round trip; initializer **rewritten inside the comment** | 4 | 0 | 1 |
+| attribute | TokenTypes-RBRACK | round trip; initializer rewritten inside the comment **three times** | 3 | 0 | 3 |
+| block | Verifier-verifyOpBegin-IF_STATEMENT | round trip, condition extended at the restore | 4 | 0 | 0 |
+| block | XdocsPagesTest-testAllStyleRules-ENHANCED_FOR_STATEMENT | one assertion disabled "till issue 5817" and restored | 10 | 0 | 2 ¹ |
+| variable | PackageHtmlCheckTest-testPackageHtml-packageHtmlPath | round trip, text unchanged | 3 | 0 | 0 |
+| variable | BaseCheckTestCase-createChecker-c | born commented | 2 | 0 | 0 |
+| method | InputValidIfIndent-parenIfTest (test input) | born commented, extended at the restore | 3 | 0 | 0 |
+| method | InputJavadocStyleCheck-method10 (test input) | born commented | 2 | 0 | 0 |
+| | **Total** | | **34** | **0** | **6** |
+
+### elasticsearch additions (6 histories, added in Phase 7; results with the Phase 7 code)
+
+| Kind | History (`elasticsearch-…-ct.json`) | Case | TP | FP | FN |
+|---|---|---|---|---|---|
+| method | TransportSearchFailuresIT-testFailedSearchWithWrongQuery | commented out in two steps (loop, then whole method); 27 changes since 2010 | 27 | 0 | 0 |
+| method | RangeQueryBuilderTest-testToQueryNonDateWithTimezone | round trip with its Javadoc, file moved twice before | 5 | 0 | 0 |
+| variable | ChildQuerySearchIT-testQueryBeforeChildType-resp | round trip (2015 refactoring) | 3 | 0 | 0 |
+| variable | GroovySecurityIT-assertSuccess-resp | round trip (2015 refactoring) | 3 | 0 | 0 |
+| variable | OnDiskScriptIT-testFieldOnDiskScript-searchResponse | round trip (2015 refactoring) | 3 | 0 | 0 |
+| variable | KibanaThreadPoolIT-assertThreadPoolsBlocked-e3 | round trip (2024), prose note **kept** above the restored code, nested `// //` comment | 0 | 1 | 3 |
+| | **Total** | | **41** | **1** | **3** |
+
 ### Summary
+
+TP / FP / FN, precision, recall:
+
+| | Phase 6 (before the fix) | Phase 7 (after ADR 0014) |
+|---|---|---|
+| javaparser, all change types | 51 / 3 / 13 · 94.4% · 79.7% | 52 / 3 / 12 · 94.5% · 81.2% |
+| elasticsearch, all change types | 18 / 9 / 65 · 66.7% · 21.7% | 77 / 2 / 6 · 97.5% · 92.8% |
+| **Both, all change types** | **69 / 12 / 78 · 85.2% · 46.9%** | **129 / 5 / 18 · 96.3% · 87.8%** |
+| **Both, transitions only** | **18 / 1 / 27 · 94.7% · 40.0%** | **35 / 1 / 10 · 97.2% · 77.8%** |
+
+**All 42 histories** (javaparser 13, elasticsearch 20, checkstyle 9), Phase 7 code:
 
 | | TP | FP | FN | Precision | Recall |
 |---|---|---|---|---|---|
-| javaparser, all change types | 51 | 3 | 13 | 94.4% | 79.7% |
-| elasticsearch, all change types | 18 | 9 | 65 | 66.7% | 21.7% |
-| **Both, all change types** | **69** | **12** | **78** | **85.2%** | **46.9%** |
-| javaparser, transitions only | 13 | 0 | 7 | 100% | 65.0% |
-| elasticsearch, transitions only | 5 | 1 | 20 | 83.3% | 20.0% |
-| **Both, transitions only** | **18** | **1** | **27** | **94.7%** | **40.0%** |
+| javaparser (13) | 52 | 3 | 12 | 94.5% | 81.2% |
+| elasticsearch (20) | 118 | 3 | 9 | 97.5% | 92.9% |
+| checkstyle (9) | 34 | 0 | 6 | 100% | 85.0% |
+| **All change types (42)** | **204** | **6** | **27** | **97.1%** | **88.3%** |
+| **Transitions only (42)** | **58** | **1** | **14** | **98.3%** | **80.6%** |
 
-**How to read these numbers.** They are low because the samples were chosen to contain comment transitions, and every missed restoration costs the element's *whole* earlier history. One miss in `TransportTwoNodesSearchIT` alone is 24 FNs. They are not comparable to the papers' 99% on random samples. They show where the feature fails on real code, and they give a baseline to measure fixes against.
+**How to read these numbers.** The samples were chosen to contain comment transitions, and every missed restoration costs the element's *whole* earlier history (one miss in `TransportTwoNodesSearchIT` alone was 24 FNs). So the Phase 6 numbers are not comparable to the papers' 99% on random samples. They showed where the feature failed on real code, and they gave the baseline that Phase 7 was measured against.
 
 ## What the real samples show (tool findings)
 
@@ -115,14 +158,18 @@ Ordered by how many real histories each cause affects.
    - a prose line *above* the code: `// source is always enabled for now`, `// this test requires tests to run with -Djava.locale.providers=COMPAT`, `// Mute this assertion until we have a new Lucene snapshot …`, `// do this once LUCENE-7685 is addressed`, `// NORELEASE These need to be tested in TemplateQueryBuilderTests`;
    - a marker *inside* the code: `//    } NOCOMMIT fix this`, `//    } NORELEASE can this still be tested? if so, how?`.
 
-   Either way the restoration is not recognised, and the tool reports `introduced`. The synthetic scenarios never had such lines. **Possible fix:** trim leading and trailing lines of a run that do not parse, and drop trailing text after the last code token on a line, then retry the parse.
+   Either way the restoration is not recognised, and the tool reports `introduced`. The synthetic scenarios never had such lines. **Fixed in Phase 7** (ADR 0014): note lines at the edges of a run are trimmed, and note text after the last code token is cut. Two related problems were fixed at the same time:
+   - comments are now aligned in file order, so a shared line such as `//    } NOCOMMIT fix this` is attributed to the right method;
+   - the commented-state search no longer follows an unrelated block with the same `try` signature.
 2. **A container renamed at the restore loses the history.** This affects 2 histories: javaparser `BulkParseTest` (`parseOpenJdk` became `parseOpenJdkSourceRepository`) and elasticsearch `LifecyclePolicyTests` (`testSteps` became `testToSteps`, variable). The commented-state search needs the same method signature (ADR 0008, 0012).
 3. **Edits made inside the comment.** This affects 2 histories:
    - javaparser `reachedVariadicParam`: the condition was rewritten in the commenting commit;
    - elasticsearch `JavaJodaTimeDuellingTests`: the test was extended inside the comment and later restored to its original text.
 
-   The search for the commented form fails (ADRs 0008–0012).
-4. **Born-commented code missed.** This affects 4 histories: one javaparser method, one elasticsearch variable and the two elasticsearch attributes. Some are explained by cause 1 (the `LUCENE-7685` note). `annotationMemberDeclarationResolve` and the two fields have no prose line and are not yet diagnosed. In `TransportEqlStatsAction`, the constructor parameter was commented with `/* */` inside an active line, which may matter.
+   The search for the commented form fails (ADRs 0008–0012). After Phase 7, `JavaJodaTimeDuellingTests` is found; only the edit itself (a `body change` inside the comment) is still missed.
+4. **Born-commented code missed.** This affected 4 histories. After Phase 7, only one remains, the elasticsearch `SecurityActionFilter` field, which is not yet diagnosed.
+   - The `LUCENE-7685` variable was cause 1.
+   - `annotationMemberDeclarationResolve` and `TransportEqlStatsAction` were fixed by the comment alignment.
 5. **Merge commits** (elasticsearch `Querier`, 1 history). The block was commented out on a feature branch (`06507eb`) and restored after a merge of `main` into the branch. In git-log order the tool reaches a `main` commit where the block was still active, and attributes the comment-out to the merge `5429621`.
 6. **A restored block missed among many** (javaparser `LexicalPreservingPrinter`, INITIALIZER, 1 history). Not yet diagnosed.
 7. **No false transitions apart from the merge case.** The negative variable case (an active declaration kept next to its commented copy) is correctly not reported. Every other FP is an `introduced` reported at a restore whose true origin is older.
@@ -139,6 +186,10 @@ Ordered by how many real histories each cause affects.
 | elasticsearch | `SearchService` (`NOCOMMIT` statements), `Version` (commented `assert` in a static initializer) | Statements in a method body or initializer, not in a tracked block. |
 | elasticsearch | `TimeseriesLifecycleTypeTests`, `IndexLifecycleServiceTests` (51–133 shared lines) | Large test-class rewrites during a feature branch's development. The pairing reflects mass edits, not a deliberate disable and restore. |
 | elasticsearch | Most `/* … */` changes (2,310 wrap/unwrap events) | Javadoc, license or prose. 13 unwraps enclose ≥ 3 code lines; none of them was a clean round trip of a trackable element within the time available. They remain candidates. |
+| elasticsearch | `StatelessTranslogIT` (`@TestLogging` method), `SimpleChildQuerySearchTests`, `TelemetryIT`, `KnnFunctionIT`, `ToStringTests`, … | The commented method was deleted, not restored; or the commented text is a fragment of an expression (a chained call, an array element). |
+| checkstyle | `CheckStyleTask.listenerClass` | The declaration only moved within the restoring commit; it was never commented out. |
+| checkstyle | `TreeTableCellRenderer`, `EmptyBlockCheck`, `XdocsJavaDocsTest`, `InputJava19PatternsInNullSwitch1` | A statement directly in a method body, an array element, or a non-compilable test resource. |
+| checkstyle | All 7 `/* */` unwraps that enclose code | Deletions of dead code, not restorations. |
 
 ## Reproducing on another machine
 
@@ -148,6 +199,7 @@ The cache entries these histories need are **not** in the `oracle` submodule: 24
 mvn -q -DskipTests test-compile && mvn -q dependency:build-classpath -Dmdep.outputFile=cp.txt
 java -cp "target/test-classes;target/classes;$(cat cp.txt)" org.codetracker.util.LocalOracleBuilder cache /path/to/javaparser javaparser src/test/resources/block/javaparser-*.json src/test/resources/method/javaparser-*.json src/test/resources/variable/javaparser-*.json
 java -cp "target/test-classes;target/classes;$(cat cp.txt)" org.codetracker.util.LocalOracleBuilder cache /path/to/elasticsearch elasticsearch src/test/resources/block/elasticsearch-*.json src/test/resources/method/elasticsearch-*.json src/test/resources/variable/elasticsearch-*.json src/test/resources/attribute/elasticsearch-*.json
+java -cp "target/test-classes;target/classes;$(cat cp.txt)" org.codetracker.util.LocalOracleBuilder cache /path/to/checkstyle checkstyle src/test/resources/block/checkstyle-*.json src/test/resources/method/checkstyle-*.json src/test/resources/variable/checkstyle-*.json src/test/resources/attribute/checkstyle-*.json
 ```
 
 (Use `:` instead of `;` as the classpath separator on Linux and macOS.) Entries that already exist are never overwritten. The `elasticsearch-*` globs also match commit-log files of the published elasticsearch oracle. Rebuilding entries for them is harmless.

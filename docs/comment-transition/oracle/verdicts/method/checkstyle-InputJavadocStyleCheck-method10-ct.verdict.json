@@ -1,0 +1,9 @@
+{
+    "validation":  "Test input file (Javadoc style check). Born commented, then turned into code at fd6a743. Convention M4: introduced plus \u0027uncommented method\u0027. Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

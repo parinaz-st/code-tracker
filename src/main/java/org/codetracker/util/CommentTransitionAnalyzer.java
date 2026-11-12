@@ -1,6 +1,7 @@
 package org.codetracker.util;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -190,7 +191,8 @@ public class CommentTransitionAnalyzer {
             return null;
         String signatureHash = codeHash(target.getActualSignature());
         String bodyHash = bodyHash(target);
-        CompositeStatementObject signatureMatch = null;
+        CompositeStatementObject bestMatch = null;
+        double bestOverlap = 0;
         for (CompositeStatementObject candidate : operation.getBody().getCompositeStatement().getInnerNodes()) {
             if (candidate.getLocationInfo().getCodeElementType() != target.getLocationInfo().getCodeElementType())
                 continue;
@@ -198,10 +200,35 @@ public class CommentTransitionAnalyzer {
                 continue;
             if (bodyHash(candidate).equals(bodyHash))
                 return candidate;
-            if (signatureMatch == null)
-                signatureMatch = candidate;
+            // Signatures such as "try" or "else" are shared by unrelated blocks, so a signature match must also share
+            // at least half of the target's statements (ADR 0014; elasticsearch InternalTestCluster).
+            double overlap = leafOverlap(target, candidate);
+            if (overlap >= 0.5 && overlap > bestOverlap) {
+                bestOverlap = overlap;
+                bestMatch = candidate;
+            }
         }
-        return signatureMatch;
+        return bestMatch;
+    }
+
+    /** Share of the leaf statements of {@code target} that also occur in {@code candidate}, whitespace ignored. */
+    private static double leafOverlap(CompositeStatementObject target, CompositeStatementObject candidate) {
+        List<AbstractCodeFragment> targetLeaves = target.getLeaves();
+        if (targetLeaves.isEmpty())
+            return 1;
+        Map<String, Integer> available = new HashMap<>();
+        for (AbstractCodeFragment leaf : candidate.getLeaves())
+            available.merge(codeHash(leaf.getString()), 1, Integer::sum);
+        int shared = 0;
+        for (AbstractCodeFragment leaf : targetLeaves) {
+            String key = codeHash(leaf.getString());
+            Integer count = available.get(key);
+            if (count != null && count > 0) {
+                shared++;
+                available.put(key, count - 1);
+            }
+        }
+        return (double) shared / targetLeaves.size();
     }
 
     /** The class named {@code className} in {@code model}, or {@code null} (ADR 0010). */
@@ -213,21 +240,65 @@ public class CommentTransitionAnalyzer {
         return null;
     }
 
-    /** The comments of {@code before} whose text no longer appears in {@code after}, whitespace ignored (ADR 0010). */
+    /**
+     * The comments of {@code before} that are not in {@code after}, whitespace ignored (ADR 0010). Both lists are
+     * aligned in file order with a longest common subsequence, like a diff, so that a comment line repeated
+     * elsewhere (for example the {@code //    \}} of another commented method) is attributed to the right place
+     * (ADR 0014).
+     */
     public static List<UMLComment> deletedComments(List<UMLComment> before, List<UMLComment> after) {
-        Map<String, Integer> remaining = new HashMap<>();
-        for (UMLComment comment : after)
-            remaining.merge(normalizeCode(comment.getFullText()), 1, Integer::sum);
+        List<UMLComment> left = new ArrayList<>(before);
+        List<UMLComment> right = new ArrayList<>(after);
+        left.sort(Comparator.comparingInt(c -> c.getLocationInfo().getStartOffset()));
+        right.sort(Comparator.comparingInt(c -> c.getLocationInfo().getStartOffset()));
+        String[] a = new String[left.size()];
+        String[] b = new String[right.size()];
+        for (int i = 0; i < a.length; i++)
+            a[i] = normalizeCode(left.get(i).getFullText());
+        for (int j = 0; j < b.length; j++)
+            b[j] = normalizeCode(right.get(j).getFullText());
+        int[][] lcs = new int[a.length + 1][b.length + 1];
+        for (int i = a.length - 1; i >= 0; i--)
+            for (int j = b.length - 1; j >= 0; j--)
+                lcs[i][j] = a[i].equals(b[j]) ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
         List<UMLComment> deleted = new ArrayList<>();
-        for (UMLComment comment : before) {
-            String key = normalizeCode(comment.getFullText());
-            Integer count = remaining.get(key);
-            if (count == null || count == 0)
-                deleted.add(comment);
-            else
-                remaining.put(key, count - 1);
+        int i = 0, j = 0;
+        while (i < a.length) {
+            if (j < b.length && a[i].equals(b[j])) {
+                i++;
+                j++;
+            }
+            else if (j < b.length && lcs[i][j + 1] > lcs[i + 1][j]) {
+                j++;
+            }
+            else {
+                deleted.add(left.get(i));
+                i++;
+            }
         }
         return deleted;
+    }
+
+    /**
+     * The comments of {@code before} that belong to a comment run (consecutive {@code //} lines, or one block comment)
+     * of which at least one comment was deleted in {@code after} (ADR 0014). Text matching alone is not enough: a line
+     * such as {@code //    \} NOCOMMIT fix this} can also close another commented method that stays, and a restoring
+     * commit can move part of the commented text into a new comment, so the deleted lines alone may not form the run.
+     */
+    public static List<UMLComment> deletedCommentRuns(List<UMLComment> before, List<UMLComment> after) {
+        List<UMLComment> deleted = deletedComments(before, after);
+        if (deleted.isEmpty())
+            return deleted;
+        List<UMLComment> result = new ArrayList<>();
+        for (List<UMLComment> run : CommentedCodeUncommenter.groupIntoRuns(before)) {
+            for (UMLComment comment : run) {
+                if (deleted.contains(comment)) {
+                    result.addAll(run);
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     /** Whether the comments of {@code operation} contain the signature of {@code target} as commented-out code. */

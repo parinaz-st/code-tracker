@@ -1,0 +1,9 @@
+{
+    "validation":  "Commented out in two steps. ab01ec5 turns the for-loop of the body into // comments with \u0027} NOCOMMIT fix this\u0027 (body change and, as the published method oracle labels comment-only body edits, documentation change). 851af9e then turns the whole method into // comments under \u0027// NORELEASE can this still be tested? if so, how?\u0027. 83771d3 restores it rewritten (body change). The 27-entry active history back to 2010 was compared with git log -L: the same commits, except the file moves and renames (container changes, which git log -L does not count) and 6a71eab (@Test moved to its own line, not a change). Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

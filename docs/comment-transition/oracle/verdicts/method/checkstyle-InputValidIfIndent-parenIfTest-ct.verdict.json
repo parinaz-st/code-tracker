@@ -1,0 +1,9 @@
+{
+    "validation":  "Test input file (indentation check). Born commented: 1ffc5bb adds parenIfTest as // comments; 0eeb5e4 turns it into code and adds an extra if-statement (body change). Convention M4: introduced plus \u0027uncommented method\u0027, and body change for the edit at the restore. Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

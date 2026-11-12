@@ -1,0 +1,43 @@
+{
+  "repositoryName" : "checkstyle",
+  "repositoryWebURL" : "https://github.com/checkstyle/checkstyle.git",
+  "filePath" : "src/tests/com/puppycrawl/tools/checkstyle/PackageHtmlCheckTest.java",
+  "functionName" : "testPackageHtml",
+  "functionKey" : "src/tests/com.puppycrawl.tools.checkstyle.PackageHtmlCheckTest#testPackageHtml()",
+  "functionStartLine" : 17,
+  "variableName" : "packageHtmlPath",
+  "variableKey" : "src/tests/com.puppycrawl.tools.checkstyle.PackageHtmlCheckTest#testPackageHtml()$packageHtmlPath:String(22)",
+  "variableStartLine" : 22,
+  "startCommitId" : "e09a108f22f244f968194e738fd086243014ea2c",
+  "expectedChanges" : [ {
+    "parentCommitId" : "42015d3ea38f6cc41826525d9df6c70c95c92f96",
+    "commitId" : "e09a108f22f244f968194e738fd086243014ea2c",
+    "commitTime" : 1038743020,
+    "changeType" : "uncommented variable",
+    "elementFileBefore" : "src/tests/com/puppycrawl/tools/checkstyle/PackageHtmlCheckTest.java",
+    "elementNameBefore" : "src/tests/com.puppycrawl.tools.checkstyle.PackageHtmlCheckTest#testPackageHtml()$packageHtmlPath:String(22)",
+    "elementFileAfter" : "src/tests/com/puppycrawl/tools/checkstyle/PackageHtmlCheckTest.java",
+    "elementNameAfter" : "src/tests/com.puppycrawl.tools.checkstyle.PackageHtmlCheckTest#testPackageHtml()$packageHtmlPath:String(22)",
+    "comment" : "Variable Change, Uncommented Variable"
+  }, {
+    "parentCommitId" : "7429b6641bf9a34ab0f831974597321c235a3a92",
+    "commitId" : "fbbaff4827a55cb5d99b3f334b560b41728a7666",
+    "commitTime" : 1038720453,
+    "changeType" : "commented out variable",
+    "elementFileBefore" : "src/tests/com/puppycrawl/tools/checkstyle/PackageHtmlCheckTest.java",
+    "elementNameBefore" : "src/tests/com.puppycrawl.tools.checkstyle.PackageHtmlCheckTest#testPackageHtml()$packageHtmlPath:String(28)",
+    "elementFileAfter" : "src/tests/com/puppycrawl/tools/checkstyle/PackageHtmlCheckTest.java",
+    "elementNameAfter" : "src/tests/com.puppycrawl.tools.checkstyle.PackageHtmlCheckTest#testPackageHtml()$packageHtmlPath:String(22)",
+    "comment" : "Variable Change, Commented-out Variable"
+  }, {
+    "parentCommitId" : "6f378fdf3d5ec0247fe54681c249444a7dab97a9",
+    "commitId" : "0de0817fb1b1ee8ffd01ec660098b2680ebf0677",
+    "commitTime" : 1037296882,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/tests/com/puppycrawl/tools/checkstyle/PackageHtmlCheckTest.java",
+    "elementNameBefore" : "src/tests/com.puppycrawl.tools.checkstyle.PackageHtmlCheckTest#testPackageHtml()$packageHtmlPath:String(17)",
+    "elementFileAfter" : "src/tests/com/puppycrawl/tools/checkstyle/PackageHtmlCheckTest.java",
+    "elementNameAfter" : "src/tests/com.puppycrawl.tools.checkstyle.PackageHtmlCheckTest#testPackageHtml()$packageHtmlPath:String(17)",
+    "comment" : "added with method"
+  } ]
+}

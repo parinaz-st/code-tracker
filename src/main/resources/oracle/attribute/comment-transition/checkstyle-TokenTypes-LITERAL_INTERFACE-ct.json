@@ -1,0 +1,60 @@
+{
+  "repositoryName" : "checkstyle",
+  "repositoryWebURL" : "https://github.com/checkstyle/checkstyle.git",
+  "startCommitId" : "d2fb67faae0b56340678abef1d1ecedf1df8bb95",
+  "filePath" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+  "attributeName" : "LITERAL_INTERFACE",
+  "attributeKey" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1356)",
+  "attributeDeclarationLine" : 1356,
+  "expectedChanges" : [ {
+    "parentCommitId" : "bbd5145467f44dc3c49124097d8e5a76ba871844",
+    "commitId" : "d2fb67faae0b56340678abef1d1ecedf1df8bb95",
+    "commitTime" : 1073288313,
+    "changeType" : "uncommented attribute",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1356)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1356)",
+    "comment" : "Attribute Change, Uncommented Attribute"
+  }, {
+    "parentCommitId" : "f4a85d495cfc25dedd81d40098675217311f7fcb",
+    "commitId" : "e03dab4d1fed003ef9b0cce167ace92dda7eb55e",
+    "commitTime" : 1056198841,
+    "changeType" : "initializer change",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1356)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1356)",
+    "comment" : "manually validated: initializer rewritten inside the comment"
+  }, {
+    "parentCommitId" : "55fcf189eb1c1c4d776ce3b3ad7835fb404b21d8",
+    "commitId" : "948a7374b055c7e41ffa2b8dee924bc54c36d62a",
+    "commitTime" : 1050662814,
+    "changeType" : "commented out attribute",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1247)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(1356)",
+    "comment" : "Attribute Change, Commented-out Attribute"
+  }, {
+    "parentCommitId" : "752ce8ceed0a2fe9d3cf7711f7bd04220be2bc13",
+    "commitId" : "2727c0a857d2d5073a1d7f440e7d38bec217d92d",
+    "commitTime" : 1049035692,
+    "changeType" : "initializer change",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(192)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(190)",
+    "comment" : "initializer change"
+  }, {
+    "parentCommitId" : "3f14872d33910413734232fb16b9debe479e1bd8",
+    "commitId" : "84eddc36730c1eca845257201c71a0d1fb2d40cf",
+    "commitTime" : 1035008886,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(178)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)LITERAL_INTERFACE:int(178)",
+    "comment" : "added with new class"
+  } ]
+}

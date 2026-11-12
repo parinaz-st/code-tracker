@@ -1,0 +1,70 @@
+{
+  "repositoryName" : "checkstyle",
+  "repositoryWebURL" : "https://github.com/checkstyle/checkstyle.git",
+  "startCommitId" : "865ba5284aace7651f93dc81b0c196d1316a9fdd",
+  "filePath" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+  "attributeName" : "RBRACK",
+  "attributeKey" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+  "attributeDeclarationLine" : 1137,
+  "expectedChanges" : [ {
+    "parentCommitId" : "4f2f342589c710d31ad0ac93b56755c41dd73f73",
+    "commitId" : "865ba5284aace7651f93dc81b0c196d1316a9fdd",
+    "commitTime" : 1124261720,
+    "changeType" : "uncommented attribute",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "comment" : "Attribute Change, Uncommented Attribute"
+  }, {
+    "parentCommitId" : "1ac7fc3f8fc856547085bcc88e17fd1f4bbe0ddd",
+    "commitId" : "083ab98e4a451f1a982db89616535d9c0388b50b",
+    "commitTime" : 1097239153,
+    "changeType" : "initializer change",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "comment" : "manually validated: initializer rewritten inside the comment"
+  }, {
+    "parentCommitId" : "624f82b556974bf15cafee6a057acca3dac5eec5",
+    "commitId" : "6125beffc437f970eae276b4a6542265c6547784",
+    "commitTime" : 1096311350,
+    "changeType" : "initializer change",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "comment" : "manually validated: initializer rewritten inside the comment"
+  }, {
+    "parentCommitId" : "f4a85d495cfc25dedd81d40098675217311f7fcb",
+    "commitId" : "e03dab4d1fed003ef9b0cce167ace92dda7eb55e",
+    "commitTime" : 1056198841,
+    "changeType" : "initializer change",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "comment" : "manually validated: initializer rewritten inside the comment"
+  }, {
+    "parentCommitId" : "55fcf189eb1c1c4d776ce3b3ad7835fb404b21d8",
+    "commitId" : "948a7374b055c7e41ffa2b8dee924bc54c36d62a",
+    "commitTime" : 1050662814,
+    "changeType" : "commented out attribute",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1083)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(1137)",
+    "comment" : "Attribute Change, Commented-out Attribute"
+  }, {
+    "parentCommitId" : "3f14872d33910413734232fb16b9debe479e1bd8",
+    "commitId" : "84eddc36730c1eca845257201c71a0d1fb2d40cf",
+    "commitTime" : 1035008886,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(130)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/api/TokenTypes.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.api.TokenTypes@(final,static)(public)RBRACK:int(130)",
+    "comment" : "added with new class"
+  } ]
+}

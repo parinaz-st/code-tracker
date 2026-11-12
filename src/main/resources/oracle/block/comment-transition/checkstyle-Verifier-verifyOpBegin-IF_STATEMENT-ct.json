@@ -1,0 +1,54 @@
+{
+  "repositoryName" : "checkstyle",
+  "repositoryWebURL" : "https://github.com/checkstyle/checkstyle.git",
+  "filePath" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+  "functionName" : "verifyOpBegin",
+  "functionKey" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)",
+  "functionStartLine" : 966,
+  "blockType" : "IF_STATEMENT",
+  "blockKey" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(972-979)",
+  "blockStartLine" : 972,
+  "blockEndLine" : 979,
+  "startCommitId" : "ff0a2c04796d958e40a75353b1aacfda9d44b39d",
+  "expectedChanges" : [ {
+    "parentCommitId" : "474e266acdfd9320c999fd12df4e53293a9587b6",
+    "commitId" : "ff0a2c04796d958e40a75353b1aacfda9d44b39d",
+    "commitTime" : 1022676061,
+    "changeType" : "expression change",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(972-979)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(972-979)",
+    "comment" : "Expression Change"
+  }, {
+    "parentCommitId" : "474e266acdfd9320c999fd12df4e53293a9587b6",
+    "commitId" : "ff0a2c04796d958e40a75353b1aacfda9d44b39d",
+    "commitTime" : 1022676061,
+    "changeType" : "uncommented block",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(972-979)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(972-979)",
+    "comment" : "Block Change, Uncommented Block"
+  }, {
+    "parentCommitId" : "da940af3627944ad412904c15187627151e834e5",
+    "commitId" : "474e266acdfd9320c999fd12df4e53293a9587b6",
+    "commitTime" : 1022622624,
+    "changeType" : "commented out block",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(976-983)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(972-979)",
+    "comment" : "Block Change, Commented-out Block"
+  }, {
+    "parentCommitId" : "1c5c068b3afc6d39b8cf41e6e638efe3628e90e0",
+    "commitId" : "34770c3eaa9ad06297c13fd43a55739c02c7d67d",
+    "commitTime" : 1022593183,
+    "changeType" : "introduced",
+    "elementFileBefore" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+    "elementNameBefore" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(978-985)",
+    "elementFileAfter" : "src/checkstyle/com/puppycrawl/tools/checkstyle/Verifier.java",
+    "elementNameAfter" : "src/checkstyle/com.puppycrawl.tools.checkstyle.Verifier#verifyOpBegin(int, int, String)$if(978-985)",
+    "comment" : "added with method"
+  } ]
+}

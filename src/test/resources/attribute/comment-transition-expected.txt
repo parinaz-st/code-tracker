@@ -1,2 +1,5 @@
+checkstyle-TokenTypes-EOF-ct.json, 3, 0, 0
+checkstyle-TokenTypes-LITERAL_INTERFACE-ct.json, 4, 0, 1
+checkstyle-TokenTypes-RBRACK-ct.json, 3, 0, 3
 elasticsearch-SecurityActionFilter-authenticationService-ct.json, 1, 0, 1
-elasticsearch-TransportEqlStatsAction-planExecutor-ct.json, 1, 0, 1
+elasticsearch-TransportEqlStatsAction-planExecutor-ct.json, 2, 0, 0

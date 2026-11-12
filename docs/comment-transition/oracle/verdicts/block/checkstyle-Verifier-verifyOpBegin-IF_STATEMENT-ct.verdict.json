@@ -1,0 +1,9 @@
+{
+    "validation":  "Block text at every version (blockevo): added at 34770c3, unchanged until 474e266 turns it into // comments, restored the next day at ff0a2c0 with a new first condition \u0027!mConfig.isIgnoreOpWrap() \u0026\u0026\u0027 (uncommented + expression change). Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}

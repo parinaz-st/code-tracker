@@ -1,0 +1,9 @@
+{
+    "validation":  "git log -L on the method: added at b99cb21; b1a566f and b282ac6 move the file (container changes); 82cb0e6 turns it into // comments (with its Javadoc), and 9fd61f7 restores it the next day with text identical to the last active version (c928852). Tool output matches.",
+    "drop":  [
+
+             ],
+    "add":  [
+
+            ]
+}
