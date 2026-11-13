@@ -40,6 +40,8 @@ CodeTracker is a refactoring-aware tool that builds the commit change history of
 - `*TrackerImpl` often has two near-identical loops (`track()` and `blame()`), and `*TrackerWithLocalFiles` has a third copy of `track()` that the oracle tests use (`buildWithLocalFiles()`). Change all of them, and prefer moving shared logic into `*TrackerChangeHistory`.
 - Every new element node pushed back into the queue must either be matchable in older commits (consistent identifier) or be terminated with `handleAdd`. Otherwise the history silently loses its origin.
 - Keep changes small and PR-friendly for upstream: tests first, then logic.
+- **One request, one change.** Put only the requested change in a commit. Do not change, reformat or refactor unrelated files unless you are asked to.
+- **Reuse before you write.** Before adding a new method or helper, search the code for one that already does the job (for example in `*TrackerChangeHistory`, `util/`, or RefactoringMiner itself) and reuse or extend it. Do not add duplicate or redundant code.
 
 ## Ongoing work in this fork
 
