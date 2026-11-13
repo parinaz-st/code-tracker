@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="455" viewBox="0 0 700 455" font-family="Cambria, 'Times New Roman', serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker>
+  </defs>
+  <rect width="700" height="455" fill="#fff"/>
+  <g stroke="#000" stroke-width="1.2" fill="#f2f2f2">
+    <rect x="200" y="10" width="300" height="44" rx="6"/>
+    <rect x="200" y="84" width="300" height="44" rx="6"/>
+    <polygon points="350,158 470,198 350,238 230,198" fill="#e3e3e3"/>
+    <rect x="20" y="270" width="240" height="56" rx="6"/>
+    <rect x="440" y="270" width="240" height="56" rx="6"/>
+    <polygon points="350,345 460,380 350,415 240,380" fill="#e3e3e3"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="350" y="30">Candidate commits = commits where the</text>
+    <text x="350" y="46">container method changed (method oracle)</text>
+    <text x="350" y="104">Run the tool backwards to the next</text>
+    <text x="350" y="120">reported change of the element</text>
+    <text x="350" y="195">Change correct?</text>
+    <text x="350" y="211" font-size="12">(inspect the commit)</text>
+    <text x="140" y="293">Yes: add it to the oracle</text>
+    <text x="140" y="311" font-size="12">continue from this version</text>
+    <text x="560" y="290">No: write the correct match</text>
+    <text x="560" y="306">or change by hand, re-run</text>
+    <text x="560" y="322" font-size="12">from the parent commit</text>
+    <text x="350" y="377">Termination</text>
+    <text x="350" y="393">reached?</text>
+  </g>
+  <g stroke="#000" stroke-width="1.2" fill="none" marker-end="url(#a)">
+    <line x1="350" y1="54" x2="350" y2="82"/>
+    <line x1="350" y1="128" x2="350" y2="156"/>
+    <path d="M230,198 L140,198 L140,268"/>
+    <path d="M470,198 L560,198 L560,268"/>
+    <path d="M140,326 L140,380 L238,380"/>
+    <path d="M560,326 L560,334 L350,334 L350,343"/>
+    <path d="M460,380 L690,380 L690,106 L502,106" stroke-dasharray="5,3"/>
+  </g>
+  <g font-size="12" font-style="italic">
+    <text x="180" y="190">yes</text>
+    <text x="490" y="190">no</text>
+    <text x="600" y="100">no: next change</text>
+  </g>
+  <text x="350" y="445" text-anchor="middle" font-size="12">Stop when (1) the container method's introduction is reached, or (2) the element is introduced earlier. Either way, no change is missing.</text>
+</svg>

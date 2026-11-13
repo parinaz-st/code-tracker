@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="230" viewBox="0 0 760 230" font-family="Cambria, 'Times New Roman', serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker>
+  </defs>
+  <rect width="760" height="230" fill="#fff"/>
+  <!-- time axis -->
+  <line x1="30" y1="200" x2="730" y2="200" stroke="#000" stroke-width="1" marker-end="url(#a)"/>
+  <text x="730" y="220" text-anchor="end" font-style="italic" font-size="12">commit history (older → newer); tracking runs right to left</text>
+  <!-- nodes -->
+  <g stroke="#000" stroke-width="1.2" fill="#f2f2f2">
+    <rect x="30" y="80" width="120" height="56" rx="6"/>
+    <rect x="215" y="80" width="120" height="56" rx="6"/>
+    <rect x="400" y="80" width="120" height="56" rx="6" fill="#e3e3e3" stroke-dasharray="5,3"/>
+    <rect x="585" y="80" width="140" height="56" rx="6" stroke-width="2"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="90" y="102" font-weight="bold">72b1d0c</text>
+    <text x="90" y="122" font-size="12">if-block, L573–575</text>
+    <text x="275" y="102" font-weight="bold">c3a08e1</text>
+    <text x="275" y="122" font-size="12">as // lines, L576–578</text>
+    <text x="460" y="102" font-weight="bold">2507785</text>
+    <text x="460" y="122" font-size="12">still commented</text>
+    <text x="655" y="102" font-weight="bold">fc0e703 (start)</text>
+    <text x="655" y="122" font-size="12">if-block, L576–578</text>
+  </g>
+  <g stroke="#000" stroke-width="1.2" fill="none" marker-end="url(#a)">
+    <line x1="150" y1="108" x2="213" y2="108"/>
+    <line x1="335" y1="108" x2="398" y2="108"/>
+    <line x1="520" y1="108" x2="583" y2="108"/>
+  </g>
+  <g text-anchor="middle" font-size="12" font-style="italic">
+    <text x="182" y="66">commented</text>
+    <text x="182" y="80">out block</text>
+    <text x="367" y="74">not changed</text>
+    <text x="552" y="66">uncommented</text>
+    <text x="552" y="80">block</text>
+  </g>
+  <!-- introduced -->
+  <text x="90" y="160" text-anchor="middle" font-size="12" font-style="italic">introduced</text>
+  <line x1="90" y1="148" x2="90" y2="138" stroke="#000" marker-end="url(#a)"/>
+  <text x="380" y="30" text-anchor="middle" font-size="12">nodes = versions of the element (commit, file, name with line range); edges = changes between parent and child commit</text>
+  <g font-size="12" text-anchor="middle">
+    <text x="90" y="192">t1</text><text x="275" y="192">t2</text><text x="460" y="192">t3</text><text x="655" y="192">t4</text>
+  </g>
+</svg>

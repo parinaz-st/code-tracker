@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="290" viewBox="0 0 760 290" font-family="Cambria, 'Times New Roman', serif" font-size="12">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker>
+  </defs>
+  <rect width="760" height="290" fill="#fff"/>
+  <g stroke="#000" stroke-width="1.1" fill="#f2f2f2">
+    <rect x="10" y="20" width="200" height="52" rx="5"/>
+    <rect x="10" y="100" width="200" height="52" rx="5"/>
+    <rect x="10" y="180" width="200" height="52" rx="5"/>
+    <rect x="270" y="100" width="170" height="52" rx="5" fill="#e3e3e3"/>
+    <rect x="500" y="20" width="250" height="60" rx="5"/>
+    <rect x="500" y="110" width="250" height="60" rx="5"/>
+    <rect x="500" y="200" width="250" height="60" rx="5"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="110" y="40" font-weight="bold">Oracle JSON</text>
+    <text x="110" y="58">oracle/&lt;kind&gt;/&lt;set&gt;/*.json</text>
+    <text x="110" y="120" font-weight="bold">Commit logs</text>
+    <text x="110" y="138">src/test/resources/&lt;kind&gt;/*.json</text>
+    <text x="110" y="200" font-weight="bold">Commit cache</text>
+    <text x="110" y="218">oracle/commits (submodule)</text>
+    <text x="355" y="122" font-weight="bold">*WithLocalFiles</text>
+    <text x="355" y="140">tracker (no network)</text>
+    <text x="625" y="40" font-weight="bold">OracleTest (JUnit)</text>
+    <text x="625" y="56">TP/FP/FN per history must equal</text>
+    <text x="625" y="71">&lt;set&gt;-expected.txt (regression)</text>
+    <text x="625" y="130" font-weight="bold">*ExperimentStarter</text>
+    <text x="625" y="146">summary / detailed / final.csv</text>
+    <text x="625" y="161">P and R at change and commit level</text>
+    <text x="625" y="220" font-weight="bold">LocalOracleBuilder (this fork)</text>
+    <text x="625" y="236">builds logs + cache from a local clone,</text>
+    <text x="625" y="251">checks, finalizes and scores histories</text>
+  </g>
+  <g stroke="#000" stroke-width="1.1" fill="none" marker-end="url(#a)">
+    <path d="M210,46 L240,46 L240,118 L268,118"/>
+    <line x1="210" y1="126" x2="268" y2="126"/>
+    <path d="M210,206 L240,206 L240,134 L268,134"/>
+    <path d="M440,118 L470,118 L470,50 L498,50"/>
+    <line x1="440" y1="134" x2="498" y2="140"/>
+    <path d="M500,230 L230,230 L230,215 L212,215" stroke-dasharray="5,3"/>
+  </g>
+  <text x="380" y="282" text-anchor="middle" font-size="12">The same comparison (keys commitId + change type) is used by both consumers; the experiment runner also aggregates per commit.</text>
+</svg>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Evaluating CodeTracker</title>
+<style>
+  @page { size: A4; margin: 2.4cm 2.3cm 2.4cm 2.3cm; }
+  body { font-family: "Latin Modern Roman", "CMU Serif", Cambria, "Times New Roman", serif; font-size: 11pt; line-height: 1.38; color: #000; background: #fff; text-align: justify; }
+  p { margin: 0 0 0.55em 0; }
+  h1.title { font-size: 19pt; font-weight: bold; text-align: center; margin: 0 0 0.35em 0; line-height: 1.25; }
+  p.subtitle { font-size: 13pt; text-align: center; margin: 0 0 1.1em 0; }
+  p.author { font-size: 12pt; text-align: center; margin: 0; }
+  p.affil { font-size: 10.5pt; text-align: center; margin: 0; font-style: italic; }
+  p.date { font-size: 11pt; text-align: center; margin: 0.4em 0 1.6em 0; }
+  div.abstract { margin: 0 1.4cm 1.4em 1.4cm; font-size: 10pt; }
+  p.abstract-title { text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 0.3em; }
+  p.keywords { font-size: 10pt; }
+  h2 { font-size: 14pt; font-weight: bold; margin: 1.3em 0 0.5em 0; page-break-after: avoid; }
+  h3 { font-size: 12pt; font-weight: bold; margin: 1.0em 0 0.4em 0; page-break-after: avoid; }
+  code, .tt { font-family: Consolas, "Courier New", monospace; font-size: 9.5pt; }
+  pre { font-family: Consolas, "Courier New", monospace; font-size: 9pt; background: #f6f6f6; border-left: 2pt solid #999; padding: 4pt 8pt; margin: 0.4em 0 0.8em 0; white-space: pre-wrap; text-align: left; page-break-inside: avoid; }
+  ul, ol { margin: 0.2em 0 0.6em 0; padding-left: 1.6em; }
+  li { margin-bottom: 0.2em; }
+  div.figure { text-align: center; margin: 1em 0 1.2em 0; page-break-inside: avoid; }
+  div.figure img { max-width: 100%; }
+  p.caption { font-size: 10pt; text-align: justify; margin: 0.4em 0.6cm 0 0.6cm; }
+  table.booktabs { border-collapse: collapse; margin: 0.4em auto 1.2em auto; font-size: 9.5pt; page-break-inside: avoid; }
+  table.booktabs caption { caption-side: top; font-size: 10pt; text-align: justify; padding-bottom: 0.4em; }
+  table.booktabs th { border-top: 1.6pt solid #000; border-bottom: 0.8pt solid #000; padding: 3pt 6pt; text-align: left; font-weight: bold; vertical-align: bottom; }
+  table.booktabs td { padding: 2.5pt 6pt; vertical-align: top; text-align: left; }
+  table.booktabs td.r, table.booktabs th.r { text-align: right; }
+  table.booktabs tr.last td { border-bottom: 1.6pt solid #000; }
+  table.booktabs tr.mid td { border-top: 0.5pt solid #000; }
+  table.alg { border-collapse: collapse; width: 100%; margin: 0.6em 0 1.2em 0; font-size: 9.8pt; page-break-inside: avoid; }
+  table.alg td { padding: 0.6pt 4pt; vertical-align: top; }
+  table.alg tr.head td { border-top: 1.6pt solid #000; border-bottom: 0.8pt solid #000; padding: 3pt 4pt; }
+  table.alg tr.last td { border-bottom: 1.6pt solid #000; }
+  table.alg td.ln { width: 1.6em; text-align: right; color: #444; font-size: 8.5pt; }
+  .kw { font-weight: bold; }
+  .cm { font-style: italic; color: #333; }
+  div.eq { text-align: center; margin: 0.6em 0 0.8em 0; font-size: 11.5pt; font-style: italic; }
+  div.box { border: 0.8pt solid #000; padding: 6pt 10pt; margin: 0.8em 0 1em 0; font-size: 10pt; page-break-inside: avoid; }
+  div.box p.bt { font-weight: bold; margin-bottom: 0.3em; }
+  p.ref { font-size: 9.5pt; padding-left: 2.2em; text-indent: -2.2em; margin-bottom: 0.35em; text-align: left; }
+  div.pagebreak { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1 class="title">Evaluating CodeTracker</h1>
+<p class="subtitle">A Practical Guide to Oracles, Metrics and Baselines<br>for Refactoring-Aware Change-History Tools</p>
+<p class="author">Parinaz Sattarzadeh</p>
+<p class="affil">Guide for students joining the CodeTracker project</p>
+<p class="date">November 2026</p>
+
+<div class="abstract">
+<p class="abstract-title">Abstract</p>
+<p>CodeTracker reconstructs the commit change history of individual Java code elements: methods, variables, attributes, classes and code blocks. Its published evaluations (FSE&nbsp;2022 for methods and variables, TSE&nbsp;2024 for blocks) report precision and recall above 99%, measured against hand-validated <em>oracles</em>. This guide explains, for a reader new to empirical software engineering, how such an evaluation works in practice. It covers what an oracle is and how the CodeTracker oracles were built and corrected, and how true positives, false positives and false negatives are counted at commit level and at change level, exactly as the code in this repository does. It then shows how baselines such as CodeShovel, a GumTree-based tracker and <code>git&nbsp;log&nbsp;-L</code> are compared fairly, how to run the oracle tests and experiments, and how to build a new oracle for a new feature. As a worked example we use a 13-history oracle of commented-out and restored code mined from javaparser. Synthetic tests passed 27 of 27 scenarios on that feature, while the real histories exposed five failure causes. We close with a checklist of what a reviewer expects in an evaluation section.</p>
+<p class="keywords"><b>Keywords:</b> oracle, ground truth, precision, recall, empirical evaluation, change history, CodeTracker, RefactoringMiner, GumTree</p>
+</div>
+
+<h2>1&nbsp;&nbsp;Introduction</h2>
+<p>A change-history tool answers a simple question: <em>in which commits did this code element change, and how?</em> Whether the answer is right can only be checked against a reference answer that humans have validated, called the <b>oracle</b> or <b>ground truth</b>. Most of the effort of an evaluation goes into the oracle. In the CodeTracker papers it took two person-months for methods and variables [1] and three person-months for blocks [2], while running the tool is cheap. A tool measured against a weak oracle is only measured against itself.</p>
+<p>This guide is organised around the questions a new student usually has:</p>
+<ul>
+  <li>What does CodeTracker output? (Section&nbsp;2)</li>
+  <li>Which oracles exist, and how were they built? (Sections&nbsp;3 and 4)</li>
+  <li>How exactly are TP, FP, FN, precision and recall computed? (Section&nbsp;5)</li>
+  <li>How do we compare with other tools fairly? (Section&nbsp;6)</li>
+  <li>How do we run all of this, and build a new oracle? (Sections&nbsp;7 and 8)</li>
+  <li>What must an evaluation section contain? (Section&nbsp;9)</li>
+</ul>
+<p>Figure&nbsp;1 summarises the process.</p>
+<div class="figure"><img src="figures/fig1-pipeline.svg" alt="Evaluation pipeline">
+<p class="caption"><b>Figure 1.</b> The evaluation pipeline. The oracle is built once with manual validation (steps 1–4); the comparison and metrics (steps 5–6) run automatically after every code change.</p></div>
+
+<h2>2&nbsp;&nbsp;What CodeTracker produces</h2>
+<p>A tracker starts at a <b>start commit</b>, where it locates the element by file, name and line numbers, and walks <b>backwards</b> through the commits that changed the file. It stops at the commit where the element was <em>introduced</em>. The result is a graph (Figure&nbsp;2):</p>
+<ul>
+  <li>every <b>node</b> is a version of the element in one commit;</li>
+  <li>every <b>edge</b> links a parent-commit version to a child-commit version and carries a set of <b>changes</b>, each with a type from <code>Change.Type</code>, such as <i>body change</i>, <i>rename</i>, <i>moved</i> or <i>expression change</i>.</li>
+</ul>
+<p>For the evaluation, the graph is flattened into change records <i>(parent commit, commit, time, change type, element before, element after)</i>. Records of type <i>not changed</i> are dropped.</p>
+<div class="figure"><img src="figures/fig2-history-graph.svg" alt="History graph">
+<p class="caption"><b>Figure 2.</b> The history of a real <code>if</code> block in javaparser (<code>MethodResolutionLogic.isMoreSpecific</code>), tracked from commit <code>fc0e703</code>. It yields three change records: <i>introduced</i> (72b1d0c), <i>commented out block</i> (c3a08e1) and <i>uncommented block</i> (fc0e703).</p></div>
+
+<h2>3&nbsp;&nbsp;The oracles in this repository</h2>
+<p>Every oracle instance (a <em>history</em>) is a JSON file under <code>src/main/resources/oracle/&lt;kind&gt;/&lt;set&gt;/</code>. Its locator fields (repository, file, element name, line numbers, start commit) tell the tracker what to track. Its <code>expectedChanges</code> list is the ground truth. All elements come from the same 20 open-source Java projects, for example checkstyle, commons-io, elasticsearch, hibernate, javaparser, jgit, junit5, okhttp and spring-framework. This is deliberate: each newer oracle was built inside the methods of the earlier, already validated one.</p>
+<table class="booktabs">
+<caption><b>Table 1.</b> Oracles in the repository (number of histories).</caption>
+<tr><th>Kind</th><th class="r">Training</th><th class="r">Test</th><th>Origin</th></tr>
+<tr><td>Method</td><td class="r">100</td><td class="r">100</td><td>Grund et al. [3], corrected and extended in [1]</td></tr>
+<tr><td>Variable</td><td class="r">1025</td><td class="r">391</td><td>[1]: all variables and parameters of the 200 methods</td></tr>
+<tr><td>Block</td><td class="r">964</td><td class="r">316</td><td>[2]: all blocks of the 200 methods (6,093 changes)</td></tr>
+<tr><td>Attribute</td><td class="r">358</td><td class="r">122</td><td>later CodeTracker work, same 20 projects</td></tr>
+<tr><td>Class</td><td class="r">77</td><td class="r">88</td><td>later CodeTracker work, same 20 projects</td></tr>
+<tr class="last"><td>Comment transition</td><td class="r" colspan="2">13</td><td>this fork: javaparser, Section&nbsp;8.2</td></tr>
+</table>
+<p>The <b>training/test split</b> comes from CodeShovel [3], whose thresholds were tuned on the training half. CodeTracker uses no thresholds, so it is not trained on either half. The split is kept so that results stay comparable with earlier papers.</p>
+<p>Three supporting artefacts make the tests run offline:</p>
+<ul>
+  <li><b>commit logs</b> (<code>src/test/resources/&lt;kind&gt;/*.json</code>), which replace <code>git log</code>;</li>
+  <li>the <b>commit cache</b> (the <code>oracle/commits</code> submodule), which holds the changed files before and after each commit;</li>
+  <li>the <b>expected files</b> (<code>&lt;set&gt;-expected.txt</code>), with the TP, FP and FN the current tool obtains for each history.</li>
+</ul>
+<p>The expected files are a <em>regression baseline</em>, not ground truth.</p>
+
+<h2>4&nbsp;&nbsp;How the published oracles were built</h2>
+<h3>4.1&nbsp;&nbsp;Methods: correcting an existing oracle</h3>
+<p>The FSE&nbsp;2022 paper [1] started from the oracle of Grund et al. [3]: 200 methods with about 100 hours of manual validation. Reusing it also made the comparison with CodeShovel fair. Running CodeTracker revealed systematic disagreements. In 27 methods (18 training, 9 test), the oracle had matched the tracked method with another method <em>extracted from its body</em>, and followed the wrong method from then on. These entries were removed and the correct history was added. Every changed entry was checked on GitHub, and the paper reports how many entries were kept, removed and added. Missing change kinds, such as annotation and documentation changes, were added and validated as well.</p>
+
+<h3>4.2&nbsp;&nbsp;Variables and blocks: semi-automated validation</h3>
+<p>Validating 1,345 variables or 1,280 blocks entirely by hand is too costly. Both papers therefore use the same key observation: <em>an element inside a method can only change in a commit where its method changed</em>. The method oracle gives those candidate commits, and the tool proposes the changes. A human confirms or corrects every proposal (Algorithm&nbsp;1, Figure&nbsp;3). For blocks, a modified version of CodeTracker's Chrome extension showed each proposed commit's diff on GitHub, scrolled to the block [2].</p>
+<table class="alg">
+<tr class="head"><td colspan="2"><b>Algorithm 1</b>&nbsp; Semi-automated oracle construction for an element <i>e</i> in method <i>m</i> [1, 2]</td></tr>
+<tr><td class="ln">1</td><td><i>C</i> ← commits in which <i>m</i> changed, from the method oracle</td></tr>
+<tr><td class="ln">2</td><td><i>v</i> ← version of <i>e</i> at the start commit</td></tr>
+<tr><td class="ln">3</td><td><span class="kw">loop</span></td></tr>
+<tr><td class="ln">4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;(<i>c</i>, <i>change</i>, <i>v′</i>) ← next change of <i>v</i> reported by the tool in <i>C</i></td></tr>
+<tr><td class="ln">5</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> a human confirms <i>change</i> by inspecting commit <i>c</i> <span class="kw">then</span> add <i>change</i> to the oracle; <i>v</i> ← <i>v′</i></td></tr>
+<tr><td class="ln">6</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span> write the correct match or change by hand; <i>v</i> ← correct version; re-run from the parent of <i>c</i></td></tr>
+<tr><td class="ln">7</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <i>c</i> is the commit introducing <i>m</i> <span class="kw">or</span> <i>e</i> is introduced at <i>c</i> <span class="kw">then return</span> <span class="cm">▷ termination: nothing is missing</span></td></tr>
+<tr class="last"><td class="ln">8</td><td><span class="kw">end loop</span></td></tr>
+</table>
+<div class="figure"><img src="figures/fig4-validation-loop.svg" alt="Validation loop" style="width:82%">
+<p class="caption"><b>Figure 3.</b> The validation loop of Algorithm&nbsp;1. Its two termination conditions guarantee that the oracle has no missing change between the start commit and the element's origin.</p></div>
+<p>The block paper also wrote its <b>matching criterion</b> down. Two blocks are the same block when they share some common functionality, even if refactored or rewritten with other APIs. Blocks with different functionality are different, even if they sit at the same place in the control structure. Writing such definitions down <em>before</em> validating is what makes an oracle consistent.</p>
+
+<h3>4.3&nbsp;&nbsp;Research questions in the papers</h3>
+<table class="booktabs">
+<caption><b>Table 2.</b> Research questions of the two CodeTracker papers.</caption>
+<tr><th>Paper</th><th>RQ</th><th>Question</th></tr>
+<tr><td>FSE 2022 [1]</td><td>RQ1</td><td>Method tracking accuracy, compared to CodeShovel</td></tr>
+<tr><td></td><td>RQ2</td><td>Variable tracking accuracy</td></tr>
+<tr><td></td><td>RQ3</td><td>Execution time, compared to CodeShovel</td></tr>
+<tr><td></td><td>RQ4</td><td>Speed-up over plain RefactoringMiner</td></tr>
+<tr class="mid"><td>TSE 2024 [2]</td><td>RQ1</td><td>Block tracking accuracy, compared to a GumTree-based baseline (and <code>git log -L</code>)</td></tr>
+<tr class="last"><td></td><td>RQ2</td><td>Execution time, compared to the GumTree baseline</td></tr>
+</table>
+
+<h2>5&nbsp;&nbsp;Computing TP, FP, FN, precision and recall</h2>
+<h3>5.1&nbsp;&nbsp;The key</h3>
+<p>Every change, in the oracle and in the tool output, becomes a <b>key</b> made of its commit id and change type:</p>
+<pre>key = commitId + "-" + changeType          (getChangeKey in OracleTest and AbstractExperimentStarter)</pre>
+<p>Two changes match exactly when their keys are equal; element names and paths are not compared. Three consequences follow:</p>
+<ul>
+  <li>Two different change types in one commit give two keys.</li>
+  <li>Two changes of the same type in one commit collapse into one key.</li>
+  <li>A right commit with a wrong type is <em>one FP and one FN</em>.</li>
+</ul>
+
+<h3>5.2&nbsp;&nbsp;Per history and overall</h3>
+<p>Let <i>E</i> be the oracle's keys and <i>D</i> the tool's keys for one history (Figure&nbsp;4):</p>
+<div class="eq">TP = |E ∩ D| &nbsp;&nbsp;&nbsp; FP = |D \ E| &nbsp;&nbsp;&nbsp; FN = |E \ D|</div>
+<p>Over a whole oracle, the counts are <b>summed first</b>, and precision and recall are computed from the sums. This is a micro-average, so long histories weigh more:</p>
+<div class="eq">Precision = ΣTP / (ΣTP + ΣFP) &nbsp;&nbsp;&nbsp;&nbsp; Recall = ΣTP / (ΣTP + ΣFN)</div>
+<p>Precision answers <em>how much of what the tool reports is right</em>; recall answers <em>how much of what happened the tool finds</em>. The CodeTracker papers report both and do not use F1 (= 2PR / (P + R)).</p>
+<div class="figure"><img src="figures/fig3-sets.svg" alt="TP FP FN sets" style="width:78%">
+<p class="caption"><b>Figure 4.</b> TP, FP and FN as set operations on keys, for the worked example of Table&nbsp;3.</p></div>
+
+<h3>5.3&nbsp;&nbsp;Commit level and change level</h3>
+<p>At <b>change level</b>, keys are compared as above. At <b>commit level</b>, each history's keys are first reduced to their commit ids (<code>calculateFinalResults</code>). This measures only whether the right commits were found. Commit-level numbers are never worse than change-level ones.</p>
+<table class="booktabs">
+<caption><b>Table 3.</b> Worked example. Oracle: A&nbsp;introduced, B&nbsp;body change, B&nbsp;rename, C&nbsp;body change. Tool: A&nbsp;introduced, B&nbsp;body change, C&nbsp;expression change, D&nbsp;body change.</caption>
+<tr><th>Level</th><th class="r">TP</th><th class="r">FP</th><th class="r">FN</th><th class="r">Precision</th><th class="r">Recall</th></tr>
+<tr><td>Change</td><td class="r">2</td><td class="r">2</td><td class="r">2</td><td class="r">50%</td><td class="r">50%</td></tr>
+<tr class="last"><td>Commit</td><td class="r">3</td><td class="r">1</td><td class="r">0</td><td class="r">75%</td><td class="r">100%</td></tr>
+</table>
+
+<h3>5.4&nbsp;&nbsp;Per change type and exclusions</h3>
+<p>The experiment runner also writes TP/FP/FN <em>per change type</em> (<code>summary-*.csv</code>). This shows where errors concentrate and fills the papers' "instances per change kind" tables. Not counted are <i>not changed</i>; in the JUnit tests also <i>signature format change</i>, which is formatting only; and in the per-type columns <i>changed multiple times</i> and <i>removed</i>.</p>
+
+<h2>6&nbsp;&nbsp;Baselines and fair comparison</h2>
+<p>An accuracy number means little alone. The papers compare against the strongest available alternative, run on the <em>same</em> oracle, and state every fairness rule.</p>
+<p><b>CodeShovel</b> [3] was the state of the art for methods. Because its change vocabulary is coarser, the FSE paper counted its coarse reports as TPs: for example, a single <i>ParameterChange</i> covering CodeTracker's finer parameter kinds, and a <i>BodyChange</i> for comment-only edits.</p>
+<p>No tool tracked blocks, so the TSE paper <b>built baselines</b>:</p>
+<ul>
+  <li>The <b>GumTree-based baseline</b> is CodeTracker's own algorithm with the statement mappings of RefactoringMiner replaced by the AST node mappings of GumTree&nbsp;3.0 [4]. GumTree is the state-of-the-art AST diff tool. It maps nodes in two phases: first the largest identical subtrees top-down, then the remaining nodes bottom-up when enough of their children are mapped (Figure&nbsp;5). Moved blocks were handled with two-stage matching [5].</li>
+  <li>The <b><code>git log -L</code> baseline</b> traces the block's line range. It returns commits only, so it is evaluated at commit level only.</li>
+</ul>
+<div class="figure"><img src="figures/fig5-gumtree.svg" alt="GumTree mapping">
+<p class="caption"><b>Figure 5.</b> Why a general-purpose AST differ can mis-track blocks. An <code>else</code> branch that is an identical subtree is mapped in GumTree's top-down phase, although its parent <code>if</code> changed. The TSE paper discusses a real case of this (its Fig.&nbsp;10).</p></div>
+<p>The paper stated these fairness rules:</p>
+<ul>
+  <li>GumTree maps a node at most once, so for block <em>merges</em> only the fork with the largest overlap is in the ground truth.</li>
+  <li>Commits that <code>git log -L</code> reports <em>before</em> the true introduction are not counted as FPs.</li>
+  <li><code>git log -L</code> is restarted after whole-file reformatting commits.</li>
+  <li>For timing, RefactoringMiner's move detection in the GumTree baseline was cached.</li>
+</ul>
+<table class="booktabs">
+<caption><b>Table 4.</b> Published overall results (training + test) [1, 2].</caption>
+<tr><th>Element</th><th>Level</th><th>Tool</th><th class="r">TP</th><th class="r">FP</th><th class="r">FN</th><th class="r">Precision</th><th class="r">Recall</th></tr>
+<tr><td>Method</td><td>commit</td><td>CodeShovel</td><td class="r">3527</td><td class="r">287</td><td class="r">139</td><td class="r">92.48</td><td class="r">96.21</td></tr>
+<tr><td></td><td>commit</td><td>CodeTracker</td><td class="r">3664</td><td class="r">1</td><td class="r">0</td><td class="r">99.97</td><td class="r">100</td></tr>
+<tr><td></td><td>change</td><td>CodeShovel</td><td class="r">4327</td><td class="r">440</td><td class="r">270</td><td class="r">90.77</td><td class="r">94.13</td></tr>
+<tr><td></td><td>change</td><td>CodeTracker</td><td class="r">4594</td><td class="r">6</td><td class="r">3</td><td class="r">99.87</td><td class="r">99.93</td></tr>
+<tr class="mid"><td>Variable</td><td>commit</td><td>CodeTracker</td><td class="r">1971</td><td class="r">3</td><td class="r">1</td><td class="r">99.85</td><td class="r">99.95</td></tr>
+<tr><td></td><td>change</td><td>CodeTracker</td><td class="r">2037</td><td class="r">7</td><td class="r">3</td><td class="r">99.66</td><td class="r">99.85</td></tr>
+<tr class="mid"><td>Block</td><td>commit</td><td>GumTree baseline</td><td class="r">4735</td><td class="r">271</td><td class="r">929</td><td class="r">94.59</td><td class="r">83.60</td></tr>
+<tr><td></td><td>commit</td><td><code>git log -L</code></td><td class="r">4730</td><td class="r">1689</td><td class="r">934</td><td class="r">73.69</td><td class="r">83.51</td></tr>
+<tr><td></td><td>commit</td><td>CodeTracker</td><td class="r">5651</td><td class="r">12</td><td class="r">13</td><td class="r">99.79</td><td class="r">99.77</td></tr>
+<tr><td></td><td>change</td><td>GumTree baseline</td><td class="r">4798</td><td class="r">607</td><td class="r">1296</td><td class="r">88.77</td><td class="r">78.73</td></tr>
+<tr class="last"><td></td><td>change</td><td>CodeTracker</td><td class="r">6063</td><td class="r">31</td><td class="r">31</td><td class="r">99.49</td><td class="r">99.49</td></tr>
+</table>
+<p><b>Every remaining error of the proposed tool is explained.</b> The FSE paper traces its few FPs to a method-merge case in javaparser and to RefactoringMiner reporting a <i>FileMove</i> instead of a <i>MoveMethod</i>. The TSE paper shows each error pattern on a real diff. It turns each pattern into an <em>Insight</em> that states the exact conditions under which the tool fails, and it explains the baselines' errors in the same way. It also explains differences between the training and test sets: longer histories make an early miss cost more FNs.</p>
+<p><b>Execution time</b> is measured per tracked element with <code>System.nanoTime</code>, on one documented machine, with repositories cloned beforehand. It is reported as median and average, shown in log-scale box plots, and broken down by tracking step. CodeTracker took 3.35&nbsp;s median per method [1] and 2&nbsp;s median per block, against 10&nbsp;s for the GumTree baseline [2].</p>
+
+<h2>7&nbsp;&nbsp;Running the evaluation in practice</h2>
+<div class="figure"><img src="figures/fig6-offline.svg" alt="Offline evaluation">
+<p class="caption"><b>Figure 6.</b> How the evaluation code fits together. Both consumers use the same key comparison.</p></div>
+<p><b>Oracle tests</b> (<code>mvn test -Dtest=BlockOracleTest</code>, and likewise for the other kinds) run each history with the offline tracker. A history passes when its TP/FP/FN <em>equal</em> its line in <code>&lt;set&gt;-expected.txt</code>. They are regression tests: they detect change, not imperfection. They take more than an hour for all kinds, so run them in the background and do not compile in the same checkout meanwhile. In this fork, <code>pom.xml</code> mixes JUnit 5.8.2 and 5.10.0. Use a temporary pom aligned to 5.10.0 (<code>docs/comment-transition/tools/run-oracles.sh</code>).</p>
+<p><b>Experiment runners</b> (<code>org.codetracker.experiment.&lt;Kind&gt;ExperimentStarter</code>) write <code>summary</code>, <code>detailed</code> and <code>final.csv</code> files under <code>experiments/tracking-accuracy/</code>. <code>final.csv</code> holds the paper-style numbers per set and level.</p>
+<p><b>Regression protocol after a change.</b></p>
+<ol>
+  <li>Run all oracle tests on a <em>baseline</em> checkout (<code>git worktree add</code> at the commit before your change) and on your final checkout.</li>
+  <li>Compare per history (<code>CompareOracle.java</code>).</li>
+  <li>Explain every difference as a regression, an expected effect (for example, a new change type that the old oracle does not contain), or noise.</li>
+</ol>
+
+<h2>8&nbsp;&nbsp;Building a new oracle</h2>
+<h3>8.1&nbsp;&nbsp;Recipe</h3>
+<ol>
+  <li><b>Define</b> every change type you will label, precisely, before looking at data.</li>
+  <li><b>Find candidates.</b> Use random sampling for general accuracy (spread over projects), or <em>targeted mining</em> for a rare phenomenon. A random sample of 200 methods may contain no commented-out code at all.</li>
+  <li><b>Locate</b> each element at its start commit: file, name and lines, read with <code>git show</code>.</li>
+  <li><b>Run the tool</b> to get proposals, and treat them as proposals only.</li>
+  <li><b>Validate against git.</b> Read the code before and after for every proposed change. Search for <em>misses</em> with <code>git log -L</code> and with a check that flags unreported commits touching the element. Verify the origin: was the element moved, extracted or renamed?</li>
+  <li><b>Record</b> how each history was validated and why each correction was made.</li>
+  <li><b>Store</b> new histories as a separate set with unique file names, and add the current scores as the regression baseline.</li>
+</ol>
+<div class="box"><p class="bt">Tooling in this fork</p>
+<p><code>LocalOracleBuilder</code> (test scope) implements steps 4–7 on a local clone. Its modes:</p>
+<ul>
+  <li><code>&lt;kind&gt;</code> runs the tool, and writes the commit logs and the cache;</li>
+  <li><code>check</code> gives evidence for validation;</li>
+  <li><code>finalize</code> applies the verdict;</li>
+  <li><code>score</code> computes TP/FP/FN exactly as the tests do;</li>
+  <li><code>cache</code> rebuilds the offline cache without network.</li>
+</ul>
+<p><code>MineCommentTransitions.java</code> and <code>blockevo.sh</code> support mining and validation.</p></div>
+
+<h3>8.2&nbsp;&nbsp;Worked example: commented-out and restored code</h3>
+<p>The comment-transition feature of this fork passed all 27 synthetic scenarios. To measure it on real code, the full histories of javaparser (10,039 commits) and elasticsearch (100,544 commits) were mined. This produced 303 comment-out/uncomment events and 45 same-file pairs. From them, 27 histories were selected and validated with the recipe above: 11 blocks, 10 methods, 4 variables and 2 attributes.</p>
+<table class="booktabs">
+<caption><b>Table 5.</b> Results on the real-project comment-transition oracle.</caption>
+<tr><th>Measure</th><th class="r">TP</th><th class="r">FP</th><th class="r">FN</th><th class="r">Precision</th><th class="r">Recall</th></tr>
+<tr><td>javaparser (13), all change types</td><td class="r">51</td><td class="r">3</td><td class="r">13</td><td class="r">94.4%</td><td class="r">79.7%</td></tr>
+<tr><td>elasticsearch (14), all change types</td><td class="r">18</td><td class="r">9</td><td class="r">65</td><td class="r">66.7%</td><td class="r">21.7%</td></tr>
+<tr class="mid"><td>Both, all change types</td><td class="r">69</td><td class="r">12</td><td class="r">78</td><td class="r">85.2%</td><td class="r">46.9%</td></tr>
+<tr class="mid"><td>Both, comment-transition types only</td><td class="r">18</td><td class="r">1</td><td class="r">27</td><td class="r">94.7%</td><td class="r">40.0%</td></tr>
+<tr class="last"><td><i>After the fix, 42 histories incl. checkstyle</i>, all change types</td><td class="r">204</td><td class="r">6</td><td class="r">27</td><td class="r">97.1%</td><td class="r">88.3%</td></tr>
+</table>
+<p>Six lessons follow from this example:</p>
+<ul>
+  <li><b>Real habits break synthetic assumptions.</b> Developers put a prose note above commented-out code (<code>// source is always enabled for now</code>) or a marker inside it (<code>//&nbsp;&nbsp;&nbsp;&nbsp;} NOCOMMIT fix this</code>). The commented text then no longer parses as Java, and the restoration is missed. This explains 8 of the 14 elasticsearch misses. No synthetic scenario contained it.</li>
+  <li><b>One project is not enough.</b> javaparser alone suggested 80% recall; elasticsearch showed 22%.</li>
+  <li><b>One miss can cost a whole history.</b> A single missed restoration costs 24 FNs in one test-method history. Report per-history results next to the totals.</li>
+  <li><b>Check the scoring code too.</b> One apparent defect was the test harness filtering a change type out. Before reporting an FN, confirm with the raw tracker output that the tool really missed it.</li>
+  <li><b>Check the harness for name collisions.</b> A published history appeared to regress because another oracle's history had the same file name.</li>
+  <li><b>Measure, fix, re-measure.</b> Fixing the dominant cause and re-scoring with the same oracle raised recall from 46.9% to 87.8% and precision from 85.2% to 96.3% on the same 27 histories (97.1% and 88.3% on 42 histories after adding checkstyle), with no history getting worse. Re-scoring also exposed two weaknesses the fix had made reachable.</li>
+</ul>
+<p>The main lesson: an evaluation is useful when it shows where a tool fails, not only where it succeeds.</p>
+
+<h2>9&nbsp;&nbsp;What an evaluation section must contain</h2>
+<ol>
+  <li><b>Research questions</b> stated first, each answered with a one-sentence finding.</li>
+  <li><b>The oracle:</b> source, size, construction and validation process, effort (person-months), and the corrections made to earlier oracles, with counts.</li>
+  <li><b>Accuracy tables</b> with TP, FP, FN, precision and recall, for training, test and overall, at commit and change level.</li>
+  <li><b>Comparison with the state of the art</b> on the same oracle, with all fairness rules.</li>
+  <li><b>An explanation of every FP and FN</b> of your tool, grouped by cause, each with a real example (project, commit) and ideally an <em>insight</em>.</li>
+  <li><b>Execution time</b>, with machine, JVM settings and medians.</li>
+  <li><b>Threats to validity:</b>
+    <ul>
+      <li><i>internal</i>: oracle errors, and how they were reduced;</li>
+      <li><i>external</i>: few projects or one language, and why that is acceptable;</li>
+      <li><i>construct</i>: what the change types do not capture (for example, variable initializer changes).</li>
+    </ul>
+  </li>
+  <li><b>Data availability:</b> the tool, oracle and scripts are public.</li>
+</ol>
+
+<h2>10&nbsp;&nbsp;Common mistakes</h2>
+<ul>
+  <li>Building the oracle from the tool's output without independent validation, which measures agreement with yourself.</li>
+  <li>Silently editing a published oracle. Add a new set instead, or report kept, removed and added counts.</li>
+  <li>Duplicate history file names. <code>OracleTest</code> keys expected values by file name in shared static maps.</li>
+  <li>Treating <code>expected.txt</code> as ground truth. It is the tool's current score.</li>
+  <li>Counting whitespace-only edits as changes.</li>
+  <li>Accepting <i>introduced</i> without checking whether the element was moved, extracted or renamed.</li>
+  <li>Assuming <code>commitTime</code> order is ancestry order. Rebased histories break this.</li>
+</ul>
+
+<h2>References</h2>
+<p class="ref">[1] M. Jodavi and N. Tsantalis, "Accurate Method and Variable Tracking in Commit History," in <i>Proc. 30th ACM ESEC/FSE</i>, Singapore, 2022. doi:10.1145/3540250.3549079.</p>
+<p class="ref">[2] M. Jodavi and N. Tsantalis, "Refactoring-aware Block Tracking," <i>IEEE Transactions on Software Engineering</i>, 2024.</p>
+<p class="ref">[3] F. Grund, S. Chowdhury, N. C. Bradley, B. Hall and R. Holmes, "CodeShovel: Constructing Method-Level Source Code Histories," in <i>Proc. 43rd ICSE</i>, 2021.</p>
+<p class="ref">[4] J.-R. Falleri, F. Morandat, X. Blanc, M. Martinez and M. Monperrus, "Fine-grained and Accurate Source Code Differencing," in <i>Proc. 29th ACM/IEEE ASE</i>, 2014.</p>
+<p class="ref">[5] A. Fujimoto, Y. Higo, J. Matsumoto and S. Kusumoto, "Staged Tree Matching for Detecting Code Move across Files," in <i>Proc. 28th ICPC</i>, 2020.</p>
+</body>
+</html>

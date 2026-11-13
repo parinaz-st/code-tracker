@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="250" viewBox="0 0 760 250" font-family="Cambria, 'Times New Roman', serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker>
+  </defs>
+  <rect width="760" height="250" fill="#fff"/>
+  <!-- boxes -->
+  <g stroke="#000" stroke-width="1.2" fill="#f2f2f2">
+    <rect x="10" y="60" width="110" height="70" rx="6"/>
+    <rect x="150" y="60" width="110" height="70" rx="6"/>
+    <rect x="290" y="60" width="120" height="70" rx="6" fill="#e3e3e3"/>
+    <rect x="440" y="60" width="95" height="70" rx="6"/>
+    <rect x="565" y="60" width="85" height="70" rx="6"/>
+    <rect x="670" y="60" width="80" height="70" rx="6"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="65" y="85" font-weight="bold">1. Select</text>
+    <text x="65" y="103">projects and</text>
+    <text x="65" y="119">elements</text>
+    <text x="205" y="85" font-weight="bold">2. Run tool</text>
+    <text x="205" y="103">backward</text>
+    <text x="205" y="119">tracking</text>
+    <text x="350" y="85" font-weight="bold">3. Validate</text>
+    <text x="350" y="103">every change</text>
+    <text x="350" y="119">against git</text>
+    <text x="487" y="85" font-weight="bold">4. Oracle</text>
+    <text x="487" y="103">JSON</text>
+    <text x="487" y="119">(ground truth)</text>
+    <text x="607" y="85" font-weight="bold">5. Compare</text>
+    <text x="607" y="103">keys</text>
+    <text x="607" y="119">commit+type</text>
+    <text x="710" y="85" font-weight="bold">6. Metrics</text>
+    <text x="710" y="103">TP FP FN</text>
+    <text x="710" y="119">P, R</text>
+  </g>
+  <g stroke="#000" stroke-width="1.2" fill="none" marker-end="url(#a)">
+    <line x1="120" y1="95" x2="148" y2="95"/>
+    <line x1="260" y1="95" x2="288" y2="95"/>
+    <line x1="410" y1="95" x2="438" y2="95"/>
+    <line x1="535" y1="95" x2="563" y2="95"/>
+    <line x1="650" y1="95" x2="668" y2="95"/>
+    <!-- feedback -->
+    <path d="M350,130 L350,175 L205,175 L205,132"/>
+    <!-- tool output used again in comparison -->
+    <path d="M205,60 L205,30 L607,30 L607,58" stroke-dasharray="5,3"/>
+  </g>
+  <text x="278" y="193" text-anchor="middle" font-style="italic" font-size="12">wrong match: correct it, re-run from the parent commit</text>
+  <text x="406" y="22" text-anchor="middle" font-style="italic" font-size="12">final tool output (the version under test)</text>
+  <text x="380" y="232" text-anchor="middle" font-size="12">Steps 1–4 build the oracle once (expensive, manual). Steps 5–6 are re-run after every code change (cheap, automatic).</text>
+</svg>
