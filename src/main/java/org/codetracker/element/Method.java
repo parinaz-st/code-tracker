@@ -10,6 +10,7 @@ import gr.uom.java.xmi.decomposition.StatementObject;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 import org.codetracker.api.Version;
+import org.codetracker.util.IdentityMemo;
 import org.codetracker.util.Util;
 
 import java.util.*;
@@ -22,10 +23,10 @@ public class Method extends BaseCodeElement {
     private final String identifierIgnoringVersionAndDocumentationAndBody;
     private final String identifierIgnoringVersionAndAnnotation;
 
-    private Method(VariableDeclarationContainer umlOperation, String identifierIgnoringVersion, String identifierIgnoringVersionAndDocumentationAndBody, String identifierIgnoringVersionAndAnnotation, String name, String filePath, Version version) {
+    private Method(VariableDeclarationContainer umlOperation, String identifierIgnoringVersion, String identifierIgnoringVersionAndDocumentationAndBody, String identifierIgnoringVersionAndAnnotation, String name, String filePath, Version version, String documentsHashCode) {
         super(identifierIgnoringVersion, name, filePath, version);
         this.umlOperation = umlOperation;
-        this.documentsHashCode = getDocumentsSha512(umlOperation);
+        this.documentsHashCode = documentsHashCode;
         this.identifierIgnoringVersionAndDocumentationAndBody = identifierIgnoringVersionAndDocumentationAndBody;
         this.identifierIgnoringVersionAndAnnotation = identifierIgnoringVersionAndAnnotation;
     }
@@ -35,6 +36,11 @@ public class Method extends BaseCodeElement {
     }
 
     public static Method of(VariableDeclarationContainer umlOperation, Version version) {
+        String[] ids = IdentityMemo.get(umlOperation, Method::computeIdentifiers);
+        return new Method(umlOperation, ids[0], ids[1], ids[2], ids[3], umlOperation.getLocationInfo().getFilePath(), version, ids[4]);
+    }
+
+    private static String[] computeIdentifiers(VariableDeclarationContainer umlOperation) {
         String sourceFolder = umlOperation.getLocationInfo().getSourceFolder();
         String identifierIgnoringVersion = null;
         String identifierIgnoringVersionAndDocumentationAndBody = null;
@@ -44,15 +50,15 @@ public class Method extends BaseCodeElement {
             identifierIgnoringVersion = getIdentifierExcludeVersion((UMLOperation) umlOperation, true, true, true);
             identifierIgnoringVersionAndDocumentationAndBody = getIdentifierExcludeVersion((UMLOperation) umlOperation, false, false, true);
             identifierIgnoringVersionAndAnnotation = getIdentifierExcludeVersion((UMLOperation) umlOperation, true, true, false);
-            name = String.format("%s%s", sourceFolder, ((UMLOperation) umlOperation).getKey());
+            name = sourceFolder + ((UMLOperation) umlOperation).getKey();
         }
         else if (umlOperation instanceof UMLInitializer) {
             identifierIgnoringVersion = getIdentifierExcludeVersion((UMLInitializer) umlOperation, true, true);
             identifierIgnoringVersionAndDocumentationAndBody = getIdentifierExcludeVersion((UMLInitializer) umlOperation, false, false);
             identifierIgnoringVersionAndAnnotation = identifierIgnoringVersion;
-            name = String.format("%s%s", sourceFolder, umlOperation.getName());
+            name = sourceFolder + umlOperation.getName();
         }
-        return new Method(umlOperation, identifierIgnoringVersion, identifierIgnoringVersionAndDocumentationAndBody, identifierIgnoringVersionAndAnnotation, name, umlOperation.getLocationInfo().getFilePath(), version);
+        return new String[] {identifierIgnoringVersion, identifierIgnoringVersionAndDocumentationAndBody, identifierIgnoringVersionAndAnnotation, name, getDocumentsSha512(umlOperation)};
     }
 
     public boolean differInFormatting(Method other) {
@@ -152,6 +158,50 @@ public class Method extends BaseCodeElement {
             }
         }
         return null;
+    }
+
+    /**
+     * Indexes the statements of this method by the identifier (ignoring version) of their block, in the same
+     * traversal order as {@link #findBlock(Predicate)}. For an identifier, the index holds the statement of the block
+     * that {@code findBlock(b -> b.getIdentifierIgnoringVersion().equals(identifier))} would return.
+     * Use {@link #findBlock(Map, String)} to look up a block.
+     */
+    public Map<String, AbstractStatement> blockIndex() {
+        Map<String, AbstractStatement> index = new HashMap<>();
+        if (umlOperation.getBody() != null) {
+            indexBlocks(umlOperation.getBody().getCompositeStatement().getAllStatements(), index);
+        }
+        for (UMLAnonymousClass anonymousClass : umlOperation.getAnonymousClassList()) {
+            for (UMLOperation operation : anonymousClass.getOperations()) {
+                if (operation.getBody() != null) {
+                    indexBlocks(operation.getBody().getCompositeStatement().getAllStatements(), index);
+                }
+            }
+        }
+        for (LambdaExpressionObject lambda : umlOperation.getAllLambdas()) {
+            if (lambda.getBody() != null) {
+                indexBlocks(lambda.getBody().getCompositeStatement().getAllStatements(), index);
+            }
+        }
+        return index;
+    }
+
+    private void indexBlocks(List<AbstractStatement> statements, Map<String, AbstractStatement> index) {
+        for (AbstractStatement composite : statements) {
+            Block block = Block.of(composite, this);
+            if (block != null) {
+                index.putIfAbsent(block.getIdentifierIgnoringVersion(), composite);
+            }
+        }
+    }
+
+    /**
+     * Equivalent to {@code findBlock(b -> b.getIdentifierIgnoringVersion().equals(identifier))}, using an index
+     * built by {@link #blockIndex()} for this method. Returns a new Block, like findBlock.
+     */
+    public Block findBlock(Map<String, AbstractStatement> blockIndex, String identifier) {
+        AbstractStatement statement = blockIndex.get(identifier);
+        return statement != null ? Block.of(statement, this) : null;
     }
 
     public Block findBlockWithoutName(Predicate<Block> equalOperator) {
