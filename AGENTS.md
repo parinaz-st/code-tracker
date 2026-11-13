@@ -44,6 +44,17 @@ CodeTracker is a refactoring-aware tool that builds the commit change history of
 - `feature/CmtTransitionDetectionBlock`: detects code that was commented out or uncommented in block histories. Its analysis, known defects, and plan are in `docs/comment-transition/`.
 - Other report items (dependency regex for Extract Class, multi-variable declaration splits, SHA-512 body hash) are described in the author's report *Enhancing CodeTracker Accuracy* (April 2026).
 
+## Project skills
+
+Step-by-step procedures live in `.claude/skills/` (Claude Code loads them; other agents can read them as plain Markdown):
+
+| Skill | Use it for |
+|---|---|
+| `oracle-history` | Adding hand-validated real-project histories to the comment-transition oracle. |
+| `oracle-regression` | Running the published oracles on a baseline and on the changed code, and comparing them. |
+| `comment-transition-change` | The development checklist for comment-out/uncomment detection. |
+| `report-build` | Building the HTML → PDF/DOCX reports and their SVG figures. |
+
 ## Git
 
 - Default branch: `master`. Work on feature branches, and do not commit to `master` directly.
