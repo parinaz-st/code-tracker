@@ -40,7 +40,7 @@ CodeTracker builds a **refactoring-aware commit change history** for one code el
 Every element has an `identifierIgnoringVersion`. Two elements in different commits are "the same, unchanged" when these identifiers are equal.
 
 - **Method** (`element/Method.java`): the identifier is built by `getIdentifierExcludeVersion(op, true, true, true)` and **includes the documentation and body hash**. A second identifier, `identifierIgnoringVersionAndDocumentationAndBody`, is used to find "the same method with a changed body".
-- **Block** (`element/Block.java:42-48`): the identifier is `method.getIdentifierIgnoringVersion() + "$" + type + ":{" + SHA512(all statements) + "," + signature + "}"`. As a result, **a block's identity depends on the body hash of its enclosing method.** This fact matters for the bug in Section 4.1.
+- **Block** (`element/Block.java:42-48`): the identifier is `method.getIdentifierIgnoringVersion() + "$" + type + ":{" + SHA512(all statements) + "," + signature + "}"`. As a result, **a block's identity depends on the body hash of its enclosing method.** This fact is what the reconnection heuristic in Section 4.1 relies on, and what limits it.
 
 ### 1.2 Backward tracking loop (block tracker, `BlockTrackerImpl.java:57-300`)
 
@@ -116,16 +116,22 @@ This covers the left half of the report's Algorithm 3 for blocks. The *pending �
 
 Severity levels: **H** means the result is wrong or the history is broken, **M** means precision or recall suffers, **L** means quality or maintainability. Section 8 lists which scenario test confirms each item.
 
-### 4.1 Continuity after `UNCOMMENTED_BLOCK` is broken (H, **confirmed** by S1, S2, S6, S7)
+### 4.1 Limits of the reconnection heuristic after `UNCOMMENTED_BLOCK` (H, **confirmed** by S1, S7; D missing in S2, S6)
 
-`virtualBlockBefore` is built from `container2`, the **current** operation, so its identifier contains the **current method's body hash** (Section 1.1). In the next iteration of `BlockTrackerImpl`:
+`virtualBlockBefore` is built from `container2`, the **current** operation, so its identifier contains the **current method's body hash** (Section 1.1). This is **deliberate**: it is the prototype's reconnection heuristic. In the next iteration of `BlockTrackerImpl`:
 
 - `currentMethod = Method.of(currentBlock.getOperation(), …)` uses F's operation.
-- `getMethod(rightModel, …, currentMethod::equalIdentifierIgnoringVersion)` is evaluated at commit E, where the block is still a comment. The method body differs, so the result is `null` and the loop calls `continue` (`:81-84`).
-- This repeats for **every** older commit:
-  - If no older commit has a method body byte-identical to F's, the queue empties **with no "introduced" node**. The history has no origin, which is worse than the original "introduced at F". (Confirmed by S1 and S7.)
-  - If some commit C happens to have an identical body, tracking silently resumes there. However, no `COMMENTED_OUT` change is ever recorded, and the D/E period is missing from the history. (Confirmed by S2 and S6.)
-- Every skipped commit still pays for model loading, so long histories become slow.
+- `getMethod(rightModel, …, currentMethod::equalIdentifierIgnoringVersion)` is evaluated at each older commit. While the block is still a comment, the method body differs, so the result is `null` and the loop calls `continue` (`:81-84`).
+- The loop therefore skips commits until it reaches one whose method body equals F's. When nothing else in the method changed during the commented period, that commit is C, the block's last active version, and tracking continues from there down to the true origin. **This works as intended in S2 and S6.**
+
+The heuristic has two limits:
+
+- **The comment-out commit is never recorded.** D's method body differs from F's (the block is a comment there), so D is skipped like E. The history is continuous, but no `COMMENTED_OUT` change is recorded and the D/E period is not visible. (S2, S6; see 4.6.)
+- **It needs a byte-identical method body.** If any other line of the method changes during the commented period or in the restoring commit, no older commit matches. The queue empties **with no "introduced" node**, which is worse than the original "introduced at F". (Confirmed by S1. S7, a block first written as a comment, ends the same way.) Real restorations do this often; for example, javaparser `fc0e703` restored a block while rewriting much of `isApplicable(MethodUsage)`.
+
+Every skipped commit also pays for model loading, so long histories become slow.
+
+The prototype's case study used a method that was otherwise unchanged during the commented period, the case the heuristic was designed for, so these limits did not show up there.
 
 `isAdded` builds its node the same way, but it calls `handleAdd`, so the queue stops there. The uncommented path does not stop.
 
