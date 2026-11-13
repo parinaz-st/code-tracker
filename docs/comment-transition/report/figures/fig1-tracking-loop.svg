@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="470" viewBox="0 0 720 470" font-family="Cambria, 'Times New Roman', serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker>
+  </defs>
+  <rect width="720" height="470" fill="#fff"/>
+  <!-- queue -->
+  <rect x="20" y="20" width="250" height="46" rx="6" fill="#f2f2f2" stroke="#222"/>
+  <text x="145" y="40" text-anchor="middle" font-weight="bold">Poll element e from the queue</text>
+  <text x="145" y="57" text-anchor="middle" font-size="12" font-style="italic">stop if e is marked introduced</text>
+  <line x1="145" y1="66" x2="145" y2="88" stroke="#222" marker-end="url(#a)"/>
+  <rect x="20" y="90" width="250" height="46" rx="6" fill="#f2f2f2" stroke="#222"/>
+  <text x="145" y="110" text-anchor="middle" font-weight="bold">For each commit c touching the file</text>
+  <text x="145" y="127" text-anchor="middle" font-size="12" font-style="italic">newest first; p = parent(c)</text>
+  <line x1="270" y1="113" x2="318" y2="113" stroke="#222" marker-end="url(#a)"/>
+  <!-- steps -->
+  <g>
+    <rect x="320" y="20" width="380" height="54" fill="#fff" stroke="#222"/>
+    <text x="332" y="40" font-weight="bold">Step 1</text>
+    <text x="390" y="40">locate the container and e in c</text>
+    <text x="390" y="60" font-size="12" font-style="italic">not found → next commit</text>
+    <rect x="320" y="84" width="380" height="54" fill="#fff" stroke="#222"/>
+    <text x="332" y="104" font-weight="bold">Step 2</text>
+    <text x="390" y="104">identical identifier in p → no change</text>
+    <text x="390" y="124" font-size="12" font-style="italic">identity includes the method body hash</text>
+    <rect x="320" y="148" width="380" height="92" fill="#eef4fb" stroke="#1f4e79" stroke-width="1.6"/>
+    <text x="332" y="168" font-weight="bold">Step 3</text>
+    <text x="390" y="168">same signature in p: lightweight body mapper</text>
+    <text x="390" y="188" font-size="12">refactored → matched → <tspan font-weight="bold" fill="#1f4e79">uncommented</tspan> → added</text>
+    <text x="390" y="208" font-size="12" fill="#1f4e79">blocks, variables: CTD inside checkBodyOfMatchedOperations</text>
+    <text x="390" y="226" font-size="12" fill="#1f4e79">methods, attributes: CTD right after this step fails</text>
+    <rect x="320" y="250" width="380" height="54" fill="#fff" stroke="#222"/>
+    <text x="332" y="270" font-weight="bold">Step 4</text>
+    <text x="390" y="270">local refactorings (diff of the file models)</text>
+    <text x="390" y="290" font-size="12" font-style="italic">extract, inline, move, rename, merge, split</text>
+    <rect x="320" y="314" width="380" height="54" fill="#fff" stroke="#222"/>
+    <text x="332" y="334" font-weight="bold">Step 5</text>
+    <text x="390" y="334">commit-level refactorings (partial/full model)</text>
+    <text x="390" y="354" font-size="12" font-style="italic">cross-file moves; otherwise "added"</text>
+    <line x1="510" y1="74" x2="510" y2="82" stroke="#222" marker-end="url(#a)"/>
+    <line x1="510" y1="138" x2="510" y2="146" stroke="#222" marker-end="url(#a)"/>
+    <line x1="510" y1="240" x2="510" y2="248" stroke="#222" marker-end="url(#a)"/>
+    <line x1="510" y1="304" x2="510" y2="312" stroke="#222" marker-end="url(#a)"/>
+  </g>
+  <!-- outcome -->
+  <rect x="320" y="396" width="380" height="54" rx="6" fill="#f2f2f2" stroke="#222"/>
+  <text x="510" y="417" text-anchor="middle" font-weight="bold">Found: add a change edge before → after</text>
+  <text x="510" y="437" text-anchor="middle" font-size="12" font-style="italic">enqueue the "before" node; connectRelatedNodes()</text>
+  <line x1="510" y1="368" x2="510" y2="394" stroke="#222" marker-end="url(#a)"/>
+  <path d="M320,423 L145,423 L145,138" fill="none" stroke="#222" stroke-dasharray="5,4" marker-end="url(#a)"/>
+  <text x="155" y="300" font-size="12" font-style="italic">next queued element</text>
+</svg>

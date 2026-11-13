@@ -1,0 +1,562 @@
+% Comment-Aware Change History in CodeTracker
+% LaTeX source of the report (same content as report.html / the PDF and Word versions).
+% Compile with pdflatex (Overleaf: upload this file together with the figures/ folder).
+\documentclass[11pt,a4paper]{article}
+
+% ---------------------------------------------------------------- packages
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{pifont}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[hidelinks]{hyperref}
+
+\captionsetup{font=small,labelfont=bf}
+\setlist{itemsep=1pt,topsep=3pt}
+\graphicspath{{figures/}}
+
+% ---------------------------------------------------------------- macros
+\definecolor{okgreen}{RGB}{26,107,42}
+\definecolor{nored}{RGB}{170,17,17}
+\newcommand{\ok}{\textcolor{okgreen}{\ding{51}}}
+\newcommand{\no}{\textcolor{nored}{\ding{55}}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\change}[1]{\textit{#1}}
+\newcommand{\fn}[1]{\textsc{#1}}
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+
+% ---------------------------------------------------------------- title
+\title{\textbf{Comment-Aware Change History in CodeTracker}\\[4pt]
+\large Tracking Code Elements Through Comment-Out and Restore Cycles\\
+for Blocks, Methods, Attributes and Variables}
+\author{Parinaz Sattarzadeh\\[2pt]
+\small\itshape Follow-up report on the CodeTracker comment transition detection work}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Developers frequently disable code by commenting it out and restore it later. CodeTracker, a refactoring-aware tool that reconstructs the commit history of individual code elements, treats such a restored element as newly introduced, so the history before the comment-out is lost. A previous report proposed and prototyped \emph{Comment Transition Detection} (CTD) for block tracking. This report analyses that prototype and extends it. A controlled scenario suite shows that the prototype's deliberate reconnection heuristic, a virtual parent that carries the current method's identity, links a restored block to its earlier history when the enclosing method body is otherwise unchanged, but never records the commit that commented the block out; when the method changed elsewhere, the restored history ended without an origin. The suite also shows that formatting differences and edits made during the restore prevented detection. We present four contributions: (i)~a guarantee that every history keeps exactly one origin, together with a cycle-safe linking of history fragments; (ii)~\emph{commented-state tracking}, which follows a restored element back through the commits in which it existed only as a comment and records the commit that commented it out; (iii)~edit-tolerant detection based on a \emph{virtual parent}, a line-preserving uncommented copy of the parent version that RefactoringMiner maps against the current version; and (iv)~the generalization of the approach from blocks to methods, attributes and variables, realising the method-level algorithm proposed in the first report. On a suite of 27 fixture-based scenarios, the reworked implementation passes all 27, compared with 3 of 10 block scenarios for both the original tool and the prototype. On a new oracle of 42 hand-validated comment-out and restore histories from javaparser, elasticsearch and checkstyle, it reaches 97.1\% precision and 88.3\% recall (98.3\% and 80.6\% for the comment-transition changes alone), and the 3{,}376 published CodeTracker oracle histories show no regression.
+
+\medskip
+\noindent\textbf{Keywords:} software evolution, change history, code tracking, commented-out code, refactoring-aware analysis, CodeTracker, RefactoringMiner
+\end{abstract}
+
+% =================================================================
+\section{Introduction}
+
+Commenting out code is one of the most common ways developers temporarily disable functionality, during debugging, experimentation or feature deactivation, and restore it later. Pham and Yang found commented-out code to be common in open-source projects~\cite{pham2020}. For history-reconstruction tools this practice is a blind spot. CodeTracker~\cite{jodavi2022,hasan2024} builds the commit change history of a method, variable, attribute or block by walking backwards through the commits that touched its file. When the element appears in a commit but cannot be found in that commit's parent, it is reported as \emph{introduced} and tracking stops. A restored element looks exactly like that, so everything before its restoration is cut off from its history.
+
+This problem was raised in our first report (\emph{Enhancing CodeTracker Accuracy}, April 2026~\cite{report1}), which proposed Algorithm~3 for restored methods. The second report (\emph{Comment Transition Detection in Block Tracking}, May 2026~\cite{report2}) implemented CTD for blocks. That implementation introduced three change types (\change{Uncommented Block}, \change{Uncommented Statement}, \change{Commented-Out Statement}), a strict hash-based detection of restored blocks, and a \emph{virtual parent block} that bridges a restored block to its earlier history. Its own limitations section listed open problems:
+\begin{itemize}
+  \item the commit that commented the block out is not reported;
+  \item edits made while uncommenting defeat detection;
+  \item partial \code{else}/\code{catch}/\code{finally} restorations are only partly supported;
+  \item prose comments are not distinguished from code;
+  \item the positions of statements in the parent are not verified.
+\end{itemize}
+
+This report continues that work. We first analyse the prototype systematically with a fixture-based scenario suite and identify the conditions under which its history-preservation heuristic holds (Section~\ref{sec:analysis}). We then present a reworked design (Section~\ref{sec:approach}) and its generalization to all four element kinds that CodeTracker tracks at member level (Section~\ref{sec:general}). Our contributions are:
+\begin{enumerate}
+  \item \textbf{Origin guarantee and cycle-safe linking.} Every history ends in exactly one \change{introduced} change. History fragments are never linked into cycles (Section~\ref{sec:origin}).
+  \item \textbf{Commented-state tracking.} A restored element is followed back through its commented period. The commit that commented it out is recorded, and tracking resumes from its last active version (Section~\ref{sec:commented}).
+  \item \textbf{Edit-tolerant detection via a virtual parent.} Deleted comments that are valid Java are uncommented in place, and RefactoringMiner~\cite{tsantalis2022} maps the result against the current version. This tolerates formatting changes and edits made during the restore (Section~\ref{sec:virtual}).
+  \item \textbf{Generalization.} The same scheme is applied to methods (the first report's Algorithm~3), attributes and local variables, across all eleven tracking loops of the four trackers (Section~\ref{sec:general}).
+  \item \textbf{An executable specification.} 27 scenarios built from throwaway Git repositories, plus 82 unit tests, are used as the evaluation instrument (Section~\ref{sec:eval}).
+  \item \textbf{A real-project oracle.} 42 comment-out and restore histories from three open-source projects, each validated against Git, measure precision and recall on real code (Section~\ref{sec:realoracle}).
+\end{enumerate}
+
+% =================================================================
+\section{Background}
+
+\subsection{Element identity and the tracking loop}
+CodeTracker identifies an element by a version-independent identifier. For methods, the identifier includes the signature, the documentation and a hash of the body. Blocks and local variables include the identifier of their enclosing method, and therefore depend on that method's body hash. Attributes are identified by their class, modifiers, visibility, name, type and annotations; the initializer is not part of the identifier. The tracking loop (Figure~\ref{fig:loop}) takes an element from a queue and visits the commits that touched its file, newest first. For each commit it tries five steps in turn:
+\begin{enumerate}
+  \item locate the element;
+  \item detect that nothing changed (an identical identifier exists in the parent);
+  \item for a container with an unchanged signature, build a lightweight body mapper and decide whether the element was refactored, matched, or added;
+  \item detect local refactorings from the diff of the file's model;
+  \item detect commit-level refactorings on a partial or full commit model.
+\end{enumerate}
+When a step succeeds, a change edge is added between the parent (``before'') and current (``after'') versions of the element. The ``before'' node is queued, and \fn{connectRelatedNodes} links history fragments whose identifiers coincide.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\linewidth]{fig1-tracking-loop.png}
+  \caption{The backward tracking loop of CodeTracker. Shaded: where comment-transition detection (CTD) is integrated. Blocks and variables use the body mapper of Step~3. Methods and attributes are checked right after their Step~3 / Step~2 fails, before the more expensive Steps~4 and~5.}
+  \label{fig:loop}
+\end{figure}
+
+\subsection{What RefactoringMiner provides}
+The body mapper of RefactoringMiner~\cite{tsantalis2022} (version 3.1.6 here) provides statement mappings with replacements, the non-mapped leaves and composite statements of each side, added and deleted comments (\code{UMLCommentListDiff}), matched and added variable declarations, and the refactorings found inside the body. RefactoringMiner has no notion of a comment that contains code. Commenting out a statement appears as ``statement deleted, comment added''. In a probe, its \code{UMLComment.isCommentedCode()} flag was \code{true} only for lone closing braces, so it cannot be used to recognise commented-out code.
+
+% =================================================================
+\section{Analysis of the Prototype}\label{sec:analysis}
+
+\subsection{Method}
+To measure the prototype independently of real-world noise, we built an executable specification before changing any logic. Each scenario creates a throwaway Git repository with JGit, one labelled commit at a time (A, B, C, \ldots), tracks one element from the last commit, and compares the history with the \emph{target} behaviour. The comparison works per commit label, using keywords of change titles (for example \change{commented out}, \change{uncommented}), so it does not depend on the final enum names. Every scenario also checks three invariants:
+\begin{itemize}
+  \item the history contains exactly one \change{introduced} change;
+  \item that change is the oldest entry;
+  \item the history graph is a single chain (one root, one sink, every node reachable from the root).
+\end{itemize}
+Scenario S1 reproduces the evolution of Figure~9 of the first report: introduced (A), edited (B, C), commented out (D), other code edited while still commented (E), restored (F). The other scenarios vary the comment style, the formatting, the edits made during the restore, and add negative controls.
+
+\subsection{Findings}
+Table~\ref{tab:defects} summarises the defects found by inspecting the code and confirmed by the scenarios. The most consequential one concerns history continuity. The prototype builds the virtual parent block from the \emph{current} method on purpose, so its identifier carries the current method's body hash. This is a deliberate reconnection heuristic: the backward loop skips older commits until it reaches one whose method body equals the current one, which is the last active version of the block. When nothing else in the method changes during the commented period (S2, S6), the restored block is linked to its earlier history as intended, down to its true origin.
+
+The heuristic has two limits. First, the commit that commented the block out is never visited, because its method body differs from the current one; the history is continuous, but \change{commented out} is never recorded. Second, the reconnection needs a byte-identical method body. If any other line of the method changes during the commented period or in the restore commit (S1), no older version matches and the history ends with \emph{no origin at all}, which is worse than the original tool's ``introduced at F''. In that case, because CodeTracker's block tracker does not mark its start node as such, \fn{connectRelatedNodes} treats the restored block as an open fragment end and links it back to its own virtual parent, which shares its identifier: a two-node cycle (Figure~\ref{fig:cycle}a). The prototype's case study used a method whose body was otherwise unchanged, the case the heuristic was designed for, so these limits did not show up there. Real restorations often change the method elsewhere; for example, javaparser commit \code{fc0e703} restored a block while rewriting much of the enclosing method.
+
+\begin{table}[t]
+\centering\small
+\caption{Defects of the prototype (branch \code{feature/CmtTransitionDetectionBlock}, commit \code{7c8d874}). Severity: H = wrong or broken history, M = precision or recall, L = quality.}
+\label{tab:defects}
+\begin{tabularx}{\linewidth}{@{}Xccc@{}}
+\toprule
+Defect & Sev. & Evidence & Resolved in \\
+\midrule
+Limits of the deliberate reconnection heuristic (virtual node with the current body hash): it reconnects only when the rest of the method is unchanged; otherwise the restored block loses its origin (2-node cycle). A block first written as a comment also ends without an origin & H & S1, S7 & Phase 1 \\
+Exact hash matching defeated by formatting (\code{if(x>0)\{} vs \code{if (x > 0) \{}) and by edits made while uncommenting & M & S4, S5, S11 & Phases 1, 3 \\
+A statement-level transition replaced \change{body change}, hiding other edits in the same commit & M & S10 & Phase 1 \\
+Block keywords matched by prefix (\code{double}, \code{format(}, \code{ifPresent(} counted as \code{do}, \code{for}, \code{if}) & M & unit tests & Phase 1 \\
+Single trivial comment lines (\code{return;}, \code{\}}) counted as evidence & M & unit tests & Phase 1 \\
+The commit that commented the block out is never reported & M & S1, S2, S4, S6 & Phase 2 \\
+Only blocks are covered; methods (first report, Algorithm~3), attributes and variables are not & M & M1--V5 & Phase 4 \\
+Local-files trackers, used by the oracle tests, contain none of the CTD hooks & M & inspection & Phases 3--4 \\
+Stale RefactoringMiner version (did not compile); wildcard imports; dead code & L & build & Phases 0--1 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\linewidth]{fig2-origin-loss.png}
+  \caption{(a)~In the prototype, when the method changed elsewhere during the commented period, no older version matches the virtual parent node, which shares the restored block's identifier; \fn{connectRelatedNodes} links the two into a cycle and the history never receives an origin. (b)~In the rework, a cycle-closing edge is refused. The restored element is either linked to its last active version through the commented-out commit, or closed with \change{introduced}.}
+  \label{fig:cycle}
+\end{figure}
+
+% =================================================================
+\section{Approach}\label{sec:approach}
+
+\subsection{Overview}
+The rework keeps the prototype's architecture and integration points. Figure~\ref{fig:pipeline} shows the decision sequence for a tracked element whose container has the same signature in the parent. The prototype's exact detection is kept as the first, cheapest check. The edit-tolerant detection of Section~\ref{sec:virtual} runs only when the exact check fails and the element would otherwise be reported as added. Both detectors leave a \emph{pending} virtual node. That node is later either confirmed by the commented-state search (Section~\ref{sec:commented}) or closed with an origin (Section~\ref{sec:origin}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\linewidth]{fig3-detection-pipeline.png}
+  \caption{Decision sequence in \fn{checkBodyOfMatchedOperations} for blocks (variables are analogous). Comment transitions inside a matched element are recorded \emph{in addition to} the body change.}
+  \label{fig:pipeline}
+\end{figure}
+
+\subsection{Exact detection, origin guarantee and cycle-safe linking}\label{sec:origin}
+The exact detector (Algorithm~\ref{alg:exact}) keeps the prototype's strategy:
+\begin{enumerate}
+  \item find a non-mapped composite statement whose signature matches a block signature rebuilt from the deleted comments;
+  \item check that it is the tracked block;
+  \item verify that every nested statement is either mapped or present in the deleted comments.
+\end{enumerate}
+Phase~1 made four changes to it:
+\begin{itemize}
+  \item Every comparison now goes through a single function, \fn{codeHash}, which removes all whitespace before hashing with SHA-512. This makes the detector insensitive to formatting.
+  \item Block keywords are matched with word boundaries.
+  \item Trivial lines are not counted as evidence.
+  \item Statement-level transitions are recorded next to \change{body change}, not instead of it.
+\end{itemize}
+
+\begin{algorithm}[t]
+\caption{\fn{ExactUncommentDetection}$(M, t)$, the prototype's detector with normalized hashing}\label{alg:exact}
+\begin{algorithmic}[1]
+\Require body mapper $M$ between parent $E$ and current $F$; tracked block identity $t$
+\State $D \gets M.\mathit{deletedComments}$; \textbf{if} $D = \emptyset$ \textbf{then return} \textit{false}
+\State $S \gets \{\fn{codeHash}(s) \mid s \in \fn{RebuildBlockSignatures}(D)\}$ \Comment{joins signatures spread over lines}
+\State $H \gets \{\fn{codeHash}(\ell) \mid \ell \text{ a line of } D\}$
+\For{each composite $c \in M.\mathit{nonMappedInnerNodes}(F)$}
+  \If{$\fn{codeHash}(c.\mathit{signature}) \notin S$ \textbf{or} $\fn{Block}(c, F) \neq t$} \textbf{continue} \EndIf
+  \If{$\exists$ statement $s$ nested in $c$: $\fn{codeHash}(s) \notin H \cup \mathit{mapped}(M, c)$} \textbf{continue} \Comment{strict continuity} \EndIf
+  \State $v \gets \fn{Block}(c, \mathit{container}(F), \text{version } E)$ \Comment{same identifier as $c@F$}
+  \State addEdge$(v \to c@F, \textit{uncommented block})$; \fn{MarkPending}$(v, \mathit{form}=c)$; enqueue$(v)$
+  \State \Return \textit{true}
+\EndFor
+\State \Return \textit{false}
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Origin guarantee.} A pending node that is never confirmed is closed after the tracking loop. An \change{introduced} change is added on its uncommented edge, so the history keeps exactly one origin (Algorithm~\ref{alg:origin}, lines~1--4). This is the ``pending is discarded'' case of the first report's Algorithm~3.
+
+\paragraph{Cycle-safe linking.} \fn{connectRelatedNodes} may link a fragment's open end (leaf) to another fragment's start (root) with the same identifier. The rework refuses such a link when the root already reaches the leaf, because the link would close a cycle (Algorithm~\ref{alg:origin}, lines~5--9). A cycle is never a valid history, so this guard only removes impossible edges. It lives in the \code{ChangeHistory} class that all trackers share.
+
+\begin{algorithm}[t]
+\caption{Origin guarantee and cycle-safe linking}\label{alg:origin}
+\begin{algorithmic}[1]
+\Procedure{ClosePending}{\,} \Comment{called once, after the tracking loop}
+  \For{each pending virtual node $v$ with uncommented successor $a$}
+    \If{$\mathit{predecessors}(v) = \emptyset$} addEdge$(v \to a, \textit{introduced})$ \Comment{no earlier active version} \EndIf
+  \EndFor
+\EndProcedure
+\Procedure{ConnectRelatedNodes}{\,}
+  \For{each leaf $\ell$ and root $r$ with $\mathit{id}(\ell) = \mathit{id}(r)$ and $\mathit{version}(\ell) \neq \mathit{version}(r)$}
+    \If{$\ell \in \mathit{reachable}(r)$} \textbf{continue} \Comment{would close a cycle} \EndIf
+    \State addEdge$(\ell \to r, \textit{no change})$
+  \EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Commented-state tracking}\label{sec:commented}
+The first report's Algorithm~3 marks a restoration as \emph{pending} and confirms it once an active version is found further back. We realise this with a dedicated backward search (Algorithm~\ref{alg:follow}, Figure~\ref{fig:commented}). When the tracking queue polls a pending virtual node, the generic loop is bypassed. The search walks back through the commits that touched the file, starting just before the restore commit, and handles each commit in one of three ways:
+\begin{itemize}
+  \item \textbf{Active:} the container (found by signature) contains the element as code. The comment-out is confirmed: a \change{commented out} change is recorded on the edge from the active version to a node at the commit that commented it out, and tracking resumes normally from the active version.
+  \item \textbf{Still commented:} the element is found in comment form (Section~\ref{sec:virtual} explains how). The search moves on to the next older commit.
+  \item \textbf{Neither:} the search stops, and the node is closed with an origin by Algorithm~\ref{alg:origin}.
+\end{itemize}
+The search keeps the element's \emph{commented form}, meaning how it looked while it was a comment, so it also works when the restore changed the element (Section~\ref{sec:virtual}). An active block found by signature alone must share at least half of the commented form's leaf statements, and the best such block wins. Without this rule, an unrelated \code{try} or \code{else} block with the same signature could be followed instead (Phase~7).
+
+\begin{algorithm}[t]
+\caption{\fn{FollowCommented}$(v, \mathit{commits})$, commented-state tracking (generic over element kinds)}\label{alg:follow}
+\begin{algorithmic}[1]
+\Require pending virtual node $v$ (version $E$) with restored element $a@F$ and commented form $\varphi$; file commits, newest first
+\State $d \gets \mathit{version}(v)$ \Comment{newest commit known to hold the commented form}
+\For{each commit $c$ older than $F$ in $\mathit{commits}$}
+  \State $K \gets$ container of $a$ in $c$, matched by signature
+  \If{$K = \bot$} \Return \Comment{stays pending} \EndIf
+  \State $x \gets \fn{FindActive}(K, \varphi)$
+  \If{$x \neq \bot$}
+    \State $n \gets v$ \textbf{if} $d = E$ \textbf{else} a node of $a$ at $d$, linked $n \to v$ with \textit{no change}
+    \State addEdge$(x \to n, \textit{commented out})$; unmark $v$; enqueue$(x)$; \Return
+  \EndIf
+  \If{\textbf{not} \fn{FoundAsComment}$(K, \varphi)$} \Return \Comment{first written as a comment} \EndIf
+  \State mark $c$ analysed; $d \gets c$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\linewidth]{fig4-commented-state.png}
+  \caption{Commented-state tracking on the evolution of the first report's Figure~9. The virtual node at E is created when the restore is detected at F. The search walks back over E and D (still comments) and finds the active version at C. It then records \change{commented out} on C\,$\to$\,D and resumes normal tracking from C.}
+  \label{fig:commented}
+\end{figure}
+
+\subsection{Edit-tolerant detection with a virtual parent}\label{sec:virtual}
+Instead of matching comment text against code with hand-written similarity rules, we let RefactoringMiner do the matching it was built for (Algorithm~\ref{alg:virtual}, Figure~\ref{fig:virtual}):
+\begin{enumerate}
+  \item Group the deleted comments into \emph{runs}: consecutive \code{//} lines, or one \code{/*\,\ldots\,*/} comment. Javadoc is skipped.
+  \item For each run, replace the comment markers by spaces \emph{in place}, so every offset and line number stays valid.
+  \item Keep the result only if the Eclipse JDT parser accepts it as Java statements (for blocks and variables) or as class-body declarations (for methods and attributes) without any malformed or recovered node. This filters out prose comments, and addresses the prototype's limitation that ``natural-language comments'' were not distinguished from code. It is a lightweight form of the classification proposed by Pham and Yang~\cite{pham2020}. Developers often leave a note next to commented-out code, which makes the run fail to parse. When a run that contains code-like lines does not parse, note text after the last \code{;}, \code{\{} or \code{\}} of a line is cut (for example \code{\} NOCOMMIT fix this}), and up to three prose lines are trimmed at either end of the run; the parse is retried, fewest lines dropped first. Code-like lines are never trimmed, so a commented method cannot shrink to a lone statement (Phase~7).
+  \item Re-parse the parent file with the accepted runs uncommented. This is the \emph{virtual parent}.
+  \item Map the virtual parent's container against the current container.
+  \item If the tracked element is mapped to code on an uncommented line, it was restored. Differences between the two sides are recorded on the same edge: an expression or body change for blocks and methods, an initializer change for attributes, a rename or type change for variables.
+\end{enumerate}
+
+\begin{algorithm}[t]
+\caption{\fn{VirtualUncommentDetection}$(M, t)$, edit-tolerant detection}\label{alg:virtual}
+\begin{algorithmic}[1]
+\If{$t$ is matched in $M$ \textbf{or} $M.\mathit{deletedComments} = \emptyset$} \Return \textit{false} \Comment{gate: no cost otherwise} \EndIf
+\State $\mathit{src} \gets$ content of the parent file \Comment{Git or cached commits}
+\State $U \gets \emptyset$
+\For{each run $R$ of $M.\mathit{deletedComments}$}
+  \State $\mathit{src}' \gets \mathit{src}$ with the markers of $R$ replaced by spaces \Comment{offsets and lines unchanged}
+  \If{\fn{JdtParses}(region of $R$ in $\mathit{src}'$, kind)} $\mathit{src} \gets \mathit{src}'$; $U \gets U \cup \mathit{lines}(R)$ \EndIf
+\EndFor
+\If{$U = \emptyset$} \Return \textit{false} \EndIf
+\State $K' \gets$ container in \fn{Parse}$(\mathit{src})$ with the parent's signature; $M' \gets \fn{BodyMapper}(K', \mathit{container}(F))$
+\If{$\exists$ mapping $(\varphi, t@F) \in M'$ with $\mathit{startLine}(\varphi) \in U$}
+  \State prepare changes: \textit{uncommented} $\cup$ differences$(\varphi, t@F)$ \Comment{built before the history is touched}
+  \State record them on $v \to t@F$; \fn{MarkPending}$(v, \mathit{form}=\varphi)$; \Return \textit{true}
+\EndIf
+\State \Return \textit{false}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\linewidth]{fig5-virtual-uncomment.png}
+  \caption{The virtual parent. Comment markers are replaced in place, the uncommented text is re-parsed, and RefactoringMiner maps the virtual parent against the current version. The changed condition (\code{x > 0} $\to$ \code{x >= 0}) becomes an \change{expression change} on the uncommented edge.}
+  \label{fig:virtual}
+\end{figure}
+
+% =================================================================
+\section{Generalization and Implementation}\label{sec:general}
+
+\subsection{Instantiation per element kind}
+The scheme of Section~\ref{sec:approach} (detect, mark pending, follow back, confirm or close) is instantiated for each element kind (Table~\ref{tab:kinds}). The kinds differ in four ways:
+\begin{itemize}
+  \item \textbf{Where the comments live:} inside the container body for blocks and variables, at class level for methods and attributes. Class-level comments have no comment diff in RefactoringMiner, so the deleted ones are computed by aligning the comments of the parent class and the current class in file order (a longest common subsequence). A repeated line such as \code{//    \}} is therefore credited to the right member. A run counts as deleted when it lost at least one of its lines (Phase~7).
+  \item \textbf{What the JDT parser must accept:} statements, or class-body declarations.
+  \item \textbf{How the commented form is found again in older commits:} by signature for blocks and methods, by identity for attributes, by name and type for variables.
+  \item \textbf{Where the detection hooks into the tracking loop.} For methods and attributes it runs right after the cheap steps fail, so restored members skip the expensive commit-level diff.
+\end{itemize}
+
+\begin{table}[t]
+\centering\small
+\caption{Instantiation of comment-transition detection for each element kind.}
+\label{tab:kinds}
+\begin{tabularx}{\linewidth}{@{}lllXXl@{}}
+\toprule
+Element & Comments & Parse as & Detection hook & Commented form matched by & Extra changes \\
+\midrule
+Block & method body & statements & Step 3, before \change{added} & kind + signature (body preferred) & expression, body \\
+Method & class body & class members & after Step 3 fails & signature & body \\
+Attribute & class body & class members & after Step 2 fails & identity (no initializer) & initializer \\
+Variable & method body & statements & Step 3, before \change{added} & name + type & rename, type \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Change types}
+Ten comment-related change types are available (Table~\ref{tab:types}). Three come from the prototype and seven are new. REST output and the oracle comparison look change types up by their title, so the new types need no further mapping.
+
+\begin{table}[t]
+\centering\small
+\caption{Comment-related change types. $\star$ = introduced by the prototype~\cite{report2}.}
+\label{tab:types}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Element & Restored & Commented out \\
+\midrule
+Block (whole) & \change{uncommented block} $\star$ & \change{commented out block} \\
+Statement inside a matched block & \change{uncommented statement} $\star$ & \change{commented out statement} $\star$ \\
+Method & \change{uncommented method} & \change{commented out method} \\
+Attribute & \change{uncommented attribute} & \change{commented out attribute} \\
+Variable & \change{uncommented variable} & \change{commented out variable} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Integration}
+Each tracker exists in up to three copies of its tracking loop: \code{track()} and \code{blame()} on Git, and a third \code{track()} in the \code{*WithLocalFiles} variant, which reads cached commits and is the variant used by the oracle tests. The comment-transition logic lives in each tracker's change-history class. The loops only contain three small hooks:
+\begin{itemize}
+  \item set the file source;
+  \item divert pending nodes to the backward search;
+  \item close pending nodes after the loop.
+\end{itemize}
+A \code{CommitFileSource} interface reads a file at a commit, or at its parent, from Git or from the cache. This lets the virtual parent and the backward search work in both variants. In total, eleven loops are wired: three each for blocks, methods and attributes, and two for variables, whose tracker has no \code{blame()} ($3+3+3+2=11$).
+
+\subsection{Robustness decisions}
+\begin{itemize}
+  \item \textbf{Prepare, then record.} CodeTracker builds variable rename and type changes only from a RefactoringMiner refactoring, and throws otherwise. All changes of a restore are therefore built before the history is modified, so a failure never leaves a half-recorded edge.
+  \item \textbf{Incomplete RefactoringMiner variable matching.} \code{getMatchedVariables()} does not list every mapped declaration pair, so the variable detector also inspects the statement mappings.
+  \item \textbf{Design decisions are recorded.} Each phase is a separate commit with a report, and fourteen Architecture Decision Records document the design choices (Appendix~\ref{app:phases}).
+\end{itemize}
+
+% =================================================================
+\section{Evaluation}\label{sec:eval}
+
+\subsection{Research questions}
+\textbf{RQ1.} Does the rework produce the target histories for comment-out and restore cycles, including edits made during the restore?
+\textbf{RQ2.} Does it avoid false comment transitions?
+\textbf{RQ3.} Does it leave histories of ordinary code unchanged?
+\textbf{RQ4.} How precise and complete is it on real comment-out and restore histories?
+
+\subsection{RQ1 and RQ2: scenario suite}
+Table~\ref{tab:scenarios} lists the scenarios and their outcomes. ``Baseline'' is CodeTracker without CTD (the prototype branch's merge-base with \code{master}, \code{375d0bb}). ``Prototype'' is \code{7c8d874}. ``Rework'' is \code{c3994df}, the end of Phase~4; all 27 scenarios still pass after Phase~7 (\code{a788373}). The scenarios for methods, attributes and variables were written in Phase~4. Their ``Baseline'' column was measured on the rework branch just before each tracker's hooks were added. At that point those trackers still behaved like the original CodeTracker, because the prototype only changed the block tracker. Figure~\ref{fig:progress} shows the progression across the phases.
+
+\begin{table}[t]
+\centering\small
+\caption{Scenario outcomes. \ok{} = target history; \no{} = deviation (reason given); n/a = scenario added later. ``intro'' = introduced.}
+\label{tab:scenarios}
+\begin{tabularx}{\linewidth}{@{}lXlll@{}}
+\toprule
+\# & Scenario & Baseline & Prototype & Rework \\
+\midrule
+S1 & Block commented out, method edited while commented, restored & \no{} intro at F & \no{} no origin & \ok{} \\
+S2 & Same, nothing else edited & \no{} intro at F & \no{} D missing & \ok{} \\
+S3 & Statement inside the block commented out and restored & \no{} body only & \ok{} & \ok{} \\
+S4 & Commented code formatted differently (\code{//if(x>0)\{}) & \no{} intro at F & \no{} intro at F & \ok{} \\
+S5 & Condition edited during restore & \no{} intro at F & \no{} intro at F & \ok{} \\
+S6 & Block commented with \code{/*\,\ldots\,*/} & \no{} intro at F & \no{} D missing & \ok{} \\
+S7 & Block first written as a comment & \ok{} & \no{} no origin & \ok{} \\
+S8 & Negative: prose comment removed with a real edit & \ok{} & \ok{} & \ok{} \\
+S9 & Negative: commented statement removed in a sibling block & \ok{} & \ok{} & \ok{} \\
+S10 & Statement uncommented together with a real edit & \no{} no transition & \no{} edit hidden & \ok{} \\
+S11 & Block body edited during restore & n/a & n/a & \ok{} \\
+S12 & Negative: unrelated commented loop deleted while a block is added & n/a & n/a & \ok{} \\
+\midrule
+M1--M3 & Method restored (line comment / block comment / body edited) & \no{} intro at F & n/a & \ok{} (3/3) \\
+M4, M5 & Method first written as comment; negative control & \ok{} & n/a & \ok{} (2/2) \\
+F1--F3 & Field restored (line / block comment / initializer edited) & \no{} intro at F & n/a & \ok{} (3/3) \\
+F4, F5 & Field first written as comment; negative control & \ok{} & n/a & \ok{} (2/2) \\
+V1--V3 & Variable restored (line / block comment / type edited) & \no{} intro at F & n/a & \ok{} (3/3) \\
+V4, V5 & Variable first written as comment; negative control & \ok{} & n/a & \ok{} (2/2) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\linewidth]{fig6-scenario-progress.png}
+  \caption{Share of scenarios that produce the target history, per development stage.}
+  \label{fig:progress}
+\end{figure}
+
+\paragraph{RQ1.} The rework produces the target history in all 27 scenarios. These include the method-level evolution of the first report's Figure~9, and restores that changed a condition (S5), a statement (S11), a method body (M3), an initializer (F3) or a variable type (V3).
+
+\paragraph{RQ2.} No comment transition was reported in any of the seven negative or origin-only scenarios (S7--S9, S12, M4/M5, F4/F5, V4/V5). The unit tests further check that prose and fragments are rejected by the parser filter, and that identifiers which merely start with a keyword (\code{double}, \code{format(}) are not taken for blocks.
+
+\subsection{RQ3: regression on the CodeTracker oracle}
+The CodeTracker oracle comprises 1{,}280 block, 200 method, 1{,}416 variable and 480 attribute histories from open-source projects, read from cached commits. We ran it on the Phase~0 commit (the prototype plus the build fix), on the end of Phase~4, and again after Phase~7, and compared the true positive, false positive and false negative counts history by history (Table~\ref{tab:regression}).
+
+\begin{table}[h]
+\centering\small
+\caption{Histories that match their expected values in the published CodeTracker oracle. $^{*}$~See the text.}
+\label{tab:regression}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Oracle & Prototype (\code{81dcf47}) & Phase 4 (\code{c3994df}) & Phase 7 (\code{a788373}) \\
+\midrule
+Block & 1269 / 1280 & 1280 / 1280 & 1280 / 1280 \\
+Method & 200 / 200 & 199 / 200$^{*}$ & 200 / 200 \\
+Variable & 1416 / 1416 & 1416 / 1416 & 1416 / 1416 \\
+Attribute & 480 / 480 & 480 / 480 & 480 / 480 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{RQ3.} The rework causes no regression in any published oracle. The prototype misses 11 block histories (javaparser \code{SourceFileInfoExtractor.solve} and \code{Difference.apply}, and one checkstyle history). All 11 are false negatives with the same cause: the prototype replaced \change{body change} by a statement-level transition whenever one line of the block matched a deleted or added comment, and the oracle comparison filters those transition types out, so the expected \change{body change} disappears. The rework keeps \change{body change} and passes all 11. The one method ``failure'' marked $^{*}$ is a test-harness artifact: \code{lucene-solr-Field-tokenStream.json} exists both as a method and as an attribute history, the oracle tests key expected values by file name in shared maps, and whether it passes depends on the order in which the test classes load. The computed history is correct in both runs.
+
+Two practical findings from preparing the runs: the committed \code{pom.xml} mixes JUnit 5.8.2 and 5.10.0, which makes every parameterized oracle test fail before running, so the runs use a temporary copy with aligned versions; and before this work the local-files trackers used by the oracle contained no CTD code at all, so earlier oracle numbers did not measure the prototype.
+
+\subsection{RQ4: a real-project oracle}\label{sec:realoracle}
+The published oracle contains almost no commented-out code, so it cannot measure detection. We therefore built a new oracle of 42 histories from javaparser, elasticsearch and checkstyle: 13 block, 14 method, 10 variable and 5 attribute histories. Candidates were mined from the projects' Git histories. Each expected history was validated commit by commit against Git (\code{git log -L} and the diffs), and the verdicts are kept with the oracle. The histories are tracked offline from cached commits, like the published oracle, and scored with the same rules: an expected change counts as found when the commit and the change type match.
+
+\begin{table}[h]
+\centering\small
+\caption{Results on the real-project oracle (Phase~7). TP / FP / FN = true positives, false positives, false negatives.}
+\label{tab:realoracle}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Project (histories) & TP & FP & FN & Precision & Recall \\
+\midrule
+javaparser (13) & 52 & 3 & 12 & 94.5\% & 81.2\% \\
+elasticsearch (20) & 118 & 3 & 9 & 97.5\% & 92.9\% \\
+checkstyle (9) & 34 & 0 & 6 & 100\% & 85.0\% \\
+\midrule
+\textbf{All change types (42)} & \textbf{204} & \textbf{6} & \textbf{27} & \textbf{97.1\%} & \textbf{88.3\%} \\
+\textbf{Comment transitions only (42)} & \textbf{58} & \textbf{1} & \textbf{14} & \textbf{98.3\%} & \textbf{80.6\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{RQ4.} The oracle also exposed the main real-world failure cause, which Phase~7 fixed (Section~\ref{sec:virtual}): developers leave a note above or inside commented-out code (for example \code{// NORELEASE These need \ldots} or \code{\} NOCOMMIT fix this}), which made the run unparseable, so the restoration was reported as \change{introduced}. On the first 27 histories (javaparser and elasticsearch), Phase~7 raised recall from 46.9\% to 87.8\% and precision from 85.2\% to 96.3\%; ten histories improved and none got worse. The remaining misses have known causes:
+\begin{itemize}
+  \item the enclosing method was renamed in the restoring commit, which ends the backward search (Section~\ref{sec:threats});
+  \item the element was edited \emph{inside} the comment while it was commented out, such as a condition or an initializer rewritten (checkstyle \code{TokenTypes}), which is not recorded;
+  \item statement-level transitions are found but filtered out by the oracle comparison, as for \change{body change} refinements; whether they should be scored is open;
+  \item a comment-out made in a merge commit is attributed to the merge rather than to the first-parent commit;
+  \item three cases are not yet diagnosed (elasticsearch \code{KibanaThreadPoolIT} and \code{SecurityActionFilter}, javaparser \code{LexicalPreservingPrinter}).
+\end{itemize}
+
+% =================================================================
+\section{Discussion and Threats to Validity}\label{sec:threats}
+
+\paragraph{Body change: refinement or addition.} The prototype reported a statement-level transition \emph{instead of} a generic body change. Its change classes extend the body-change class, and their labels read ``Body Change, Contains \ldots''. The rework records the transition \emph{in addition to} the body change, so that other edits in the same commit stay visible and the oracle's expected \change{body change} entries are still produced. The first choice is more concise for readers; the second loses no information. The final choice is open.
+
+\paragraph{Internal validity.} The scenarios were written by the same people who wrote the implementation, and they are synthetic. They show that the mechanisms work; the real-project oracle (Section~\ref{sec:realoracle}) measures precision and recall, but its 42 histories were also selected and validated by the authors, and they come from three projects. The \code{blame()} paths are exercised only by compilation and by the shared code, not by scenarios. All results were measured with RefactoringMiner~3.1.6. Upstream CodeTracker now builds against the development version of RefactoringMiner, and the mapping that the virtual parent relies on may differ there.
+
+\paragraph{Construct validity.} In the edit-tolerant path, ``the same element'' means ``RefactoringMiner maps it''. If RefactoringMiner maps a new element to unrelated commented-out code, a false restoration is reported. Scenarios S12, M5, F5 and V5 probe one such case each; on the real-project oracle, one of 59 reported comment transitions was false. Some labels are conventions: for example, a \change{body change} made inside a comment in the same commit that commented it out is expected at that commit.
+
+\paragraph{Limitations.}
+\begin{itemize}
+  \item The container must keep its signature while the element is commented out. A rename or move ends the backward search, and the element then receives an origin as before.
+  \item Partial restorations whose comment run is not valid Java on its own, such as only \code{if (\ldots) \{} and its closing brace, rely on the exact detector alone.
+  \item \code{else}/\code{catch}/\code{finally} fragments restored inside an existing block are not specifically supported.
+  \item Edits made inside a comment while it is commented out are not recorded as changes.
+  \item The variable search matches by name and type and can be ambiguous in methods with repeated declarations.
+  \item A comment-out made in a merge commit is attributed to the merge commit.
+  \item Note trimming is limited to three prose lines at each end of a run; longer notes still make the run unparseable.
+\end{itemize}
+
+% =================================================================
+\section{Related Work}
+CodeTracker~\cite{jodavi2022} reconstructs method and variable histories with refactoring awareness, and its block extension~\cite{hasan2024} tracks statements and blocks. CodeShovel~\cite{grund2021} builds method-level histories with a different, language-agnostic approach. RefactoringMiner~\cite{tsantalis2022} detects refactorings and statement mappings and underlies CodeTracker. It records some commented and uncommented statements in its body mapper, but only for single-line comments and only when the statements remain unmapped~\cite{report2}. Pham and Yang~\cite{pham2020} studied commented-out code in open-source projects and proposed classifying comments as code or prose. Our JDT-based filter is a deliberately simple form of such a classifier: a comment run counts as code only if it parses without errors.
+
+% =================================================================
+\section{Conclusion and Future Work}
+We analysed a prototype of comment transition detection for CodeTracker. Its deliberate history-preservation heuristic reconnects a restored block when the enclosing method is otherwise unchanged, but never records the commit that commented the block out, and when the method changed elsewhere the history was left without an origin. We reworked it into a scheme that guarantees an origin, follows a restored element back through its commented period to the commit that commented it out, and tolerates edits made during the restore by letting RefactoringMiner map a virtual parent. The scheme now covers blocks, methods, attributes and variables in all eleven tracking loops, and passes a suite of 27 scenarios that the original tool passed only in its trivial cases. On 42 real histories it reaches 97.1\% precision and 88.3\% recall, with no regression in the published oracle. Future work:
+\begin{enumerate}
+  \item extend the real-project oracle to more projects, and decide whether statement-level transitions should count in the scoring;
+  \item record edits made inside a comment while the element is commented out;
+  \item attribute comment-outs made in merge commits to the first-parent commit;
+  \item support partial \code{else}/\code{catch}/\code{finally} restorations;
+  \item follow elements whose container is renamed or moved while they are commented out;
+  \item discuss with the RefactoringMiner maintainers whether comment transitions should be recognised at that level.
+\end{enumerate}
+
+\section*{Acknowledgements}
+The analysis, implementation and documentation of the rework were carried out with the assistance of an AI coding assistant (Claude Code, Anthropic), under the author's direction and review.
+
+% =================================================================
+\begin{thebibliography}{9}
+\bibitem{jodavi2022} M.~Jodavi and N.~Tsantalis. Accurate Method and Variable Tracking in Commit History. In \emph{Proc.\ 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE 2022)}, pp.~183--195, 2022. doi:10.1145/3540250.3549079.
+\bibitem{tsantalis2022} N.~Tsantalis, A.~Ketkar and D.~Dig. RefactoringMiner 2.0. \emph{IEEE Transactions on Software Engineering}, 48(3):930--950, 2022. doi:10.1109/TSE.2020.3007722.
+\bibitem{hasan2024} M.~T.~Hasan, N.~Tsantalis and P.~Alikhanifard. Refactoring-aware Block Tracking in Commit History. \emph{IEEE Transactions on Software Engineering}, 2024. doi:10.1109/TSE.2024.3484586.
+\bibitem{report1} P.~Sattarzadeh. Enhancing CodeTracker Accuracy. Technical report, April 2026.
+\bibitem{report2} P.~Sattarzadeh. Enhancing CodeTracker: Comment Transition Detection in Block Tracking. Technical report, May 2026.
+\bibitem{pham2020} T.~M.~Pham and J.~Yang. The Secret Life of Commented-Out Source Code. In \emph{Proc.\ 28th International Conference on Program Comprehension (ICPC 2020)}, pp.~308--318, 2020. doi:10.1145/3387904.3389289.
+\bibitem{grund2021} F.~Grund, S.~A.~Chowdhury, N.~C.~Bradley, B.~Hall and R.~Holmes. CodeShovel: Constructing Method-Level Source Code Histories. In \emph{Proc.\ 43rd International Conference on Software Engineering (ICSE 2021)}, 2021.
+\end{thebibliography}
+
+% =================================================================
+\clearpage
+\appendix
+\section{Development Phases and Design Decisions}\label{app:phases}
+
+\begin{table}[h]
+\centering\small
+\caption{Development phases on branch \code{claude/comment-transition-rework}.}
+\begin{tabular}{@{}llp{8.2cm}r@{}}
+\toprule
+Phase & Commit & Content & Scenarios \\
+\midrule
+0 & \code{81dcf47} & Scenario suite, build fix (RefactoringMiner 3.1.6), analysis & 3/10 \\
+1 & \code{ae15cce} & Origin guarantee, cycle guard, normalized hashing, body change kept & 5/10 \\
+2 & \code{faf5624} & Commented-state tracking for blocks & 9/10 \\
+3 & \code{5992174} & Virtual parent, edit tolerance, local-files trackers wired & 12/12 \\
+4a & \code{9737598} & Methods (first report, Algorithm 3) & 17/17 \\
+4b & \code{c462408} & Attributes & 22/22 \\
+4c & \code{c3994df} & Variables & 27/27 \\
+5 & -- & Published-oracle regression (no code change) & 27/27 \\
+6 & \code{e86227a}, \code{e0cb15e} & Real-project oracle: javaparser, elasticsearch & 27/27 \\
+7 & \code{a788373} & Notes around commented code, comment alignment, stricter active-block match; oracle extended to 42 histories (checkstyle) & 27/27 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{Architecture Decision Records (\code{docs/adr/}). Proposed records await the author's review.}
+\begin{tabular}{@{}lll@{}}
+\toprule
+ADR & Decision & Status \\
+\midrule
+0001 & Record architecture decisions & Accepted \\
+0002 & Scenario tests with in-test fixture repositories & Accepted \\
+0003 & Build against RefactoringMiner 3.1.6 & Accepted \\
+0004 & An unresolved uncommented element ends the history with \change{introduced} & Proposed \\
+0005 & Comment transitions are recorded in addition to \change{body change} & Proposed \\
+0006 & Whitespace-insensitive matching and trivial-line filtering & Proposed \\
+0007 & The oracle regression runs once, after the last phase & Accepted \\
+0008 & Commented-state tracking by a direct backward search & Proposed \\
+0009 & Edit-tolerant detection with a virtual parent & Proposed \\
+0010 & Commented-out methods & Proposed \\
+0011 & Commented-out attributes & Proposed \\
+0012 & Commented-out variables & Proposed \\
+0013 & A real-project oracle for comment transitions & Proposed \\
+0014 & Tolerate notes around commented-out code & Proposed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

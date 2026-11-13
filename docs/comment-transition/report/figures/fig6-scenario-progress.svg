@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="320" viewBox="0 0 720 320" font-family="Cambria, 'Times New Roman', serif" font-size="13">
+  <rect width="720" height="320" fill="#fff"/>
+  <!-- axes: y from 60 (100%) to 260 (0%) -->
+  <line x1="80" y1="260" x2="700" y2="260" stroke="#222"/>
+  <line x1="80" y1="50" x2="80" y2="260" stroke="#222"/>
+  <g font-size="11" text-anchor="end" fill="#444">
+    <text x="72" y="264">0%</text><text x="72" y="214">25%</text><text x="72" y="164">50%</text><text x="72" y="114">75%</text><text x="72" y="64">100%</text>
+  </g>
+  <g stroke="#e5e5e5"><line x1="80" y1="210" x2="700" y2="210"/><line x1="80" y1="160" x2="700" y2="160"/><line x1="80" y1="110" x2="700" y2="110"/><line x1="80" y1="60" x2="700" y2="60"/></g>
+  <text x="26" y="160" transform="rotate(-90 26 160)" text-anchor="middle" font-size="12">scenarios passing</text>
+  <!-- bars: height = 200 * ratio -->
+  <g>
+    <!-- baseline 3/10 -> 60 -->
+    <rect x="100" y="200" width="70" height="60" fill="#9e9e9e"/>
+    <text x="135" y="192" text-anchor="middle" font-size="12">3/10</text>
+    <text x="135" y="280" text-anchor="middle" font-size="12">Baseline</text>
+    <text x="135" y="295" text-anchor="middle" font-size="11" fill="#555">375d0bb</text>
+    <!-- original 3/10 -->
+    <rect x="200" y="200" width="70" height="60" fill="#9e9e9e"/>
+    <text x="235" y="192" text-anchor="middle" font-size="12">3/10</text>
+    <text x="235" y="280" text-anchor="middle" font-size="12">Original CTD</text>
+    <text x="235" y="295" text-anchor="middle" font-size="11" fill="#555">7c8d874</text>
+    <!-- phase1 5/10 -> 100 -->
+    <rect x="300" y="160" width="70" height="100" fill="#7fa7cc"/>
+    <text x="335" y="152" text-anchor="middle" font-size="12">5/10</text>
+    <text x="335" y="280" text-anchor="middle" font-size="12">Phase 1</text>
+    <text x="335" y="295" text-anchor="middle" font-size="11" fill="#555">ae15cce</text>
+    <!-- phase2 9/10 -> 180 -->
+    <rect x="400" y="80" width="70" height="180" fill="#4f81b0"/>
+    <text x="435" y="72" text-anchor="middle" font-size="12">9/10</text>
+    <text x="435" y="280" text-anchor="middle" font-size="12">Phase 2</text>
+    <text x="435" y="295" text-anchor="middle" font-size="11" fill="#555">faf5624</text>
+    <!-- phase3 12/12 -> 200 -->
+    <rect x="500" y="60" width="70" height="200" fill="#1f4e79"/>
+    <text x="535" y="52" text-anchor="middle" font-size="12">12/12</text>
+    <text x="535" y="280" text-anchor="middle" font-size="12">Phase 3</text>
+    <text x="535" y="295" text-anchor="middle" font-size="11" fill="#555">5992174</text>
+    <!-- phase4 27/27 -->
+    <rect x="600" y="60" width="70" height="200" fill="#0f2f4d"/>
+    <text x="635" y="52" text-anchor="middle" font-size="12">27/27</text>
+    <text x="635" y="280" text-anchor="middle" font-size="12">Phase 4</text>
+    <text x="635" y="295" text-anchor="middle" font-size="11" fill="#555">c3994df</text>
+  </g>
+  <text x="390" y="30" text-anchor="middle" font-size="12" font-style="italic">Baseline to Phase 2: block scenarios S1–S10. Phase 3: S1–S12. Phase 4: all 27 (blocks, methods, attributes, variables).</text>
+</svg>

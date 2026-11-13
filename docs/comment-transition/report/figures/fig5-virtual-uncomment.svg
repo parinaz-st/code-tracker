@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="300" viewBox="0 0 720 300" font-family="Cambria, 'Times New Roman', serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f4e79"/></marker>
+  </defs>
+  <rect width="720" height="300" fill="#fff"/>
+  <g text-anchor="middle" font-weight="bold">
+    <text x="115" y="26">Parent (commit E)</text>
+    <text x="360" y="26">Virtual parent (in memory)</text>
+    <text x="605" y="26">Current (commit F)</text>
+  </g>
+  <g font-family="Consolas, 'Courier New', monospace" font-size="12" xml:space="preserve">
+    <rect x="15" y="40" width="200" height="150" fill="#fafafa" stroke="#222"/>
+    <text x="25" y="64">int result = 0;</text>
+    <text x="25" y="86" fill="#6a8759">// if (x &gt; 0) {</text>
+    <text x="25" y="108" fill="#6a8759">//   result = x * 2;</text>
+    <text x="25" y="130" fill="#6a8759">//   count++;</text>
+    <text x="25" y="152" fill="#6a8759">// }</text>
+    <text x="25" y="174">return result;</text>
+    <rect x="260" y="40" width="200" height="150" fill="#eef4fb" stroke="#1f4e79"/>
+    <text x="270" y="64">int result = 0;</text>
+    <text x="270" y="86">   if (x &gt; 0) {</text>
+    <text x="270" y="108">     result = x * 2;</text>
+    <text x="270" y="130">     count++;</text>
+    <text x="270" y="152">   }</text>
+    <text x="270" y="174">return result;</text>
+    <rect x="505" y="40" width="200" height="150" fill="#fafafa" stroke="#222"/>
+    <text x="515" y="64">int result = 0;</text>
+    <text x="515" y="86" font-weight="bold">if (x &gt;= 0) {</text>
+    <text x="515" y="108">  result = x * 2;</text>
+    <text x="515" y="130">  count++;</text>
+    <text x="515" y="152">}</text>
+    <text x="515" y="174">return result;</text>
+  </g>
+  <line x1="215" y1="115" x2="258" y2="115" stroke="#222" marker-end="url(#a)"/>
+  <text x="237" y="210" text-anchor="middle" font-size="12">① strip markers</text>
+  <text x="237" y="226" text-anchor="middle" font-size="12">in place (same</text>
+  <text x="237" y="242" text-anchor="middle" font-size="12">offsets and lines)</text>
+  <path d="M460,82 C480,82 485,82 503,82" fill="none" stroke="#1f4e79" stroke-width="1.6" marker-end="url(#b)"/>
+  <path d="M460,104 C480,104 485,104 503,104" fill="none" stroke="#1f4e79" marker-end="url(#b)"/>
+  <path d="M460,126 C480,126 485,126 503,126" fill="none" stroke="#1f4e79" marker-end="url(#b)"/>
+  <text x="482" y="210" text-anchor="middle" font-size="12">② RefactoringMiner</text>
+  <text x="482" y="226" text-anchor="middle" font-size="12">maps statements</text>
+  <text x="482" y="242" text-anchor="middle" font-size="12">(with replacements)</text>
+  <text x="360" y="276" text-anchor="middle" font-size="12" font-style="italic">③ a mapping whose left side lies on an uncommented line ⇒ "uncommented block" + "expression change" (x &gt; 0 → x &gt;= 0)</text>
+  <text x="360" y="294" text-anchor="middle" font-size="12" font-style="italic">a comment run is only uncommented if the JDT parser accepts it as statements (prose is left alone)</text>
+</svg>

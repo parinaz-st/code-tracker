@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="300" viewBox="0 0 720 300" font-family="Cambria, 'Times New Roman', serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b22222"/></marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f4e79"/></marker>
+  </defs>
+  <rect width="720" height="300" fill="#fff"/>
+  <!-- left panel -->
+  <text x="175" y="26" text-anchor="middle" font-weight="bold">(a) Original branch</text>
+  <circle cx="90" cy="120" r="34" fill="#f2f2f2" stroke="#222" stroke-dasharray="4,3"/>
+  <text x="90" y="116" text-anchor="middle">virtual</text>
+  <text x="90" y="133" text-anchor="middle" font-size="12">@E</text>
+  <circle cx="270" cy="120" r="34" fill="#f2f2f2" stroke="#222"/>
+  <text x="270" y="116" text-anchor="middle">block</text>
+  <text x="270" y="133" text-anchor="middle" font-size="12">@F</text>
+  <path d="M124,108 Q180,82 236,108" fill="none" stroke="#222" marker-end="url(#a)"/>
+  <text x="180" y="82" text-anchor="middle" font-size="12">uncommented block</text>
+  <path d="M236,134 Q180,162 124,134" fill="none" stroke="#b22222" stroke-dasharray="5,4" marker-end="url(#r)"/>
+  <text x="180" y="176" text-anchor="middle" font-size="12" fill="#b22222">no change (connectRelatedNodes)</text>
+  <text x="175" y="214" text-anchor="middle" font-size="12">same identifier ⇒ 2-node cycle;</text>
+  <text x="175" y="231" text-anchor="middle" font-size="12">the virtual node never looks unresolved,</text>
+  <text x="175" y="248" text-anchor="middle" font-size="12">no "introduced" is ever recorded,</text>
+  <text x="175" y="265" text-anchor="middle" font-size="12">and C, D, E are never reached.</text>
+  <line x1="360" y1="20" x2="360" y2="285" stroke="#bbb"/>
+  <!-- right panel -->
+  <text x="540" y="26" text-anchor="middle" font-weight="bold">(b) Rework (Phases 1–2)</text>
+  <g font-size="12">
+    <circle cx="400" cy="110" r="22" fill="#fff" stroke="#222"/><text x="400" y="114" text-anchor="middle">C</text>
+    <circle cx="480" cy="110" r="22" fill="#fff" stroke="#222"/><text x="480" y="114" text-anchor="middle">D</text>
+    <circle cx="560" cy="110" r="22" fill="#f2f2f2" stroke="#222" stroke-dasharray="4,3"/><text x="560" y="114" text-anchor="middle">E</text>
+    <circle cx="660" cy="110" r="22" fill="#fff" stroke="#222"/><text x="660" y="114" text-anchor="middle">F</text>
+    <line x1="422" y1="110" x2="456" y2="110" stroke="#1f4e79" stroke-width="1.6" marker-end="url(#b)"/>
+    <line x1="502" y1="110" x2="536" y2="110" stroke="#999" stroke-dasharray="4,3" marker-end="url(#a)"/>
+    <line x1="582" y1="110" x2="636" y2="110" stroke="#1f4e79" stroke-width="1.6" marker-end="url(#b)"/>
+    <text x="440" y="80" text-anchor="middle" fill="#1f4e79">commented</text>
+    <text x="440" y="94" text-anchor="middle" fill="#1f4e79">out block</text>
+    <text x="519" y="94" text-anchor="middle" fill="#777">(hidden)</text>
+    <text x="610" y="80" text-anchor="middle" fill="#1f4e79">uncommented</text>
+    <text x="610" y="94" text-anchor="middle" fill="#1f4e79">block</text>
+    <path d="M660,132 Q560,190 560,132" fill="none" stroke="#b22222" stroke-dasharray="5,4"/>
+    <text x="635" y="185" text-anchor="middle" fill="#b22222">✕ cycle-closing edge refused</text>
+    <text x="540" y="226" text-anchor="middle">confirmed: tracking resumes at C (A, B, …);</text>
+    <text x="540" y="243" text-anchor="middle">not confirmed: "introduced" is added on E → F,</text>
+    <text x="540" y="260" text-anchor="middle">so every history keeps exactly one origin.</text>
+  </g>
+</svg>
