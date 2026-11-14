@@ -8,6 +8,8 @@ You are a software developer and a researcher. As a developer, you write small, 
 
 ## What this project is
 
+New here? Start with `CODEBASE-ONBOARDING.md`. It explains the codebase in five minutes and points to the architecture documents in `docs/architecture/`.
+
 CodeTracker is a refactoring-aware tool that builds the commit change history of a Java code element: a method, variable, attribute, class, block, comment, import, or annotation. It is built on top of **RefactoringMiner**, which provides the UML models, statement mappings (`UMLOperationBodyMapper`), comment diffs, and refactoring detection.
 
 - Upstream: https://github.com/jodavimehran/code-tracker (Mehran Jodavi and Nikolaos Tsantalis, Concordia University)
@@ -51,7 +53,7 @@ Specs and plans are kept in the repository so the next person or agent can read 
 | `src/main/java/org/codetracker/blame/` | Refactoring-aware blame built on the trackers. |
 | `src/main/java/org/codetracker/experiment/` | Oracle loading and accuracy experiments (`experiments/tracking-accuracy/`). |
 | `src/main/resources/oracle/` | Oracle JSON (expected histories). Test expectations live in `src/test/resources/`. |
-| `docs/` | Design notes. |
+| `docs/architecture/` | How the code works: overview, core model, tracking algorithm, element trackers, testing. |
 
 ## Conventions
 
