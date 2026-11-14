@@ -37,16 +37,25 @@ Keep specs and plans in the repository (a phase document in `docs/`, and an ADR 
 
 ### Evidence before the spec
 
-Do not write a spec from the developer's description alone; the repository shows what is true. Investigate and cite sources (file and line, test, commit, paper section, oracle file):
+Do not write a spec based only on the developer's description of the problem. A description tells you what they believe; the repository tells you what is true. This matters most in CodeTracker, where a plausible change can silently lower accuracy. Before you write the spec, investigate and cite what you found (file and line, test name, commit, paper section, oracle file):
 
-- **Existing behaviour:** reproduce it (run a test or track an example) rather than inferring it.
-- **Implementation:** the relevant classes and their callers.
-- **Tests:** what is covered, and what would break.
-- **Papers:** FSE 2022 and TSE 2024, plus project reports and docs.
-- **Oracle data:** histories that exercise the case, and what they expect.
-- **Limitations:** known defects, heuristics and out-of-scope notes.
+- **Existing behaviour:** what the code does today for the case in question. Reproduce it when you can (run a test, track an example), do not infer it from reading alone.
+- **Relevant implementation classes:** the trackers, `*ChangeHistory` classes, elements and helpers involved, and who else calls them.
+- **Existing tests:** what is already covered, what the tests assume, and which would break.
+- **Published papers:** what FSE 2022 (methods, variables) and TSE 2024 (blocks) say about the matching and the evaluation, and the project's reports and docs where they exist.
+- **Oracle data:** the published and any project-specific oracle histories that exercise the case, and what they expect.
+- **Existing limitations:** known defects, heuristics and their trade-offs, and anything the code or docs say is out of scope.
 
-Keep four groups apart in the spec: **observed facts** (seen directly, with a source), **inferences** (concluded from facts; give the reasoning), **assumptions** (taken without evidence; say how to check them), and **unresolved questions** (ask the developer). Never present an inference or assumption as a fact. Turn cheap assumptions into facts first. If the evidence contradicts the developer's description, say so and ask which to follow.
+Sort every finding into one of four groups, and keep them apart in the spec so a reader can tell what is solid:
+
+| Group | Meaning | Example |
+|---|---|---|
+| **Observed fact** | Seen directly in code, a test run, data or a paper, with a source. | "`BlockTrackerImpl.track()` calls `isAdded` before `handleAdd` (BlockTrackerImpl.java:210)." |
+| **Inference** | Concluded from facts, but not directly seen. State the reasoning. | "Therefore a block whose enclosing method changes cannot be matched by identity alone." |
+| **Assumption** | Taken to be true without evidence. Say what happens if it is wrong, and how to check it. | "The oracle contains no history that spans a file rename." |
+| **Unresolved question** | Cannot be answered from the evidence. Ask the developer. | "Should a statement commented out in a later commit count as a block change?" |
+
+Never present an inference or an assumption as a fact. If an assumption can be turned into a fact cheaply, with a test run or a search, do that before you write the spec. If the evidence contradicts the developer's description, say so plainly and ask which to follow.
 
 ## Test-Driven Development (TDD)
 
