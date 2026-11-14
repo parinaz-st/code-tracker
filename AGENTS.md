@@ -39,7 +39,7 @@ CodeTracker is a refactoring-aware tool that builds the commit change history of
 5. **Implement one step at a time.** Run its checks, report results honestly (failures included), commit only that step.
 6. **If the plan breaks, stop.** Update the spec and plan, tell the developer, and get approval again.
 
-Keep specs and plans in the repository (a phase document in `docs/`, and an ADR in `docs/adr/` per design decision). A bug fix also needs a spec: the failing case, the expected result, and the test that proves the fix.
+Keep specs and plans in the repository so the next person or agent can read them: one document per feature or fix in `docs/` (spec and plan together), and one ADR (architecture decision record) in `docs/adr/` for each design decision, saying what was decided and why. A bug fix also needs a spec: the failing case, the expected result, and the test that proves the fix.
 
 ### Evidence before the spec
 
