@@ -16,32 +16,43 @@ CodeTracker is a refactoring-aware tool that builds the commit change history of
 - Papers: FSE 2022 (method/variable tracking) and TSE 2024 (block tracking); citations in `README.md`.
 - This clone is a fork (`origin` = `parinaz-st/code-tracker`, `upstream` = `jodavimehran/code-tracker`).
 
-## Rule zero: spec and plan before code
+## Rule zero: understand and get approval before code
 
-**Write no code until a spec and a detailed plan exist and the developer has approved them.** This applies to every change, including a "small" one. If asked to write code without an approved spec and plan, start the steps below instead.
+**Write no code until the developer has authorized the change and you both know the intended outcome and how it will be verified.** How much spec and plan that needs depends on the change (see "How much spec and plan"). The six steps below are the full process, used for features and larger changes. If asked to write code without the spec and plan the change requires, start those steps instead.
 
 1. **Investigate, then brainstorm.** Gather evidence (see below). Restate the problem, list options, trade-offs and risks. Ask about anything you cannot decide from the evidence. Do not guess.
 2. **Write the spec.** The spec is a short document that says *what* will be built, not *how*. It answers these questions:
    - **Evidence:** What did you find out about the current code, tests, papers and oracle data? List it in the four groups from "Evidence before the spec" (facts, inferences, assumptions, open questions).
    - **Goal:** What problem are we solving, what will be different when it is solved, and why does it matter?
    - **Scope and non-goals:** What will this change cover? What will it deliberately *not* cover, even though it is related?
-   - **Behaviour:** What should the code do? Give the input, the expected output, the edge cases, and at least one concrete example (for instance: "a block commented out in commit X is reported as `commented out block`").
+   - **Behaviour:** What should the code do? Give the input, the expected output, the edge cases, and at least one concrete example (for instance: "a method renamed in commit X is reported as a `rename` change").
    - **Acceptance criteria:** How will we know it is done? Each criterion is a check that a person or a test can run and that clearly passes or fails.
    - **Impact on shared code:** Which common classes (see "Shared classes") would have to change? If none, say "none".
-3. **Write the plan.** The plan says *how* the spec will be built: a list of small steps in the order they will be done. A step should be small enough to finish, check and commit on its own. For each step, write down:
+3. **Write the plan.** The plan says *how* the spec will be built: a list of small steps in the order they will be done. A step should be small enough to finish and check on its own. For each step, write down:
    - **What it does,** in one sentence.
    - **Which files it creates or changes.** Mark any shared class (see "Shared classes").
    - **Which test proves it works.** The test is written first and must fail before the code is written (see TDD).
    - **The exact command that runs that test,** for example `mvn -q test -Dtest=BlockTrackerImplTest`.
 
    Order the steps so that each one builds on the previous ones and the code compiles and the existing tests pass after every step.
-4. **Get approval.** Wait for a clear yes. Approving one step does not approve the next.
-5. **Implement one step at a time.** Run its checks, report results honestly (failures included), commit only that step.
+4. **Get approval.** Wait for a clear yes. Approving the plan authorizes the tasks in that plan, one after another, as long as you stay within the approved scope. You do not need approval for each file edit. A material deviation from the plan needs new approval. Approving the plan or the finished work does not authorize pushing or releasing it.
+5. **Implement one task at a time.** Run its checks, report the result honestly (failures included), and keep each task in its own change. Commit only when the developer says so.
 6. **If the plan breaks, stop.** Update the spec and plan, tell the developer, and get approval again.
 
-Keep specs and plans in the repository so the next person or agent can read them: one document per feature or fix in `docs/` (spec and plan together), and one ADR (architecture decision record) in `docs/adr/` for each design decision, saying what was decided and why. A bug fix also needs a spec: the failing case, the expected result, and the test that proves the fix.
+Keep specs and plans in the repository so the next person or agent can read them: one document per feature or larger change in `docs/` (spec and plan together), and one ADR (architecture decision record) in `docs/adr/` for each design decision, saying what was decided and why.
+
+### How much spec and plan
+
+Every change needs a clear intended outcome, a way to verify it, and the developer's authorization. The depth of spec and plan scales with the change's complexity, risk, and impact on existing behaviour or research results. Pick the lowest tier whose conditions are all met. If unsure, take the more rigorous one, and explain your proposed tier before you start when it is not obvious. The developer can always ask for more.
+
+1. **Trivial.** Only when ALL of these hold: the purpose is clear; it touches one local area; it changes no runtime, tracking or externally observable behaviour; it touches no shared class, public API, data structure or dependency; it has no effect on oracle expectations, experiment results or published claims; and a simple check proves it correct. Examples: fixing a typo or a misleading comment, updating a documentation link, formatting a new file. Needs a one-line statement of intent and a verification check, not a separate spec and plan.
+2. **Bug fix.** A lightweight spec: the observed wrong behaviour, the expected behaviour, a reproducible failing case, and the regression test that will prove the fix. Plus a lightweight plan naming the affected code and the verification steps.
+3. **Feature or behaviour change** (new functionality, or changed behaviour). The full process above: spec with scope and non-goals, behaviour and edge cases, acceptance criteria, and an ordered plan with a test for each task.
+4. **Architectural, shared-code or research-impacting change** (shared tracking logic, element identity, matching, change classification, public APIs, data structures, dependencies, experimental method). Everything in tier 3, plus an impact analysis, the regression and oracle tests that must be run, and a decision on whether experimental validation is needed. Write an ADR when you introduce or change an architectural decision.
 
 ### Evidence before the spec
+
+How much investigation you do follows the tier in "How much spec and plan": none for a trivial change, a quick look at the affected code and tests for a bug fix, and everything below for features and tier 4 changes.
 
 Do not write a spec based only on the developer's description of the problem. A description tells you what they believe; the repository tells you what is true. This matters most in CodeTracker, where a plausible change can silently lower accuracy. Before you write the spec, investigate and cite what you found (file and line, test name, commit, paper section, oracle file):
 
@@ -52,11 +63,11 @@ Do not write a spec based only on the developer's description of the problem. A 
 - **Oracle data:** the published and any project-specific oracle histories that exercise the case, and what they expect.
 - **Existing limitations:** known defects, heuristics and their trade-offs, and anything the code or docs say is out of scope.
 
-Sort every finding into one of four groups, and keep them apart in the spec so a reader can tell what is solid:
+Sort every finding into one of four groups, and keep them apart in the spec so a reader can tell what is solid (the examples are illustrative, not findings):
 
 | Group | Meaning | Example |
 |---|---|---|
-| **Observed fact** | Seen directly in code, a test run, data or a paper, with a source. | "`BlockTrackerImpl.track()` calls `isAdded` before `handleAdd` (BlockTrackerImpl.java:210)." |
+| **Observed fact** | Seen directly in code, a test run, data or a paper, with a source. | "`track()` ends a history with `handleAdd` (`<file>:<line>`)." |
 | **Inference** | Concluded from facts, but not directly seen. State the reasoning. | "Therefore a block whose enclosing method changes cannot be matched by identity alone." |
 | **Assumption** | Taken to be true without evidence. Say what happens if it is wrong, and how to check it. | "The oracle contains no history that spans a file rename." |
 | **Unresolved question** | Cannot be answered from the evidence. Ask the developer. | "Should a statement commented out in a later commit count as a block change?" |
@@ -96,15 +107,62 @@ CodeTracker is a research artifact. Its papers, tracking algorithms, oracle data
 - **No accuracy claim without evidence.** Do not claim an improvement unless you ran the relevant experiments and compared them with the established baseline.
 - **State the research impact.** If a change alters the algorithm or its behaviour, explain what it could mean for the published research and the existing evaluation results.
 
-**Example.** You change the method-matching logic and 8 historical cases in the oracle now fail. Do not edit the tests or loosen the matching conditions until the build is green. Ask instead:
+## Agent autonomy and developer control
 
-1. What did the oracle expect for these histories?
-2. Why do these 8 cases fail?
-3. Did the tracker become less accurate overall?
-4. Did the change reveal an existing defect, in the tracker or in the oracle?
-5. Does the new behaviour affect any claim made in the papers?
+The developer is the decision-maker. The agent investigates, proposes, implements and provides evidence.
 
-Report the answers to the developer, then decide together what to do.
+**The agent may do these without asking:**
+- Read and analyse repository files, and search for existing implementations and reusable logic.
+- Run non-destructive tests and build commands.
+- Inspect Git history and diffs.
+- Propose specs, plans and architectural decisions.
+- Point out risks, inconsistencies and possible improvements.
+
+**The agent must get explicit approval before:**
+- Starting implementation without the approved spec and plan that its tier requires.
+- Changing an approved spec or plan.
+- Modifying a shared class (see "Shared classes") that the approved spec does not list.
+- Changing a public API or externally observable behaviour beyond the approved scope.
+- Changing oracle data or experiment expectations.
+- Adding or upgrading a dependency.
+- Doing anything destructive, or modifying unrelated files.
+- Committing, pushing or releasing.
+
+**The agent must not:**
+- Expand the scope of a task without approval.
+- Refactor unrelated code while implementing a feature.
+- Make an architectural decision silently.
+- Hide a deviation from the approved plan.
+- Claim work is complete without evidence that it was verified.
+
+Work in small, reviewable increments. After each task in the plan, report:
+- what changed, and why
+- which files were affected
+- which tests were run, and their results
+- any deviation from the approved plan
+- remaining risks and unresolved questions
+
+Do not go past an approval gate when approval is required.
+
+## Verification and completion criteria
+
+A task is not complete just because the code compiles or you have finished writing it. Before you report completion:
+
+1. Check every acceptance criterion in the approved spec.
+2. Run the relevant tests.
+3. Run extra regression tests when shared behaviour or a shared class was modified.
+4. Read the complete Git diff.
+5. Look for unintended changes, generated files, formatting noise and line-ending changes.
+6. Check that the documentation matches any behaviour that changed.
+
+In the completion report, label every check with one of these:
+
+- **VERIFIED:** checked directly, by a test or by inspection.
+- **NOT VERIFIED:** not checked. Give the reason.
+- **FAILED:** a check was run and failed.
+- **ASSUMED:** believed to be true but not checked independently.
+
+Never report a failed or unexecuted check as successful. Give the exact commands and the relevant test results. Do not invent test results, coverage numbers or experimental improvements.
 
 ## Build and test
 
@@ -154,5 +212,5 @@ Files mix CRLF and LF. **Never change a file's line endings**: a CRLF→LF flip 
 ## Git
 
 - Default branch: `master`. Use feature branches; never commit to `master`.
-- Do not push unless the developer asks.
+- Commit and push only when the developer says so.
 - Do not commit generated experiment outputs (`experiments/**/processed-*.csv`, `error-*.json.txt`) unless asked.
