@@ -4,7 +4,8 @@
 
 | Layer | Where | Runs | What it proves |
 |---|---|---|---|
-| Locator tests | `util/CodeElementLocator*Test` | `mvn test -Dtest=…` | Finding the element on a line. |
+| Locator tests | `util/CodeElementLocator*Test` | `mvn test -Dtest=…` | Finding the element on a line. `CodeElementLocatorWithLocalFilesTest` is the fast check: offline, about 12 s, 50 tests. |
+| Blame tests | `blame/CliBlameTest`, `blame/CodeTrackerBlameTest`, `blame/CodeTrackerBlameWithLocalFilesTest` | `mvn test -Dtest=…` | Refactoring-aware blame results (expected files in `src/test/resources/blame/`). |
 | Published oracles | `util/{Method,Variable,Attribute,Block}OracleTest` | `mvn test -Dtest=…OracleTest` (slow) | The FSE 2022 / TSE 2024 histories: TP/FP/FN must equal the expected values. |
 | Experiments | `experiment/*ExperimentStarter` | `main` | Precision and recall tables (`experiments/tracking-accuracy/**`). |
 
@@ -23,7 +24,7 @@ flowchart LR
 ```
 
 - A change is matched by its key, **commit id + change type**. Element names are not compared.
-- `OracleTest` skips some change types when it compares (for example `BlockBodyChange` subclasses); read `OracleTest` before you add a new change type, so you know whether it will be scored.
+- `OracleTest` does not score `NO_CHANGE`, `SIGNATURE_FORMAT_CHANGE` or any `BlockBodyChange` subclass. Read `OracleTest` before you add a new change type, so you know whether it will be scored.
 - The expected TP/FP/FN values are loaded by `OracleTest.loadExpected(...)` from a text file per set and stored in static maps keyed by history file name, so **oracle file names must be unique across all elements**.
 
 ## Practical notes

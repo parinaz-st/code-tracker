@@ -3,7 +3,7 @@
 - Tier: 4 (dependencies; may change tracking results, so research-impacting)
 - Status: In progress (RefactoringMiner part done; JUnit part waiting for approval)
 - Author: agent (Claude), 2026-11-14
-- ADRs: [0002 (Proposed)](../adr/0002-follow-upstream-refactoringminer-release.md)
+- ADRs: none
 
 ## 1. Evidence
 

@@ -86,7 +86,7 @@ The published oracles and experiment results are the scientific basis of the pap
 |---|---|---|
 | 1 | [Overview](docs/architecture/01-overview.md) | The big picture, the package map, dependencies, the three entry points (API, REST, blame). |
 | 2 | [Core model](docs/architecture/02-core-model.md) | Elements, **identity** (what "same element" means), the history graph, change types. |
-| 3 | [Tracking algorithm](docs/architecture/03-tracking-algorithm.md) | The backward loop and its 5 steps, git vs offline mode, the three loop copies. |
+| 3 | [Tracking algorithm](docs/architecture/03-tracking-algorithm.md) | The backward loop and its 5 steps, git vs offline mode, the three execution paths. |
 | 4 | [Element trackers](docs/architecture/04-element-trackers.md) | Which classes track which element, the locator, blame, REST. |
 | 5 | [Testing and evaluation](docs/architecture/05-testing-and-evaluation.md) | Test layers, how oracle tests score, practical traps. |
 

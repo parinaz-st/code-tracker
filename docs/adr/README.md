@@ -38,4 +38,3 @@ What becomes easier or harder, including the known downsides and any effect on o
 | # | Title | Status |
 |---|---|---|
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
-| [0002](0002-follow-upstream-refactoringminer-release.md) | Follow upstream's RefactoringMiner release | Proposed |

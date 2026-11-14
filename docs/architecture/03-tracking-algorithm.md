@@ -11,10 +11,10 @@ flowchart TD
     P -- yes --> E["Return History"]
     P -- no --> C["Take element v<br/>commits = git log of its file from v"]
     C --> N["Next commit c in the list:<br/>find v in c (right side)"]
-    N --> S2{"Step 2<br/>parent has identical identity?"}
-    S2 -- yes --> N
-    S2 -- no --> S3{"Step 3<br/>parent has same signature,<br/>different body or doc?"}
-    S3 -- yes --> R1["record body / documentation change<br/>continue from the parent version"] --> N
+    N --> S2{"Step 2<br/>parent has the same identity,<br/>ignoring annotations?"}
+    S2 -- yes --> R0["record type-parameter or<br/>annotation change, if any"] --> N
+    S2 -- no --> S3{"Step 3<br/>parent has the same identity,<br/>ignoring documentation and body?"}
+    S3 -- yes --> R1["record body / documentation change<br/>(and type-parameter or annotation change)<br/>continue from the parent version"] --> N
     S3 -- no --> S4{"Step 4<br/>refactoring inside this file?<br/>(RM diff of parent vs child file)"}
     S4 -- yes --> R2["record rename, move, extract, …<br/>queue the parent version"] --> P
     S4 -- no --> S5{"Step 5<br/>commit-level refactoring?<br/>(all changed files, class moves,<br/>source-folder moves)"}
@@ -24,8 +24,8 @@ flowchart TD
 
 | Step | Cost | What it uses | Typical share of commits (reported in FSE 2022) |
 |---|---|---|---|
-| 2: no change | cheapest | identity comparison on the parsed file | 67–82% |
-| 3: body or documentation change | cheap | identity ignoring body and docs | 9–24% |
+| 2: no change | cheapest | identity ignoring annotations (`equalIdentifierIgnoringVersionAndAnnotation`); may still record a type-parameter or annotation change | 67–82% |
+| 3: body or documentation change | cheap | identity ignoring documentation and body (`equalIdentifierIgnoringVersionAndDocumentAndBody`) | 9–24% |
 | 4: local refactoring | moderate | `leftModel.diff(rightModel)` on one file | ~3–4% |
 | 5: commit-level analysis | expensive | `getCommitModel`: all changed files of the commit, `MoveSourceFolderRefactoring`, class moves and renames | ~4–6% |
 
@@ -38,15 +38,15 @@ The heuristics in steps 2–4 are what make CodeTracker several times faster tha
 - **Termination:** a node marked `isAdded()` (after `handleAdd`) is not followed further. When the queue is empty, the history is complete.
 - **Matching for blocks and variables:** a method's body changes in almost every commit that touches the block, so blocks and variables are matched through RM's **statement mappings** (`UMLOperationBodyMapper`), not through identity alone.
 
-## Three copies of the loop
+## Three execution paths
 
-| Copy | Where | Used by |
+| Path | Where | Used by |
 |---|---|---|
 | `track()` | `*TrackerImpl` (git) | Java API, REST |
 | `blame()` | `*TrackerImpl` (git; none for variables) | blame (`HistoryInfo` per line) |
 | `track()` | `*TrackerWithLocalFiles` | **oracle tests**: reads `oracle/commits` and commit-log JSON instead of git (`buildWithLocalFiles()`) |
 
-A behaviour change must reach all copies. **Put the logic in `*TrackerChangeHistory`** and keep the loops thin.
+The three paths share parts of the change-history logic (`*TrackerChangeHistory`) but not necessarily the same execution flow. Before changing tracking behaviour, identify which paths are affected, and decide whether the change belongs in the shared `*TrackerChangeHistory` logic or in one path. Do not assume that changing one path updates the others.
 
 ## Git mode vs local-files mode
 
@@ -61,6 +61,6 @@ flowchart LR
     end
 ```
 
-Local-files mode runs the published oracle histories without cloning the 20 repositories. A missing cache entry means *no data*, not an error.
+Local-files mode runs the published oracle histories without cloning their repositories.
 
 Next: [elements and entry points](04-element-trackers.md).

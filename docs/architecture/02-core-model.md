@@ -67,19 +67,19 @@ flowchart LR
 - **Nodes** are created as the tracker finds older versions (`ChangeHistory.addNode`).
 - **Edges** go from the older (parent) version to the newer (child) version, and hold one or more changes (`addChange`).
 - **`handleAdd`** closes the history with an `introduced` change. *Every history must end in exactly one origin.*
-- **`connectRelatedNodes`** links nodes with equal identity, so separately found pieces join into one chain.
+- **`connectRelatedNodes`** joins separately found pieces into one chain. It links a *leaf* (a node with no successor that is not removed and not the start) to a *root* (a node with no predecessor that is not yet added) when both have the same identity.
 - **Evolution hooks** (`change.EvolutionHook`) model one-to-many cases such as a method split or an extracted method: a side branch, while the main chain continues.
 
 ## Change types and how they are built
 
 - **`Change.Type`** is an enum with a lower-case **title** (`"body change"`). REST and the oracles look types up by title (`Change.Type.get(title)`).
-- **`ChangeFactory`**: `ChangeFactory.forMethod(Change.Type.X)`, `forBlock`, `forVariable`, …, then `.refactoring(...)` when the type needs one. `RENAME` and `TYPE_CHANGE` do; without it they throw a `NullPointerException`. Build every change *before* modifying the history.
+- **`ChangeFactory`**: `ChangeFactory.forMethod(Change.Type.X)`, `forBlock`, `forVariable`, …, then `.refactoring(...)` when the type needs one. Seventeen types throw a `NullPointerException` when built without a refactoring, among them `RENAME`, `MOVED`, `TYPE_CHANGE`, `PARAMETER_CHANGE`, `MODIFIER_CHANGE`, `RETURN_TYPE_CHANGE`, and the split, merge and loop/pipeline types (see the `refactoring == null` checks in `ChangeFactory`). Because of that, create a change before you start modifying the history, so that a missing refactoring fails before the graph is partly updated.
 - **Families:**
 
   | Family | Examples |
   |---|---|
   | Lifecycle | `introduced`, `removed` |
-  | Body and expression | `body change`, `expression change`, `catch/finally/else block added/changed/removed` |
+  | Body and expression | `body change`, `expression change`, `catch block added` / `change` / `removed`, `finally block added` / `change` / `removed`, `else block added` / `removed`, `else block body added` / `removed` |
   | Signature | `rename`, `parameter change`, `return type change`, `modifier change`, `annotation change`, `type change`, `initializer change`, `documentation change` |
   | Location | `moved`, `container change` |
   | Composite | `method split/merge`, `block split/merge`, `loop replaced with pipeline`, … |

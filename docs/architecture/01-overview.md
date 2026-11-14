@@ -35,7 +35,7 @@ flowchart LR
 
 | Dependency | Why |
 |---|---|
-| **RefactoringMiner** (`rm.version`, 3.1.6) | Parses Java into UML models, maps statements between versions (`UMLOperationBodyMapper`), and detects refactorings. **The core of the matching.** |
+| **RefactoringMiner** (version set by `rm.version` in `pom.xml`) | Parses Java into UML models, maps statements between versions (`UMLOperationBodyMapper`), and detects refactorings. **The core of the matching.** |
 | JGit | Reads commits, parents and file contents from a local clone. |
 | Guava (`graph`) | The history graph. |
 | Undertow, Jackson | REST server, JSON (oracles, cache). |

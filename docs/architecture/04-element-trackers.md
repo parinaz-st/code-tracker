@@ -12,7 +12,7 @@
 | Comment, Import, Annotation | `commentTracker()`, `importTracker()`, `annotationTracker()` | `*TrackerImpl` | `*TrackerChangeHistory` | – | – |
 | Whole file (for blame) | – | `FileTrackerImpl` | – | `FileTrackerWithLocalFilesImpl` | – |
 
-Each builder needs a repository, a file path, a start commit and **locator data** (a name plus a declaration line, or a block's start and end lines and its type). The `*ChangeHistory` class holds the rules that decide whether two elements match and which changes to record: `isMatched`, `isAdded`, `analyse*Refactorings`, `is*ContainerChanged`.
+Each builder needs a repository, a file path, a start commit and **locator data**. A method needs its name and declaration line. A block needs the enclosing method's name and declaration line, *and* its own type (`codeElementType`) and start and end lines. For the other elements, see their builder in `api/`. The `*ChangeHistory` class holds the rules that decide whether two elements match and which changes to record: `isMatched`, `isAdded`, `analyse*Refactorings`, `is*ContainerChanged`.
 
 ## Finding the element: `CodeElementLocator`
 
@@ -29,14 +29,16 @@ The REST endpoint `/api/codeElementType` and blame use it, so users can click a 
 
 ```mermaid
 sequenceDiagram
-    participant U as BlameCLI or CodeTrackerBlame
+    participant U as CodeTrackerBlame
+    participant C as CodeElementLocator
     participant L as LineTrackerFromCodeTracker
     participant T as tracker for the element on the line
-    U->>L: blame(file, commit, line)
-    L->>L: locate the element containing the line
-    L->>T: blame() (HistoryInfo for that element)
-    T-->>L: last commit that changed it
-    L-->>U: LineBlameResult
+    U->>C: locate() the element on the line
+    C-->>U: code element
+    U->>L: blame(repository, filePath, commitId, lineNumber, codeElement)
+    L->>T: blame()
+    T-->>L: HistoryInfo (last commit that changed it)
+    L-->>U: HistoryInfo
 ```
 
 - The benchmarks (`blame.benchmark`) compare it with JGit and CLI blame (`JGitBlame`, `CliGitBlame`).
