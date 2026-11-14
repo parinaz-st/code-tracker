@@ -21,13 +21,13 @@ CodeTracker is a refactoring-aware tool that builds the commit change history of
 **Write no code until a spec and a detailed plan exist and the developer has approved them.** This applies to every change, including a "small" one. If asked to write code without an approved spec and plan, start the steps below instead.
 
 1. **Investigate, then brainstorm.** Gather evidence (see below). Restate the problem, list options, trade-offs and risks. Ask about anything you cannot decide from the evidence. Do not guess.
-2. **Write the spec:**
-   - **Evidence:** findings sorted into facts, inferences, assumptions and open questions.
-   - **Goal:** what must be true when done, and why.
-   - **Scope and non-goals.**
-   - **Behaviour:** inputs, outputs, edge cases, examples of expected results.
-   - **Acceptance criteria:** checks a person or test can run.
-   - **Impact on shared code:** every common class touched (see "Shared classes").
+2. **Write the spec.** The spec is a short document that says *what* will be built, not *how*. It answers these questions:
+   - **Evidence:** What did you find out about the current code, tests, papers and oracle data? List it in the four groups from "Evidence before the spec" (facts, inferences, assumptions, open questions).
+   - **Goal:** What problem are we solving, what will be different when it is solved, and why does it matter?
+   - **Scope and non-goals:** What will this change cover? What will it deliberately *not* cover, even though it is related?
+   - **Behaviour:** What should the code do? Give the input, the expected output, the edge cases, and at least one concrete example (for instance: "a block commented out in commit X is reported as `commented out block`").
+   - **Acceptance criteria:** How will we know it is done? Each criterion is a check that a person or a test can run and that clearly passes or fails.
+   - **Impact on shared code:** Which common classes (see "Shared classes") would have to change? If none, say "none".
 3. **Write the plan:** small ordered steps. Each names its files, its test and the command that runs it. Tests come before logic.
 4. **Get approval.** Wait for a clear yes. Approving one step does not approve the next.
 5. **Implement one step at a time.** Run its checks, report results honestly (failures included), commit only that step.
