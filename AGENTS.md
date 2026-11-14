@@ -82,6 +82,30 @@ Rules:
 - If TDD is impractical for a task, explain why and get approval for another way to verify it.
 - A passing suite is necessary but does not by itself prove correctness.
 
+## Research integrity and oracle protection
+
+CodeTracker is a research artifact. Its papers, tracking algorithms, oracle data and experiment results are the scientific basis of the project, not just test resources. Passing conventional tests shows that the code works as written; it does not show that the research results are still valid. Keep the two apart.
+
+- **Read the paper first.** Before changing an algorithm or behaviour that a published paper describes, read the relevant part of that paper.
+- **Do not "fix" what you do not understand.** An implementation detail is not wrong just because another implementation looks cleaner. It may exist because of a case the evaluation covers.
+- **Protect oracle and experiment data.** Do not change oracle data, expected histories or experimental datasets to make a new implementation pass. This needs the developer's explicit approval and a written justification.
+- **Investigate every oracle failure.** Decide which of these four it is before you act: a regression in your change, an existing limitation of the tracker, an incorrect oracle entry, or an intentional behaviour change that was specified and approved.
+- **Never hide inconvenient results.** Do not silently drop, skip or weaken an experiment because its result is bad. Report it.
+- **Keep it reproducible.** Report the dataset, the test configuration, the commands you ran and the relevant results, so someone else can repeat them.
+- **Separate measurements from opinions.** Say clearly what was measured, what is an assumption, and what is your interpretation.
+- **No accuracy claim without evidence.** Do not claim an improvement unless you ran the relevant experiments and compared them with the established baseline.
+- **State the research impact.** If a change alters the algorithm or its behaviour, explain what it could mean for the published research and the existing evaluation results.
+
+**Example.** You change the method-matching logic and 8 historical cases in the oracle now fail. Do not edit the tests or loosen the matching conditions until the build is green. Ask instead:
+
+1. What did the oracle expect for these histories?
+2. Why do these 8 cases fail?
+3. Did the tracker become less accurate overall?
+4. Did the change reveal an existing defect, in the tracker or in the oracle?
+5. Does the new behaviour affect any claim made in the papers?
+
+Report the answers to the developer, then decide together what to do.
+
 ## Build and test
 
 - Java 11+ and Maven 3.6.3+. Use `./mvnw` or `mvn`.
