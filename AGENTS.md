@@ -28,7 +28,13 @@ CodeTracker is a refactoring-aware tool that builds the commit change history of
    - **Behaviour:** What should the code do? Give the input, the expected output, the edge cases, and at least one concrete example (for instance: "a block commented out in commit X is reported as `commented out block`").
    - **Acceptance criteria:** How will we know it is done? Each criterion is a check that a person or a test can run and that clearly passes or fails.
    - **Impact on shared code:** Which common classes (see "Shared classes") would have to change? If none, say "none".
-3. **Write the plan:** small ordered steps. Each names its files, its test and the command that runs it. Tests come before logic.
+3. **Write the plan.** The plan says *how* the spec will be built: a list of small steps in the order they will be done. A step should be small enough to finish, check and commit on its own. For each step, write down:
+   - **What it does,** in one sentence.
+   - **Which files it creates or changes.** Mark any shared class (see "Shared classes").
+   - **Which test proves it works.** The test is written first and must fail before the code is written (see TDD).
+   - **The exact command that runs that test,** for example `mvn -q test -Dtest=BlockTrackerImplTest`.
+
+   Order the steps so that each one builds on the previous ones and the code compiles and the existing tests pass after every step.
 4. **Get approval.** Wait for a clear yes. Approving one step does not approve the next.
 5. **Implement one step at a time.** Run its checks, report results honestly (failures included), commit only that step.
 6. **If the plan breaks, stop.** Update the spec and plan, tell the developer, and get approval again.
