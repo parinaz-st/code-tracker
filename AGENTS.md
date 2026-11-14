@@ -48,6 +48,25 @@ Do not write a spec from the developer's description alone; the repository shows
 
 Keep four groups apart in the spec: **observed facts** (seen directly, with a source), **inferences** (concluded from facts; give the reasoning), **assumptions** (taken without evidence; say how to check them), and **unresolved questions** (ask the developer). Never present an inference or assumption as a fact. Turn cheap assumptions into facts first. If the evidence contradicts the developer's description, say so and ask which to follow.
 
+## Test-Driven Development (TDD)
+
+TDD is the default for all behavioural code changes. Follow Red-Green-Refactor:
+
+1. **RED:** write a test that expresses the behaviour in the approved spec.
+2. **Run it and confirm it fails for the intended reason.** A compilation error or broken test setup is not a meaningful failure.
+3. **GREEN:** make the smallest production-code change that passes it.
+4. **REFACTOR:** improve the code without changing its observable behaviour, then run the relevant tests again.
+
+Rules:
+
+- Derive tests from the approved spec and acceptance criteria, not from the existing code. Do not change production code first and then write tests that confirm what it already does.
+- Do not weaken assertions, delete failing tests or change expected results just to get a green build. When a test fails, find the cause before changing the code or the test.
+- Existing tests stay green unless a behaviour change was specified and approved.
+- Use focused unit tests for isolated logic, integration tests for component interactions, and oracle tests for historical tracking accuracy.
+- Do not claim TDD was followed unless the failing test was actually run before the production change.
+- If TDD is impractical for a task, explain why and get approval for another way to verify it.
+- A passing suite is necessary but does not by itself prove correctness.
+
 ## Build and test
 
 - Java 11+ and Maven 3.6.3+. Use `./mvnw` or `mvn`.
