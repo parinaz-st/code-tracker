@@ -48,10 +48,10 @@ Every element has an **`identifierIgnoringVersion`**: a string that is equal for
 
 | Element | Identity contains | Consequence |
 |---|---|---|
-| `Method` | source folder, class, visibility, modifiers, name, parameter types, return type, thrown exceptions, annotations, documentation, **body hash** | Any body edit changes the identity. Weaker variants exist: `…IgnoringVersionAndDocumentAndBody` (signature only) and `…IgnoringVersionAndAnnotation`. |
-| `Block` | **the enclosing method's identity** + statement type + **hash of all its statements** + signature | A block's identity changes when *anything* in its method changes. |
-| `Variable` | **the enclosing method's identity** + `final` + name + type + annotations + hash of its scope + scope signature | Same as blocks: variables are matched through RM's statement mappings, not identity alone. |
-| `Attribute` | source folder, class, modifiers, visibility, name, type | Independent of method bodies. |
+| `Method` | source folder, class, visibility, modifiers, name, parameter types, return type, thrown exceptions, **body hash** (RefactoringMiner's `getBodyHashCode()`), documentation (SHA-512 of its comments), annotations | Any body edit changes the identity. Weaker variants exist: `…IgnoringVersionAndDocumentationAndBody` (no body, no documentation) and `…IgnoringVersionAndAnnotation`. |
+| `Block` | **the enclosing method's (or attribute's) identity** + statement type + **SHA-512 of all its statements** + signature | A block's identity changes when *anything* in its method (or attribute) changes. |
+| `Variable` | **the enclosing method's identity** + `final` + name + type + annotations + SHA-512 of the statements in its scope + scope signature (+ SHA-512 of the enclosing lambda, when there is one) | Same as blocks: variables are matched through RM's statement mappings, not identity alone. |
+| `Attribute` | source folder, class, modifiers, visibility, name, type, annotations | Independent of method bodies. |
 
 The display **name** is separate. It is what people and the oracles read, for example `src/main/java/org.example.Foo#run(int)$if(42-48)`; it contains line numbers and is not used for matching.
 

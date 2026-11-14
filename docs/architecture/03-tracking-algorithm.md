@@ -1,6 +1,6 @@
 # 3. The tracking algorithm
 
-All trackers share one backward loop, shown here for a method (`MethodTrackerImpl.track()`). The other kinds follow the same pattern with their own matching rules.
+All trackers share one backward loop, shown here for a method (`MethodTrackerImpl.track()`). The other elements follow the same pattern with their own matching rules.
 
 ## The loop
 
@@ -56,11 +56,11 @@ flowchart LR
         R1["JGit repository<br/>(local clone)"] --> T1["*TrackerImpl"]
     end
     subgraph off["Local-files mode (buildWithLocalFiles)"]
-        J["commit-log JSON<br/>src/test/resources/kind/"] --> T2["*TrackerWithLocalFiles"]
+        J["commit-log JSON<br/>src/test/resources/element/"] --> T2["*TrackerWithLocalFiles"]
         CC["commit cache<br/>oracle/commits (submodule)"] --> T2
     end
 ```
 
 Local-files mode runs the published oracle histories without cloning the 20 repositories. A missing cache entry means *no data*, not an error.
 
-Next: [element kinds and entry points](04-element-trackers.md).
+Next: [elements and entry points](04-element-trackers.md).

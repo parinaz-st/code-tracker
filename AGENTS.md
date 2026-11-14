@@ -36,16 +36,16 @@ Do not treat onboarding or architecture documentation as a substitute for inspec
    - **What it does,** in one sentence.
    - **Which files it creates or changes.** Mark any shared class (see "Shared classes").
    - **Which test proves it works.** The test is written first and must fail before the code is written (see TDD).
-   - **The exact command that runs that test,** for example `mvn -q test -Dtest=BlockTrackerImplTest`.
+   - **The exact command that runs that test,** for example `mvn -q test -Dtest=<TestClassName>`.
 
    Order the steps so that each one builds on the previous ones and the code compiles and the existing tests pass after every step.
 4. **Get approval.** Wait for a clear yes. Approving the plan authorizes the tasks in that plan, one after another, as long as you stay within the approved scope. You do not need approval for each file edit. A material deviation from the plan needs new approval. Approving the plan or the finished work does not authorize pushing or releasing it.
 5. **Implement one task at a time.** Run its checks, report the result honestly (failures included), and keep each task in its own change. Commit only when the developer says so.
 6. **If the plan breaks, stop.** Update the spec and plan, tell the developer, and get approval again.
 
-Keep specs and plans in the repository so the next person or agent can read them: one document per feature or larger change in `docs/` (spec and plan together).
+Keep specs and plans in the repository so the next person or agent can read them: one document per feature or larger change in `docs/specs/` (spec and plan together), copied from `docs/specs/TEMPLATE.md`.
 
-Record each significant architectural decision in `docs/adr/` as an ADR (architecture decision record) that explains the context, the decision, the alternatives considered and the consequences. Ordinary implementation choices do not need an ADR.
+Record each significant architectural decision in `docs/adr/` as an ADR (architecture decision record) that explains the context, the decision, the alternatives considered and the consequences, using the template in `docs/adr/README.md`. Ordinary implementation choices do not need an ADR.
 
 ### How much spec and plan
 
@@ -105,7 +105,9 @@ CodeTracker is a research artifact. Its papers, tracking algorithms, oracle data
 
 - **Read the paper first.** Before changing an algorithm or behaviour that a published paper describes, read the relevant part of that paper.
 - **Do not "fix" what you do not understand.** An implementation detail is not wrong just because another implementation looks cleaner. It may exist because of a case the evaluation covers.
-- **Protect oracle and experiment data.** Do not change oracle data, expected histories or experimental datasets to make a new implementation pass. This needs the developer's explicit approval and a written justification.
+- **Protect oracle and experiment data.** Do not change oracle data, expected histories or experimental datasets to make a new implementation pass, and do not overwrite published experiment results (`final.csv`, `summary-*.csv`, `detailed-*.csv` in `experiments/`). This needs the developer's explicit approval and a written justification.
+- **Keep new datasets separate.** A new feature gets its own folder and its own ground truth next to `training` and `test`, not inside them. Its accuracy is not directly comparable with the published results.
+- **Test, then experiment.** A plan that changes tracking logic includes the relevant `*OracleTest`. Full experiments (`*ExperimentStarter`) rewrite files in `experiments/` and take hours, so run them only with the developer's approval.
 - **Investigate every oracle failure.** Decide which of these four it is before you act: a regression in your change, an existing limitation of the tracker, an incorrect oracle entry, or an intentional behaviour change that was specified and approved.
 - **Never hide inconvenient results.** Do not silently drop, skip or weaken an experiment because its result is bad. Report it.
 - **Keep it reproducible.** Report the dataset, the test configuration, the commands you ran and the relevant results, so someone else can repeat them.
@@ -179,30 +181,34 @@ Never report a failed or unexecuted check as successful. Give the exact commands
 
 ## Build and test
 
-- Java 11+ and Maven 3.6.3+. Use `./mvnw` or `mvn`.
+- Java 11+ and Maven 3.6.3+. Use `mvn`: `./mvnw` does not work in this checkout (the wrapper jar is missing and its download fails).
 - Build: `mvn -q -DskipTests install`
-- One test class: `mvn -q test -Dtest=BlockTrackerImplTest`
-- Oracle tests (`src/test/java/org/codetracker/util/*OracleTest`) clone real repositories and are slow. Run them only when the approved plan includes them or the developer agrees, and run them in the background.
+- The build works with RefactoringMiner 3.2.0 (checked 2026-11-14 after merging `master` at `131fc8b`). The first build downloads RefactoringMiner and takes a few minutes; later builds are faster.
+- One test class: `mvn -q test -Dtest=<TestClassName>`
+- **Fast check** (offline, about 12 s once compiled, 50 tests; needs the `oracle` submodule): `mvn -q -o test -Dtest=CodeElementLocatorWithLocalFilesTest`. Use it to confirm the build and test setup work before a longer run.
+- **Known test problem (checked 2026-11-14, with a RefactoringMiner snapshot before the 3.2.0 update; not rechecked since):** the oracle tests did not start. `MethodOracleTest` failed in about 7 s with `NoSuchMethodError: ClassLoaderUtils.getClassLoader` and "You must configure at least one set of arguments for this @ParameterizedTest". `mvn dependency:tree` shows JUnit Jupiter API and engine 5.8.2 next to `junit-jupiter` 5.10.0, and the 3.2.0 update did not change them. Fixing it is a `pom.xml` change and needs approval (see `docs/specs/build-dependencies-fix.md`).
+- Oracle tests (`src/test/java/org/codetracker/util/*OracleTest`) run offline from the cached commits in the `oracle` submodule and are slow (the experiment starters are the ones that clone the real repositories). Run them only when the approved plan includes them or the developer agrees, and run them in the background.
 - The RM version is `rm.version` in `pom.xml`. RM API changes are a common source of compile errors after upgrades.
 
 ## Code map
 
 | Path | Purpose |
 |---|---|
-| `src/main/java/org/codetracker/*TrackerImpl.java` | The backward tracking loop for each element kind (no change → body change via lightweight diff → local refactorings → commit-level refactorings). |
+| `src/main/java/org/codetracker/*TrackerImpl.java` | The backward tracking loop for each element (no change → body change via lightweight diff → local refactorings → commit-level refactorings). |
 | `src/main/java/org/codetracker/*TrackerChangeHistory.java` | Matching logic (`isMatched`, `isAdded`, refactoring analysis) and how change edges are recorded. |
-| `src/main/java/org/codetracker/element/` | Tracked element types. **Identity = `identifierIgnoringVersion`.** A method's identifier includes its body hash; a block's includes its enclosing method's identifier. |
+| `src/main/java/org/codetracker/element/` | Tracked element types. **Identity = `identifierIgnoringVersion`.** A method's identifier includes its body hash; a block's includes its enclosing method's (or attribute's) identifier, and a variable's its enclosing method's. |
 | `src/main/java/org/codetracker/change/` | `Change.Type` enum, `ChangeFactory`, and the change classes. |
 | `src/main/java/org/codetracker/blame/` | Refactoring-aware blame built on the trackers. |
 | `src/main/java/org/codetracker/experiment/` | Oracle loading and accuracy experiments (`experiments/tracking-accuracy/`). |
 | `src/main/resources/oracle/` | Oracle JSON (expected histories). Test expectations are in `src/test/resources/`. |
 | `docs/architecture/` | Overview, core model, tracking algorithm, element trackers, testing. |
+| `docs/specs/`, `docs/adr/` | Spec and plan documents (with `TEMPLATE.md`), and architecture decision records. |
 
 ## Conventions
 
 - Match each file's upstream style: mostly **explicit imports** (some files, such as `BlockTrackerImpl`, use wildcards; leave them), its own indentation (tabs and spaces are mixed in older files), and no unrelated reformatting.
 - A new `Change.Type` needs a unique lower-case title, a change class, and a `ChangeFactory` case. REST and the oracle look types up by title (`Change.Type.get(title)`). Add or update oracle/test JSON only when the expected history is explicitly part of the approved spec. Any change to established oracle expectations needs explicit approval and a written justification (see "Research integrity").
-- `*TrackerImpl` has two near-identical loops (`track()` and `blame()`), and `*TrackerWithLocalFiles` has a third `track()` that the oracle tests use (`buildWithLocalFiles()`). Change all of them; prefer moving shared logic into `*TrackerChangeHistory`.
+- `*TrackerImpl` has two near-identical loops (`track()` and `blame()`), and `*TrackerWithLocalFiles` has a third `track()` that the oracle tests use (`buildWithLocalFiles()`). Before changing tracking behaviour, identify which of these paths are affected, and decide whether the change belongs in the shared `*TrackerChangeHistory` logic or in one path. Do not assume that changing one path updates the others.
 - Every new element node pushed into the queue must be matchable in older commits (consistent identifier) or be terminated with `handleAdd`. Otherwise the history silently loses its origin.
 - Keep changes small and PR-friendly for upstream.
 - **One request, one change.** A commit holds only the requested change; do not change, reformat or refactor unrelated files.
@@ -233,7 +239,7 @@ Never report a failed or unexecuted check as successful. Give the exact commands
 
 ### Shared classes: ask before you touch them
 
-Keep the footprint small: prefer new classes, or code inside the one element kind in scope. **Shared** classes are `Change`, `ChangeFactory`, `ChangeHistory`, `BaseTracker`, `BaseTrackerWithLocalFiles`, the `*TrackerChangeHistory` and `*TrackerImpl` of other element kinds, the oracle classes, and `pom.xml`. If a shared class must change, put the reason and the alternative you considered in the spec and **get approval before editing**.
+Keep the footprint small: prefer new classes, or code inside the one element in scope. **Shared** classes are `Change`, `ChangeFactory`, `ChangeHistory`, `BaseTracker`, `BaseTrackerWithLocalFiles`, the `*TrackerChangeHistory` and `*TrackerImpl` of other elements, the oracle classes, and `pom.xml`. If a shared class must change, put the reason and the alternative you considered in the spec and **get approval before editing**.
 
 ### Line endings: no noisy diffs
 

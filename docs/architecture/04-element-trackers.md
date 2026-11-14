@@ -1,8 +1,8 @@
-# 4. Element kinds, entry points, blame and REST
+# 4. Elements, entry points, blame and REST
 
-## One tracker per element kind
+## One tracker per element
 
-| Kind | Builder (`api.CodeTracker`) | Loop | Matching and recording | Offline variant | Published oracle (histories) |
+| Element | Builder (`api.CodeTracker`) | Loop | Matching and recording | Offline variant | Published oracle (histories) |
 |---|---|---|---|---|---|
 | Method | `methodTracker()` | `MethodTrackerImpl` | `MethodTrackerChangeHistory` | `MethodTrackerWithLocalFilesImpl` | 200 |
 | Variable | `variableTracker()` | `VariableTrackerImpl` | `VariableTrackerChangeHistory` | `VariableTrackerWithLocalFiles` | 1,416 |
@@ -44,6 +44,6 @@ sequenceDiagram
 
 ## REST
 
-`org.codetracker.rest.REST` starts an Undertow server with two endpoints: `GET /api/track` (the change history as JSON, `RESTChange`) and `GET /api/codeElementType`. The parameters are in the README.
+`org.codetracker.rest.REST` starts an Undertow server under `/api`. `RESTHandler` serves four endpoints: `/api/track` (the change history as JSON, `RESTChange`), `/api/codeElementType` (which element is on a line), and `/api/addToOracle` and `/api/getOracleData`, which store and read oracle data collected through the UI (currently for blocks only). The parameters of the first two are in the README.
 
 Next: [testing and evaluation](05-testing-and-evaluation.md).
